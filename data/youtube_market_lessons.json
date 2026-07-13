@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-15T00:00:00+08:00",
+  "source": "scripts/update_youtube_market_lessons.py metadata seed",
+  "pipelineStatus": "metadata-only",
+  "transcriptPolicy": "Full transcripts are read locally but not bundled in the extension.",
+  "channels": [
+    {
+      "label": "Gooaye 股癌 YouTube",
+      "url": "https://www.youtube.com/@Gooaye",
+      "sourceTier": "Tier 3 影音來源"
+    },
+    {
+      "label": "理財達人秀 EBCmoneyshow",
+      "url": "https://www.youtube.com/@EBCmoneyshow",
+      "sourceTier": "Tier 3 影音來源"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "cvJf4Ux_4vE",
+      "videoId": "cvJf4Ux_4vE",
+      "displayTitle": "週報 ep259 公開版：43000 以下 / 投信買盤 / 事件前規劃",
+      "title": "週報ep259公開版｜43000以下 投信買盤來了！升息.長假.世足賽 先規劃ft.盈利投資董事長 鍾國忠 2026/06/14 李兆華River @riverstockshow",
+      "channel": "李兆華River",
+      "url": "https://www.youtube.com/watch?v=cvJf4Ux_4vE&t=490s",
+      "startSeconds": 490,
+      "duration": "13:12",
+      "fetchedAt": "2026-06-14",
+      "updatedAt": "2026-06-15T00:00:00+08:00",
+      "sourceTier": "Tier 3 影片 metadata",
+      "transcriptStatus": "無公開字幕；待本機轉錄",
+      "confidence": "low / metadata-only",
+      "tags": ["投信買盤", "事件前規劃", "指數位置"],
+      "usableSignals": [
+        "大盤在 43000 以下時，優先觀察投信買盤是否提供承接。",
+        "升息、長假、世足賽等事件前要先規劃曝險，而不是等波動出現才反應。",
+        "用資金流與指數位置作部位調整線索，仍需回查 TWSE / TAIFEX / 投信買賣超。"
+      ],
+      "limits": [
+        "尚未完成逐字轉錄，不能視為完整影片觀點。",
+        "投信買盤、指數區間與事件風險都需要回官方或市場資料複核。"
+      ],
+      "crossChecks": ["TWSE 加權指數", "TAIFEX 台指期", "投信買賣超", "Fed / FOMC 事件日曆"]
+    },
+    {
+      "id": "szA2MSO_qTo",
+      "videoId": "szA2MSO_qTo",
+      "displayTitle": "Gooaye 股癌 EP670：AI 熱度後的急殺與部位檢查",
+      "title": "EP670 | 🫡",
+      "channel": "Gooaye 股癌",
+      "url": "https://www.youtube.com/watch?v=szA2MSO_qTo",
+      "duration": "52:07",
+      "fetchedAt": "2026-06-14",
+      "updatedAt": "2026-06-15T00:00:00+08:00",
+      "sourceTier": "Tier 3 影片 metadata",
+      "transcriptStatus": "無公開字幕；待本機轉錄",
+      "confidence": "low / metadata-only",
+      "tags": ["AI 熱度", "夜盤急殺", "部位控管"],
+      "usableSignals": [
+        "AI 題材過熱後遇到台指期夜盤急殺，應優先檢查整體曝險與槓桿。",
+        "部位變胖時先分清核心持股、題材倉位與可挪動資金，不把波動直接轉成買賣訊號。",
+        "急殺情境可映射到 extension 的 Market Heat、急殺風險雷達、技術過熱與籌碼退潮檢查。"
+      ],
+      "limits": [
+        "只有 YouTube metadata 與影片描述線索，尚不能代表完整節目脈絡。",
+        "夜盤跌幅與 AI 題材強弱需回 TAIFEX、美股科技指數與個股籌碼交叉比對。"
+      ],
+      "crossChecks": ["TAIFEX 台指期夜盤", "NASDAQ / 費半", "AI 供應鏈技術過熱", "融資券 / 法人流向"]
+    },
+    {
+      "id": "5DV8yGkzCH8",
+      "videoId": "5DV8yGkzCH8",
+      "displayTitle": "Gooaye 股癌 EP669：市場壓力與情緒耐受待轉錄",
+      "title": "EP669 | 🎈",
+      "channel": "Gooaye 股癌",
+      "url": "https://www.youtube.com/watch?v=5DV8yGkzCH8",
+      "duration": "50:41",
+      "fetchedAt": "2026-06-14",
+      "updatedAt": "2026-06-15T00:00:00+08:00",
+      "sourceTier": "Tier 3 影片 metadata",
+      "transcriptStatus": "無公開字幕；待本機轉錄",
+      "confidence": "very-low / metadata-only",
+      "tags": ["市場情緒", "待轉錄"],
+      "usableSignals": [
+        "描述線索不足，本輪只收錄為待轉錄來源，不轉成明確交易結論。",
+        "後續若取得逐字稿，再拆成情緒面、部位管理與題材輪動的可複核條目。"
+      ],
+      "limits": [
+        "未取得逐字稿前，不應拿來加權交易雷達或風險分數。",
+        "若要納入模型，需要至少一個獨立市場資料來源確認。"
+      ],
+      "crossChecks": ["Market Heat", "大盤廣度", "法人流向", "追蹤池過熱 / 深跌"]
+    },
+    {
+      "id": "gooaye-position-risk-framework",
+      "videoId": "gooaye-position-risk-framework",
+      "displayTitle": "Gooaye 頻道框架：大盤風險 / 部位分層 / 不把情緒當訊號",
+      "title": "Gooaye channel-level operating framework",
+      "channel": "Gooaye 股癌",
+      "url": "https://www.youtube.com/@Gooaye",
+      "duration": "channel",
+      "fetchedAt": "2026-07-09",
+      "updatedAt": "2026-07-09T00:00:00+08:00",
+      "sourceTier": "Tier 3 頻道入口 / metadata-only",
+      "transcriptStatus": "頻道層框架；待指定影片逐字稿",
+      "confidence": "low / framework-only",
+      "tags": ["部位控管", "急殺風險", "情緒耐受"],
+      "usableSignals": [
+        "先把盤勢風險、核心持股、題材倉位與現金分開；部位過大時先做風險整理，不把單日情緒直接轉成買賣訊號。",
+        "遇到急殺或熱門題材回檔時，先看台指期、美股科技、融資、法人與持股技術位階是否共振。",
+        "用作戰中樞決定今天先控風險、看族群，還是回單檔檢查停損 / 停利。"
+      ],
+      "limits": [
+        "此為頻道層研究框架，不代表特定單集逐字內容。",
+        "需指定影片並用本機轉錄後，才能升級為較高信心心得。"
+      ],
+      "crossChecks": ["市場風險雷達", "TAIFEX 台指期", "NASDAQ / 費半", "融資券 / 法人流向", "持股作戰室"]
+    },
+    {
+      "id": "ebc-line-pattern-framework",
+      "videoId": "ebc-line-pattern-framework",
+      "displayTitle": "EBC 理財達人秀框架：線型判斷 / 量價確認 / 關鍵均線攻防",
+      "title": "EBCmoneyshow channel-level line-pattern framework",
+      "channel": "理財達人秀 EBCmoneyshow",
+      "url": "https://www.youtube.com/@EBCmoneyshow",
+      "duration": "channel",
+      "fetchedAt": "2026-07-09",
+      "updatedAt": "2026-07-09T00:00:00+08:00",
+      "sourceTier": "Tier 3 頻道入口 / metadata-only",
+      "transcriptStatus": "頻道層框架；待指定影片逐字稿",
+      "confidence": "low / framework-only",
+      "tags": ["線型判斷", "量價", "均線攻防"],
+      "usableSignals": [
+        "線型先看趨勢位置：MA5 / MA10 / MA20 / MA60、前高前低、突破或跌破後是否能快速修復。",
+        "技術訊號要配合量價：突破需要量能與收盤站穩；急拉但量價背離或 KD / RSI 過熱時，不直接追價。",
+        "個股切換時先從族群 regime 選方向，再回單檔看線型、籌碼、營收與 R:R 是否同向。"
+      ],
+      "limits": [
+        "此為線型檢查清單，不是節目逐字稿，也不是買賣建議。",
+        "任何線型判讀都需回本機日線、TWSE / TPEx 官方資料與第二來源交叉比對。"
+      ],
+      "crossChecks": ["MA5/10/20/60", "大量 K 攻防", "KD / RSI / MACD", "量能 Regime", "TWSE / TPEx 日線", "個股 R:R"]
+    }
+  ]
+}

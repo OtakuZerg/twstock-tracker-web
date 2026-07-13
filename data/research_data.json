@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "15.3",
+  "generatedAt": "2026-06-24T14:02:15+08:00",
+  "methodology": {
+    "status": "current",
+    "label": "現行整合方法",
+    "sections": {
+      "quant": "量化篩選：流動性與市值先行，再整合趨勢、風報比、相對強弱、月營收、籌碼與風險扣分。",
+      "research": "個股研究：產業位置、營運動能、季報獲利率、估值、技術與籌碼使用同一份資料狀態。",
+      "technical": "技術與籌碼：交易狀態、事件新鮮度、事件續航、失守後修復與 KD / 背離整合判讀。",
+      "themes": "主題總覽：主題標籤、分類純度、產業趨勢、資料缺口與複核優先級使用同一套現行標註。"
+    }
+  },
+  "financialPerformance": {
+    "monthlyRevenue": {
+      "records": {},
+      "history": {},
+      "meta": {
+        "fetchedAt": null,
+        "sourceSummary": "內建長期基線尚無月營收資料；更新後會保存目前月份與最多 36 個月歷史。",
+        "sources": [],
+        "errors": [],
+        "missingHoldings": [],
+        "missingByCode": {}
+      }
+    },
+    "quarterlyMargins": {
+      "records": {},
+      "meta": {
+        "fetchedAt": null,
+        "sourceSummary": "內建長期基線尚無季報三率；目前需匯入 MOPS 季損益表或已整理三率 CSV。",
+        "sources": [],
+        "errors": [],
+        "missingHoldings": [],
+        "missingByCode": {}
+      }
+    }
+  },
+  "cachePolicy": {
+    "bundledBaseline": "data/research_data.json",
+    "runtimeCache": "IndexedDB durable:research-data:v1",
+    "syncFile": "research_data.json",
+    "monthlyRevenueRetentionMonths": 72,
+    "quarterlyMarginRetentionQuarters": 20,
+    "monthlyRevenueUpdate": "完整更新只在缺資料或預期公告月份尚未取得時下載；手動月營收更新可強制重抓。",
+    "quarterlyMarginUpdate": "CSV 匯入後增量合併，不以月營收替代季報三率。"
+  }
+}

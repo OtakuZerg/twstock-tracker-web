@@ -1,0 +1,576 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-02T23:08:05+08:00",
+  "source": "Podcast RSS",
+  "shows": [
+    {
+      "slug": "gooaye",
+      "name": "股癌",
+      "cadence": "每週 2 次",
+      "rss": "https://feeds.soundon.fm/podcasts/954689a5-3096-43a4-a80b-7810b219cef3.xml",
+      "episodes": [
+        {
+          "guid": "05d6fea4-c6a1-47f2-a57e-b2f4e8d82bc0",
+          "episodeNo": "658",
+          "title": "EP658 | 🪿",
+          "headline": "🪿",
+          "publishedAt": "2026-05-02T16:53:53+08:00",
+          "duration": "2997",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/05d6fea4-c6a1-47f2-a57e-b2f4e8d82bc0/rssFileVip.mp3?timestamp=1777712563909",
+          "description": "最終都是氣氛\n\n本集節目由【NordVPN】贊助\n現在搜尋 https://nordvpn.com/gooaye\n或結帳時輸入股癌的專屬優惠碼【gooaye】購買2年方案＋送四個月\n一個月只要一杯咖啡的價格就能取得VPN服務\n還有30天試用期，不滿意可隨時取消\n#NordVPN\n\n股癌傳送門：https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集從最終都是氣氛一個月只要一杯咖啡的價格就能取得VPN服務還有30天試用期出發，延伸到不滿意可隨時取消#NordVPN。"
+          ],
+          "summary500": "本集從最終都是氣氛一個月只要一杯咖啡的價格就能取得VPN服務還有30天試用期出發，延伸到不滿意可隨時取消#NordVPN。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "最終都是氣氛 一個月只要一杯咖啡的價格就能取得VPN服務 還有30天試用期，不滿意可隨時取消 #NordVPN",
+          "transcriptPath": "Podcast/股癌/2026-05-02/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-05-02/summary_500.md"
+        },
+        {
+          "guid": "ebd38d86-113a-4ce7-9c64-72f3fb63e5b4",
+          "episodeNo": "657",
+          "title": "EP657 | 🐫",
+          "headline": "🐫",
+          "publishedAt": "2026-04-29T16:15:00+08:00",
+          "duration": "3023",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/ebd38d86-113a-4ce7-9c64-72f3fb63e5b4/rssFileVip.mp3?timestamp=1777502042794",
+          "description": "他不呆兒 他長大了\n\n一年一度的母親節又來了\n你準備好老婆、岳母、媽媽的母親節禮物了嗎？\n她不一定記得你去年送什麼花，\n但她一定會記得讓她臉「變緊」的保養品！\n\n📦 股癌專屬賣場 👉 https://www.momoshop.com.tw/category/DgrpCategory.jsp?d_code=2176300048&p_orderType=4&osm=t04&utm_source=BD_024232&utm_medium=Gooaye-podcast&scm_activity=202603270252ujqtclh3\n\n股癌限定優惠：\n🔥 股癌專屬連結 精美禮盒8折起\n🔥 獨家下單送紫米精華 4ml\n🔥 滿 8000 送 修麗可訂製化妝鏡手機支架 or 修麗可客製毛巾禮盒\n🔥獨家 滿15000 送 KINYO 雙電壓小圓鍋-奶茶色\n\n📅重點明星商品一次看：\nCE 抗氧化精華： 肌膚最強防禦護盾，不讓皮膚變黃變老\nP-TIOX 抗皺精華： 擦的肉毒，專治各種煩人細紋\nA.G.E 緊緻精華： 最強新品🔥 撐起下垂肉肉、U臉變 V 臉\nA.G.E 緊緻霜： 負責補彈力，讓臉摸起來又Ｑ又緊\n\n抗老佈局要像你投資一樣：「穩健抗氧，進攻抗皺，風控穩膚」\n這才是完整抗老組合，買一瓶怎麼夠？\n\n🎁 限量精美禮盒，買到直接當禮物送（賣完沒得補）\n\nHappy Wife, Happy Life\n修麗可真的是我老婆的愛（今年母親節禮物直接由修麗可贊助了）\n\n兄弟，聽我一句勸，當個會送禮的男人\n母親節一次打中三顆心❤️❤️❤️ 接下來保證順風順水！\n\n#修麗可\n#SkinCeuticals\n#黃金抗老組合\n#AGE極效賦活緊緻精華\n#AGE緊緻霜\n#CE抗氧化精華\n#PTIOX抗皺精華\n\n股癌傳送門： https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集從他不呆兒他長大了一年一度的母親節又來了你準備好老婆、岳母、媽媽的母親節禮物了嗎出發，延伸到她不一定記得你去年送什麼花。",
+            "同時也談到但她一定會記得讓她臉「變緊」的保養品。",
+            "選股與觀察重點還包括📦股癌專屬賣場👉🔥股癌專屬連結精美禮盒8折起🔥獨家下單送紫米精華4ml🔥滿8000送修麗可訂製化妝鏡手機支架or修麗可客製毛巾禮盒🔥獨家滿15000送KINYO雙電壓小圓鍋-奶茶色📅重點明星商品一次看：CE抗氧化精華：肌膚最強防禦護盾。"
+          ],
+          "summary500": "本集從他不呆兒他長大了一年一度的母親節又來了你準備好老婆、岳母、媽媽的母親節禮物了嗎出發，延伸到她不一定記得你去年送什麼花。同時也談到但她一定會記得讓她臉「變緊」的保養品。選股與觀察重點還包括📦股癌專屬賣場👉🔥股癌專屬連結精美禮盒8折起🔥獨家下單送紫米精華4ml🔥滿8000送修麗可訂製化妝鏡手機支架or修麗可客製毛巾禮盒🔥獨家滿15000送KINYO雙電壓小圓鍋-奶茶色📅重點明星商品一次看：CE抗氧化精華：肌膚最強防禦護盾。依現有文字來源，這集也夾雜主持人近況與投資心態互動，產業濃度相對有限。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "他不呆兒 他長大了 一年一度的母親節又來了 你準備好老婆、岳母、媽媽的母親節禮物了嗎？ 她不一定記得你去年送什麼花， 但她一定會記得讓她臉「變緊」的保養品！ 📦 股癌專屬賣場 👉 🔥 股癌專屬連結 精美禮盒8折起 🔥 獨家下單送紫米精華 4ml 🔥 滿 8000 送 修麗可訂製化妝鏡手機支架 or 修麗可客製毛巾禮盒 🔥獨家 滿15000 送 KINYO 雙電壓小圓鍋-奶茶色 📅重點明星商品一次看： CE 抗氧化精華： 肌膚最強防禦護盾…",
+          "transcriptPath": "Podcast/股癌/2026-04-29/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-04-29/summary_500.md"
+        },
+        {
+          "guid": "642a945a-aa16-48c9-b3ba-18449dd1cf9c",
+          "episodeNo": "656",
+          "title": "EP656 | 🍇",
+          "headline": "🍇",
+          "publishedAt": "2026-04-25T15:13:49+08:00",
+          "duration": "2999",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/642a945a-aa16-48c9-b3ba-18449dd1cf9c/rssFileVip.mp3?timestamp=1777156667153",
+          "description": "萬劍歸宗\n\n買股票你會停損，但身體累積的勞損可沒辦法輕易平倉。\n聽勸一句：先優化交易環境。這可能是你今年勝率最高的一筆投資！\n🔗 https://www.uview.com.tw/\n\n很多人對股價變動敏感，但對自己每天久待的工作環境卻完全放任。螢幕高度不對讓頸椎提早折舊，桌面凌亂導致思考邏輯受阻，這在效率管理上其實是最大利空。\n\n與其在那邊墊原文書、彎腰看螢幕，不如一次到位換上 Ergotron 愛格升。這牌子就是業界天花板，穩定度跟流暢感真的沒在跟你開玩笑，用過就回不去。\n\n為什麼推薦 Ergotron 愛格升？\n\n📈 效益穩定：專利技術單手秒調，螢幕推到哪停到哪，不點頭、不下垂。\n\n📈 長期持有：業界標竿 10 年保固，耐用到台股破十萬點它可能都還在。\n\n📈 空間解放：騰起螢幕、徹底清空桌面空間，使用者效率直接翻倍。\n\n別在不該省的地方省，投資自己的產出效率，這筆交易絕對穩賺不賠。\n\n#即日起至5月底\n🎫 結帳輸入優惠碼：「GOOAYE」全館螢幕支架 9 折\n🛒 手刀升級配置：https://www.uview.com.tw/\n\n股癌傳送門：https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集從買股票你會停損，但身體累積的勞損可沒辦法輕易平倉出發，延伸到聽勸一句：先優化交易環境。",
+            "同時也談到這可能是你今年勝率最高的一筆投資。",
+            "選股與觀察重點還包括很多人對股價變動敏感。"
+          ],
+          "summary500": "本集從買股票你會停損，但身體累積的勞損可沒辦法輕易平倉出發，延伸到聽勸一句：先優化交易環境。同時也談到這可能是你今年勝率最高的一筆投資。選股與觀察重點還包括很多人對股價變動敏感。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "買股票你會停損，但身體累積的勞損可沒辦法輕易平倉。 聽勸一句：先優化交易環境。這可能是你今年勝率最高的一筆投資！ 很多人對股價變動敏感，但對自己每天久待的工作環境卻完全放任。螢幕高度不對讓頸椎提早折舊，桌面凌亂導致思考邏輯受阻，這在效率管理上其實是最大利空。 與其在那邊墊原文書、彎腰看螢幕，不如一次到位換上 Ergotron 愛格升。這牌子就是業界天花板，穩定度跟流暢感真的沒在跟你開玩笑，用過就回不去。 為什麼推薦 Ergotron 愛…",
+          "transcriptPath": "Podcast/股癌/2026-04-25/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-04-25/summary_500.md"
+        },
+        {
+          "guid": "29360069-27f9-41bf-80af-778e54933c7b",
+          "episodeNo": "655",
+          "title": "EP655 | 🐯",
+          "headline": "🐯",
+          "publishedAt": "2026-04-22T16:06:13+08:00",
+          "duration": "3023",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/29360069-27f9-41bf-80af-778e54933c7b/rssFileVip.mp3?timestamp=1776897503318",
+          "description": "誰比較大組誰贏\n\n捏卵陣線專屬優惠 → https://yohopower.net/IVrD4\n巧虎 x 悠活原力兒童保健系列聯名\n【葉黃素、魚油、鈣、綜合維他命、多醣體】\n\n★4/22-5/5 巧虎生日慶於momo購買\n✅下單抽可愛巧虎限量金飾\n✅滿額送巧虎聯名擦手巾、兒童水壺、午餐袋等多重好禮\n✅最高再享8折優惠\n\n🏆【小悠活兒童葉黃素咀嚼錠】\n✅ 專利FloraGLO游離型葉黃素\n✅ 含山桑子、枸杞萃取，營養補給\n✅ 葡萄口味，酸甜好吃\n\n🏆【小悠活兒童魚油咀嚼軟膠囊】\n✅ 挪威頂級魚油大廠，品質保障\n✅ DHA:EPA5:1比例，一顆達275毫克DHA\n✅ 香檸風味，無魚腥味，兒童愛吃\n\n🏆【小悠活鈣咀嚼錠】\n✅ 天然海陸雙鈣，法國海藻鈣+德國牛奶鈣\n✅ 含維生素D、K，補鈣更鎖鈣\n✅ 草莓牛奶口味\n\n🏆【小悠活兒童綜合維他命咀嚼錠】\n✅ 精選13種營養素+2種礦物質\n✅ 高生物利用率微膠囊化鐵\n✅ 水果口味\n\n🏆【小悠活兒童多醣體咀嚼錠】\n✅ 高達75%專利多醣體的β-1,3-1,6葡聚多醣體\n✅ 含德國接骨木莓可增強體力，高活性鋅酵母可助於生長發育\n✅ 黑醋栗口味\n\n健康加倉→ https://yohopower.net/IVrD4\n\n股癌傳送門：https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "台積電",
+            "半導體設備 / 廠務",
+            "ETF / 主動式基金"
+          ],
+          "summaryBullets": [
+            "本集目前能取得的 RSS 內容多為贊助或活動文案，缺少足夠的市場與產業脈絡，因此不適合整理成可靠的 500 字產業摘要。",
+            "若要補強，建議改用較高品質的中文轉錄後再人工確認。",
+            "相關族群：台積電、半導體設備 / 廠務、ETF / 主動式基金。"
+          ],
+          "summary500": "本集目前能取得的 RSS 內容多為贊助或活動文案，缺少足夠的市場與產業脈絡，因此不適合整理成可靠的 500 字產業摘要。若要補強，建議改用較高品質的中文轉錄後再人工確認。",
+          "transcriptStatus": "transcribed_whisper",
+          "transcriptNote": "Whisper tiny 逐字稿",
+          "transcriptPreview": "本集目前能取得的 RSS 內容多為贊助或活動文案，缺少足夠的市場與產業脈絡，因此不適合整理成可靠的 500 字產業摘要。若要補強，建議改用較高品質的中文轉錄後再人工確認。",
+          "transcriptPath": "Podcast/股癌/2026-04-22/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-04-22/summary_500.md"
+        },
+        {
+          "guid": "687a5ae3-badb-4733-a9ff-49228d65875f",
+          "episodeNo": "654",
+          "title": "EP654 | 🌵",
+          "headline": "🌵",
+          "publishedAt": "2026-04-18T14:37:33+08:00",
+          "duration": "2999",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/687a5ae3-badb-4733-a9ff-49228d65875f/rssFileVip.mp3?timestamp=1776573731975",
+          "description": "supply chain 仔永支 tokenmaxxing\n\n本集節目由 New Balance 贊助播出👟 https://reurl.cc/2azzZv\n\n無論你是想出國或是去戶外走走 ✈️，出發之前請先找到你的優質裝備。\n\n出門穿搭就跟找旅伴一樣，必須找一個有潛力的長期標的。\n\nNB 這一套就是穿搭界的「優質資產」，基本面紮實、設計在線。陪你日走三萬步，依然有體力可以看盤：\n\n👕 NB BOY 系列上衣：插畫好看、不單調也不臭宅，全家一起穿也很溫馨！\n👟 740：腳感舒適、外型耐看，回饋感就像穩定的報酬——沒有花言巧語，但很實在 📈\n👟 204L：線條簡約又好搭，要跟老婆約會拍美照，還是硬派走景點都能一雙打天下！\n投資自己的穿搭，絕對比亂聽明牌划算 💰\n\n有興趣的朋友，去全台 New Balance 門市試穿，或直接點官網連結看看!\n\n🔗 New Balance 官網逛起來： https://www.newbalance.com.tw/\n\n股癌傳送門： https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集從supplychain仔永支tokenmaxxing無論你是想出國或是去戶外走走✈️出發，延伸到出發之前請先找到你的優質裝備。",
+            "同時也談到出門穿搭就跟找旅伴一樣。",
+            "選股與觀察重點還包括必須找一個有潛力的長期標的。"
+          ],
+          "summary500": "本集從supplychain仔永支tokenmaxxing無論你是想出國或是去戶外走走✈️出發，延伸到出發之前請先找到你的優質裝備。同時也談到出門穿搭就跟找旅伴一樣。選股與觀察重點還包括必須找一個有潛力的長期標的。選股面偏向比較強勢題材與回檔族群之間的輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "supply chain 仔永支 tokenmaxxing 無論你是想出國或是去戶外走走 ✈️，出發之前請先找到你的優質裝備。 出門穿搭就跟找旅伴一樣，必須找一個有潛力的長期標的。 NB 這一套就是穿搭界的「優質資產」，基本面紮實、設計在線。陪你日走三萬步，依然有體力可以看盤： 👕 NB BOY 系列上衣：插畫好看、不單調也不臭宅，全家一起穿也很溫馨！ 👟 740：腳感舒適、外型耐看，回饋感就像穩定的報酬——沒有花言巧語，但很實在 📈 …",
+          "transcriptPath": "Podcast/股癌/2026-04-18/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-04-18/summary_500.md"
+        },
+        {
+          "guid": "3239f800-b064-4ac4-bef6-e7f72021b49f",
+          "episodeNo": "653",
+          "title": "EP653 | 🕊️",
+          "headline": "🕊️",
+          "publishedAt": "2026-04-15T15:51:32+08:00",
+          "duration": "2999",
+          "audioUrl": "https://rss.soundon.fm/rssf/954689a5-3096-43a4-a80b-7810b219cef3/feedurl/3239f800-b064-4ac4-bef6-e7f72021b49f/rssFileVip.mp3?timestamp=1776292498987",
+          "description": "鳥語花香\n\n本集節目由【NordVPN】贊助\n\n現在搜尋 https://nordvpn.com/gooaye\n或結帳時輸入股癌的專屬優惠碼【gooaye】\n購買 2 年方案＋送四個月一個月只要一杯咖啡的價格就能取得 VPN 服務還有30天試用期，不滿意可隨時取消\n\n#NordVPN\n\n股癌傳送門：https://linktr.ee/gooaye\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集聚焦#NordVPN。"
+          ],
+          "summary500": "本集聚焦#NordVPN。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "#NordVPN",
+          "transcriptPath": "Podcast/股癌/2026-04-15/transcript.txt",
+          "summaryPath": "Podcast/股癌/2026-04-15/summary_500.md"
+        }
+      ]
+    },
+    {
+      "slug": "zhaohua",
+      "name": "兆華與股惑仔",
+      "cadence": "每日更新",
+      "rss": "https://feeds.soundon.fm/podcasts/91be014b-9f55-4bf3-a910-b232eda82d11.xml",
+      "episodes": [
+        {
+          "guid": "459feaa0-7eb1-48e3-8582-a70a632007ce",
+          "episodeNo": "1088",
+          "title": "EP1088｜4月漲7203點，5月還有好光景？台積電回檔更好買，熱門產業絕對要有！機器人、低軌轉強，載板、CPO續飛，封測穩賺中！ft.操盤手 黃豐凱",
+          "headline": "4月漲7203點，5月還有好光景？台積電回檔更好買，熱門產業絕對要有！機器人、低軌轉強，載板、CPO續飛，封測穩賺中！ft.操盤手 黃豐凱",
+          "publishedAt": "2026-04-30T16:27:21+08:00",
+          "duration": "2278",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/459feaa0-7eb1-48e3-8582-a70a632007ce/rssFileVip.mp3?timestamp=1777588383544",
+          "description": "4月漲7203點，5月還有好光景？台積電回檔更好買，熱門產業絕對要有！機器人、低軌轉強，載板、CPO續飛，封測穩賺中！\n\n殺尾盤震盪921點，瑕不掩瑜，4月大漲7203點賺錢了嗎？\n南電破千、欣興準備，載板勢最強，至少有一點？\n大戶靠攏機器人，大銀微表態，等待投信願意接棒？\n低軌衛星轉強，留意發射衛星數量增加，跌勢回穩依舊可期？\n國巨*溫吞等表態，外資其實聚集中，小被動元件先漲？\n日月光示範、京元電跟上，IC封測強業績繼續！\nCPO回檔後反攻，不怕分盤交易，顯學持續走？\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "台積電",
+            "PCB / 載板",
+            "CPO / 矽光子",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從4月漲7203點，5月還有好光景出發，延伸到台積電回檔更好買，熱門產業絕對要有。",
+            "同時也談到機器人、低軌轉強，載板、CPO續飛，封測穩賺中。",
+            "涉及族群包括台積電、PCB/載板、CPO/矽光子、低軌/衛星。",
+            "相關族群：台積電、PCB / 載板、CPO / 矽光子、低軌 / 衛星。"
+          ],
+          "summary500": "本集從4月漲7203點，5月還有好光景出發，延伸到台積電回檔更好買，熱門產業絕對要有。同時也談到機器人、低軌轉強，載板、CPO續飛，封測穩賺中。涉及族群包括台積電、PCB/載板、CPO/矽光子、低軌/衛星。重點之一是高檔震盪、急漲急跌與量能放大的情緒影響。族群配置則圍繞台積電、PCB/載板、CPO/矽光子、低軌/衛星之間的強弱與輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。並由來賓操盤手黃豐凱從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "4月漲7203點，5月還有好光景？台積電回檔更好買，熱門產業絕對要有！機器人、低軌轉強，載板、CPO續飛，封測穩賺中！ 殺尾盤震盪921點，瑕不掩瑜，4月大漲7203點賺錢了嗎？ 南電破千、欣興準備，載板勢最強，至少有一點？ 大戶靠攏機器人，大銀微表態，等待投信願意接棒？ 低軌衛星轉強，留意發射衛星數量增加，跌勢回穩依舊可期？ 國巨*溫吞等表態，外資其實聚集中，小被動元件先漲？ 日月光示範、京元電跟上，IC封測強業績繼續！ CPO回檔後…",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-30/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-30/summary_500.md"
+        },
+        {
+          "guid": "203ebc56-48d9-4409-b674-eb89ec8b45b4",
+          "episodeNo": "1087",
+          "title": "EP1087｜Open AI入不敷出，台股各大廠通吃所以不擔心？台達電、聯發科、4大雲端CSP廠法說、FED會議，什麼狀況會回檔？ft.AI達人 蔡明翰",
+          "headline": "Open AI入不敷出，台股各大廠通吃所以不擔心？台達電、聯發科、4大雲端CSP廠法說、FED會議，什麼狀況會回檔？ft.AI達人 蔡明翰",
+          "publishedAt": "2026-04-29T16:34:36+08:00",
+          "duration": "3280",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/203ebc56-48d9-4409-b674-eb89ec8b45b4/rssFileVip.mp3?timestamp=1777501517466",
+          "description": "Open AI入不敷出，台股各大廠通吃所以不擔心？台達電、聯發科、4大雲端CSP廠法說、FED會議，什麼狀況會回檔？\n\n台股又是世界強，看回不回怎麼上車？乖離率過大終究得修正？\nOpen AI說收入恐難支付合約，美股AI廠怕怕，台股卻很淡定？\n康寧財報預估Q2普普，CPO再度遇到壓力？回月線可以買嗎？\n記憶體威剛、十銓Q1大賺，為何反而下跌，旺宏創高是因為981A ？\n低軌衛星何時回神？等到市場共識重新聚集再說！\n主動是ETF會否左手換右手，最後多殺多，其實關鍵永遠是產業成長性！\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "聯發科 / IC 設計",
+            "CPO / 矽光子",
+            "記憶體",
+            "ETF / 主動式基金",
+            "低軌 / 衛星",
+            "散熱 / 電源"
+          ],
+          "summaryBullets": [
+            "本集從OpenAI入不敷出，台股各大廠通吃所以不擔心出發，延伸到台達電、聯發科、4大雲端CSP廠法說、FED會議。",
+            "同時也談到什麼狀況會回檔。",
+            "涉及族群包括聯發科/IC設計、CPO/矽光子、記憶體、ETF/主動式基金。",
+            "相關族群：聯發科 / IC 設計、CPO / 矽光子、記憶體、ETF / 主動式基金。"
+          ],
+          "summary500": "本集從OpenAI入不敷出，台股各大廠通吃所以不擔心出發，延伸到台達電、聯發科、4大雲端CSP廠法說、FED會議。同時也談到什麼狀況會回檔。涉及族群包括聯發科/IC設計、CPO/矽光子、記憶體、ETF/主動式基金。節目把焦點放在高檔震盪、量能擴大，以及ETF/基金資金活水對權值股的推動效果。族群配置則圍繞聯發科/IC設計、CPO/矽光子、記憶體、ETF/主動式基金之間的強弱與輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。並由來賓AI達人蔡明翰從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "Open AI入不敷出，台股各大廠通吃所以不擔心？台達電、聯發科、4大雲端CSP廠法說、FED會議，什麼狀況會回檔？ 台股又是世界強，看回不回怎麼上車？乖離率過大終究得修正？ Open AI說收入恐難支付合約，美股AI廠怕怕，台股卻很淡定？ 康寧財報預估Q2普普，CPO再度遇到壓力？回月線可以買嗎？ 記憶體威剛、十銓Q1大賺，為何反而下跌，旺宏創高是因為981A ？ 低軌衛星何時回神？等到市場共識重新聚集再說！ 主動是ETF會否左手換右…",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-29/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-29/summary_500.md"
+        },
+        {
+          "guid": "e7835596-f210-4be2-ac99-84a8ab2929be",
+          "episodeNo": "1086",
+          "title": "EP1086｜主動型ETF的挑戰日，機器人、記憶體、被動，低檔回暖3劍客，都還買不多？Q1季報出爐，好股票的長短戰略？ft.存股總編 謝富旭",
+          "headline": "主動型ETF的挑戰日，機器人、記憶體、被動，低檔回暖3劍客，都還買不多？Q1季報出爐，好股票的長短戰略？ft.存股總編 謝富旭",
+          "publishedAt": "2026-04-28T16:26:28+08:00",
+          "duration": "2684",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/e7835596-f210-4be2-ac99-84a8ab2929be/rssFileVip.mp3?timestamp=1777415354548",
+          "description": "主動型ETF的挑戰日，機器人、記憶體、被動，低檔回暖3劍客，都還買不多？Q1季報出爐，好股票的長短戰略？\n\n從來不買股票的人都在瘋股市，如何穩定自己的投資邏輯？\n價值股、高息股寂寞嗎？想清楚要累積多少部位，就會慶幸還算便宜？\n市場資金不會全部都買台積電，要拼出自己的績效，中小股盤中翻身！\n機器人、記憶體、被動，低檔回暖3劍客，各有代表股創高，火種都在？\n網友分享：殺進殺出10幾年，終於學會長線保護短線，連續3年穩健獲利\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "台積電",
+            "記憶體",
+            "ETF / 主動式基金"
+          ],
+          "summaryBullets": [
+            "本集從主動型ETF的挑戰日出發，延伸到機器人、記憶體、被動。",
+            "同時也談到低檔回暖3劍客。",
+            "選股與觀察重點還包括都還買不多。",
+            "相關族群：台積電、記憶體、ETF / 主動式基金。"
+          ],
+          "summary500": "本集從主動型ETF的挑戰日出發，延伸到機器人、記憶體、被動。同時也談到低檔回暖3劍客。選股與觀察重點還包括都還買不多。涉及族群包括台積電、記憶體、ETF/主動式基金。節目把焦點放在高檔震盪、量能擴大，以及ETF/基金資金活水對權值股的推動效果。族群配置則圍繞台積電、記憶體、ETF/主動式基金之間的強弱與輪動節奏。並由來賓存股總編謝富旭從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "主動型ETF的挑戰日，機器人、記憶體、被動，低檔回暖3劍客，都還買不多？Q1季報出爐，好股票的長短戰略？ 從來不買股票的人都在瘋股市，如何穩定自己的投資邏輯？ 價值股、高息股寂寞嗎？想清楚要累積多少部位，就會慶幸還算便宜？ 市場資金不會全部都買台積電，要拼出自己的績效，中小股盤中翻身！ 機器人、記憶體、被動，低檔回暖3劍客，各有代表股創高，火種都在？ 網友分享：殺進殺出10幾年，終於學會長線保護短線，連續3年穩健獲利",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-28/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-28/summary_500.md"
+        },
+        {
+          "guid": "1654dd95-4560-488a-99c4-0e622f3b25e1",
+          "episodeNo": "1084",
+          "title": "EP1084｜資金狂潮，罕見洗刷後立刻創高！逼近4萬的健康與不健康？ETF和基金放寬單一持股比例，台積電、聯發科最受惠？ft.選股教練 陳唯泰",
+          "headline": "資金狂潮，罕見洗刷後立刻創高！逼近4萬的健康與不健康？ETF和基金放寬單一持股比例，台積電、聯發科最受惠？ft.選股教練 陳唯泰",
+          "publishedAt": "2026-04-24T16:17:05+08:00",
+          "duration": "2997",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/1654dd95-4560-488a-99c4-0e622f3b25e1/rssFileVip.mp3?timestamp=1777068977545",
+          "description": "資金狂潮，罕見洗刷後立刻創高！逼近4萬的健康與不健康？ETF和基金放寬單一持股比例，台積電、聯發科最受惠？\n\n台股昨日爆天量洗刷後，今天再創高也是史上罕見？\n基金和ETF放寬單一持股上限，台積電、聯發科最受惠？\n市場從百花齊放變成大股輪動，下跌家數1200多家，不太健康？\nGoogle題材，英特爾好財報，聯發科帶低位階IC設計、IP股票漲，健康？\n主動式ETF經理人各有專長，買幾檔一起比賽，都會有人衝出去！\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "台積電",
+            "聯發科 / IC 設計",
+            "PCB / 載板",
+            "ETF / 主動式基金",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從資金狂潮，罕見洗刷後立刻創高出發，延伸到逼近4萬的健康與不健康。",
+            "同時也談到ETF和基金放寬單一持股比例。",
+            "選股與觀察重點還包括台積電、聯發科最受惠。",
+            "相關族群：台積電、聯發科 / IC 設計、PCB / 載板、ETF / 主動式基金。"
+          ],
+          "summary500": "本集從資金狂潮，罕見洗刷後立刻創高出發，延伸到逼近4萬的健康與不健康。同時也談到ETF和基金放寬單一持股比例。選股與觀察重點還包括台積電、聯發科最受惠。涉及族群包括台積電、聯發科/IC設計、PCB/載板、ETF/主動式基金。節目把焦點放在高檔震盪、量能擴大，以及ETF/基金資金活水對權值股的推動效果。除了指數表現，內容也提醒要同步觀察櫃買、中小型股與下跌家數，避免只看權值股拉抬的表面強勢。族群配置則圍繞台積電、聯發科/IC設計、PCB/載板、ETF/主動式基金之間的強弱與輪動節奏。並由來賓選股教練陳唯泰從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "transcribed_whisper",
+          "transcriptNote": "Whisper tiny 逐字稿",
+          "transcriptPreview": "資金狂潮，罕見洗刷後立刻創高！逼近4萬的健康與不健康？ETF和基金放寬單一持股比例，台積電、聯發科最受惠？ 台股昨日爆天量洗刷後，今天再創高也是史上罕見？ 基金和ETF放寬單一持股上限，台積電、聯發科最受惠？ 市場從百花齊放變成大股輪動，下跌家數1200多家，不太健康？ Google題材，英特爾好財報，聯發科帶低位階IC設計、IP股票漲，健康？ 主動式ETF經理人各有專長，買幾檔一起比賽，都會有人衝出去！",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-24/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-24/summary_500.md"
+        },
+        {
+          "guid": "0b19e3fe-b995-4542-8594-0ae197c0f5c8",
+          "episodeNo": "1083",
+          "title": "EP1083｜成交量近2兆！開盤漲千點怕買不到，盤中跌700點嚇爛？981A爆百萬張成交量，多頭沒變，找Q2業績起飛股？ft.統一投顧總經理 廖婉婷",
+          "headline": "成交量近2兆！開盤漲千點怕買不到，盤中跌700點嚇爛？981A爆百萬張成交量，多頭沒變，找Q2業績起飛股？ft.統一投顧總經理 廖婉婷",
+          "publishedAt": "2026-04-23T16:31:58+08:00",
+          "duration": "2737",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/0b19e3fe-b995-4542-8594-0ae197c0f5c8/rssFileVip.mp3?timestamp=1776982854300",
+          "description": "成交量近2兆！開盤漲千點怕買不到，盤中跌700點嚇爛？981A爆百萬張成交量，多頭沒變，找Q2業績起飛股？\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "ETF / 主動式基金"
+          ],
+          "summaryBullets": [
+            "本集從成交量近2兆出發，延伸到開盤漲千點怕買不到，盤中跌700點嚇爛。",
+            "同時也談到981A爆百萬張成交量。",
+            "選股與觀察重點還包括多頭沒變。",
+            "相關族群：ETF / 主動式基金。"
+          ],
+          "summary500": "本集從成交量近2兆出發，延伸到開盤漲千點怕買不到，盤中跌700點嚇爛。同時也談到981A爆百萬張成交量。選股與觀察重點還包括多頭沒變。涉及族群包括ETF/主動式基金。節目把焦點放在高檔震盪、量能擴大，以及ETF/基金資金活水對權值股的推動效果。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。並由來賓統一投顧總經理廖婉婷從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "成交量近2兆！開盤漲千點怕買不到，盤中跌700點嚇爛？981A爆百萬張成交量，多頭沒變，找Q2業績起飛股？",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-23/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-23/summary_500.md"
+        },
+        {
+          "guid": "632b686e-e5cc-4840-8f00-2c4db9be38b2",
+          "episodeNo": "1082",
+          "title": "EP1082｜台股不會跌的病又來了？摸到3萬8！主動式ETF變成資金永動機？選強恆強的PCB、CPO，還是回檔過的記憶體、低軌？ft.型男股神 陳威良",
+          "headline": "台股不會跌的病又來了？摸到3萬8！主動式ETF變成資金永動機？選強恆強的PCB、CPO，還是回檔過的記憶體、低軌？ft.型男股神 陳威良",
+          "publishedAt": "2026-04-22T16:45:29+08:00",
+          "duration": "2521",
+          "audioUrl": "https://rss.soundon.fm/rssf/91be014b-9f55-4bf3-a910-b232eda82d11/feedurl/632b686e-e5cc-4840-8f00-2c4db9be38b2/rssFileVip.mp3?timestamp=1776896995548",
+          "description": "台股不會跌的病又來了？摸到3萬8！主動式ETF變成資金永動機？選強恆強的PCB、CPO，還是回檔過的記憶體、低軌？\n\n-------\n\n節目內容純屬主持人與來賓個人經驗分享，非個股推薦。投資人須自行謹慎判斷，評估擔負風險\n\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "PCB / 載板",
+            "CPO / 矽光子",
+            "記憶體",
+            "ETF / 主動式基金",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從台股不會跌的病又來了出發，延伸到摸到3萬8。",
+            "同時也談到主動式ETF變成資金永動機。",
+            "選股與觀察重點還包括選強恆強的PCB、CPO。",
+            "相關族群：PCB / 載板、CPO / 矽光子、記憶體、ETF / 主動式基金。"
+          ],
+          "summary500": "本集從台股不會跌的病又來了出發，延伸到摸到3萬8。同時也談到主動式ETF變成資金永動機。選股與觀察重點還包括選強恆強的PCB、CPO。涉及族群包括PCB/載板、CPO/矽光子、記憶體、ETF/主動式基金。節目把焦點放在高檔震盪、量能擴大，以及ETF/基金資金活水對權值股的推動效果。族群配置則圍繞PCB/載板、CPO/矽光子、記憶體、ETF/主動式基金之間的強弱與輪動節奏。並由來賓型男股神陳威良從盤勢、資金與族群輪動角度補充看法。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "台股不會跌的病又來了？摸到3萬8！主動式ETF變成資金永動機？選強恆強的PCB、CPO，還是回檔過的記憶體、低軌？",
+          "transcriptPath": "Podcast/兆華與股惑仔/2026-04-22/transcript.txt",
+          "summaryPath": "Podcast/兆華與股惑仔/2026-04-22/summary_500.md"
+        }
+      ]
+    },
+    {
+      "slug": "jenny-us-stocks",
+      "name": "美股投資學-財女珍妮",
+      "cadence": "每日更新",
+      "rss": "https://feeds.soundon.fm/podcasts/4a8660a0-e0d0-490b-8d46-c28219606f47.xml",
+      "episodes": [
+        {
+          "guid": "f28d4471-d786-424f-9965-e9e800705b38",
+          "episodeNo": "",
+          "title": "2026/05/01(五) 美國經濟靠AI撐住了！蘋果最強季度，閃迪為何崩潰？ #AAPL #SNDK #WDC",
+          "headline": "2026/05/01(五) 美國經濟靠AI撐住了！蘋果最強季度，閃迪為何崩潰？ #AAPL #SNDK #WDC",
+          "publishedAt": "2026-05-01T09:23:24+08:00",
+          "duration": "1968",
+          "audioUrl": "https://rss.soundon.fm/rssf/4a8660a0-e0d0-490b-8d46-c28219606f47/feedurl/f28d4471-d786-424f-9965-e9e800705b38/rssFileVip.mp3?timestamp=1777667137482",
+          "description": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！\n✅ 註冊就可以先看試看課程影片& 網站功能試用\n✅ 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！\n📌 Growin 個股分析（包含 AI 財報 & 新聞摘要）\n https://www.growin.ai/zh/my/analysis?utm_source=JCJENNY\n📌 我的交易室\n https://www.growin.ai/zh/my-trading-room?utm_source=JCJENNY\n📌 資金研究員\n https://www.growin.ai/zh/my-trading-room/money-flow?utm_source=JCJENNY\n\n✅ 美股財報分析 ✅\n👉 Gemini 逼近、算力成本失控，OpenAI帝國防線出現裂痕？\n🔗 https://reurl.cc/VmdDz5\n\n👉 微軟(MSFT)：AI帝國 「軍備競賽」，微軟的新護城河與變現真相\n🔗 https://reurl.cc/NN7AQ6\n\n👉 特斯拉(TSLA)：當賣車不再是唯一，新商模展開！AI 與利潤率撐起新敘事\n🔗 https://reurl.cc/QVvLRp\n\n👉 ARK Big Ideas 2026：大加速時代來臨，你準備好了嗎？\n🔗 https://reurl.cc/zKanV6\n\n👉 英特爾（INTC)：夢想很豐滿，良率很骨感，靠富爸爸撐住股價還能漲？\n🔗 https://reurl.cc/8baxkX\n\n👉 Netflix (NFLX)：帝國擴張的陣痛期，是「危機」還是「轉機」？\n🔗 https://reurl.cc/k8eK6n\n\n👉 美光（MU）：當記憶體被重新定義，投資人正在面對一個不同的問題\n🔗 https://reurl.cc/eVoGMb\n\n👉 拆解「創世紀任務」：當矽谷遇上國家機器，將如何改寫美股的下一個十年？\n🔗 https://reurl.cc/nlMqY1\n\n👉 告別燒錢時代：誰掌握了 2026 年 Fintech 的「存活演算法」？\n🔗 https://reurl.cc/rKV3Yk\n\n👉 博通(AVGO)：當 AI 不再只比算力，博通將成輝達最大競爭對手嗎？\n🔗 https://reurl.cc/GGY5NW\n\n👉 Lumentum(LITE) vs. Coherent(COHR)：AI 光通訊升級下，誰掌握真正的定價權？\n🔗 https://reurl.cc/nlMql1\n\n👉 【市場議題】日本央行升息，會不會成為壓垮高估值風險資產的「黑天鵝」？\n🔗 https://reurl.cc/eVQ3gx\n\n👉 太空經濟崛起：SpaceX將上市，估值再翻倍！從火箭到衛星的投資機會\n🔗 https://reurl.cc/qKpRbn\n\n👉 Rocket Lab (RKLB) ：市場看的不是「小火箭」，而是美國國防太空的下一輪供應鏈重組\n🔗 https://reurl.cc/dqp3bM\n\n👉 IBM(IBM)：市場看好收購Confluent，強化混合雲優勢，AI大業能否成功？\n🔗 https://reurl.cc/NN2MmQ\n\n👉 CrowdStrike (CRWD) ：化危機為轉機！ 把握AI轉型下的資安革命商機\n🔗 https://reurl.cc/0amq8A\n\n👉 Salesforce(CRM)：AI變現將進入爆發期？ Agentforce 如何打破營收瓶頸\n🔗 https://reurl.cc/Vm2xOY\n\n👉 Fabrinet(FN)： AI浪潮中掀起光通訊革命，Fabrinet的成長機會與風險\n🔗 https://reurl.cc/2la99r\n\n👉 亞德諾(ADI)：工業市場需求強勁，AI成新引擎，2026迎新成長動能\n🔗 https://reurl.cc/mkpO51\n\n👉 Zscaler(ZS)：AIF驅動成長強勁，股價暴跌！能否克服市場壓力重拾增長？\n🔗 https://reurl.cc/8beaag\n\n✅ 美股新手開戶 ✅\n【新手必讀】美股開戶、匯款、美股基礎知識\n🔗 https://reurl.cc/jD5WWZ\n\n✅ 合作邀約 ✅\njcinsightgroup@gmail.com\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "CPO / 矽光子",
+            "記憶體",
+            "ETF / 主動式基金",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從2026/05/01(五)美國經濟靠AI撐住了出發，延伸到蘋果最強季度，閃迪為何崩潰。",
+            "同時也談到#AAPL#SNDK#WDC。",
+            "涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。",
+            "相關族群：CPO / 矽光子、記憶體、ETF / 主動式基金、低軌 / 衛星。"
+          ],
+          "summary500": "本集從2026/05/01(五)美國經濟靠AI撐住了出發，延伸到蘋果最強季度，閃迪為何崩潰。同時也談到#AAPL#SNDK#WDC。涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。節目也關注ETF、基金與資金活水如何改變權值股與市場配置。族群配置則圍繞CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星之間的強弱與輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！ 註冊就可以先看試看課程影片& 網站功能試用 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！ 📌 Growin 個股分析（包含 AI 財報 & 新聞摘要） 📌 我的交易室 📌 資金研究員 美股財報分析 👉 Gemini 逼近、算力成本失控，OpenAI帝國防線出現裂痕？ 👉 微軟(MSFT)：AI帝國 「軍備競賽」，微軟的新護城河與變現…",
+          "transcriptPath": "Podcast/美股投資學-財女珍妮/2026-05-01/transcript.txt",
+          "summaryPath": "Podcast/美股投資學-財女珍妮/2026-05-01/summary_500.md"
+        },
+        {
+          "guid": "06b7336a-5838-43b2-9b7d-f8d1bbe2ce11",
+          "episodeNo": "",
+          "title": "2026/04/30(四) FED最大分歧，巨頭財報穩了？#GOOG #AMZN #MSFT #META #TER #NXPI",
+          "headline": "2026/04/30(四) FED最大分歧，巨頭財報穩了？#GOOG #AMZN #MSFT #META #TER #NXPI",
+          "publishedAt": "2026-04-30T09:38:59+08:00",
+          "duration": "2243",
+          "audioUrl": "https://rss.soundon.fm/rssf/4a8660a0-e0d0-490b-8d46-c28219606f47/feedurl/06b7336a-5838-43b2-9b7d-f8d1bbe2ce11/rssFileVip.mp3?timestamp=1777580510442",
+          "description": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！\n✅ 註冊就可以先看試看課程影片& 網站功能試用\n✅ 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！\n📌 Growin 個股分析（包含 AI 財報 & 新聞摘要）\n https://www.growin.ai/zh/my/analysis?utm_source=JCJENNY\n📌 我的交易室\n https://www.growin.ai/zh/my-trading-room?utm_source=JCJENNY\n📌 資金研究員\n https://www.growin.ai/zh/my-trading-room/money-flow?utm_source=JCJENNY\n\n✅ 美股財報分析 ✅\n👉 Gemini 逼近、算力成本失控，OpenAI帝國防線出現裂痕？\n🔗 https://reurl.cc/VmdDz5\n\n👉 微軟(MSFT)：AI帝國 「軍備競賽」，微軟的新護城河與變現真相\n🔗 https://reurl.cc/NN7AQ6\n\n👉 特斯拉(TSLA)：當賣車不再是唯一，新商模展開！AI 與利潤率撐起新敘事\n🔗 https://reurl.cc/QVvLRp\n\n👉 ARK Big Ideas 2026：大加速時代來臨，你準備好了嗎？\n🔗 https://reurl.cc/zKanV6\n\n👉 英特爾（INTC)：夢想很豐滿，良率很骨感，靠富爸爸撐住股價還能漲？\n🔗 https://reurl.cc/8baxkX\n\n👉 Netflix (NFLX)：帝國擴張的陣痛期，是「危機」還是「轉機」？\n🔗 https://reurl.cc/k8eK6n\n\n👉 美光（MU）：當記憶體被重新定義，投資人正在面對一個不同的問題\n🔗 https://reurl.cc/eVoGMb\n\n👉 拆解「創世紀任務」：當矽谷遇上國家機器，將如何改寫美股的下一個十年？\n🔗 https://reurl.cc/nlMqY1\n\n👉 告別燒錢時代：誰掌握了 2026 年 Fintech 的「存活演算法」？\n🔗 https://reurl.cc/rKV3Yk\n\n👉 博通(AVGO)：當 AI 不再只比算力，博通將成輝達最大競爭對手嗎？\n🔗 https://reurl.cc/GGY5NW\n\n👉 Lumentum(LITE) vs. Coherent(COHR)：AI 光通訊升級下，誰掌握真正的定價權？\n🔗 https://reurl.cc/nlMql1\n\n👉 【市場議題】日本央行升息，會不會成為壓垮高估值風險資產的「黑天鵝」？\n🔗 https://reurl.cc/eVQ3gx\n\n👉 太空經濟崛起：SpaceX將上市，估值再翻倍！從火箭到衛星的投資機會\n🔗 https://reurl.cc/qKpRbn\n\n👉 Rocket Lab (RKLB) ：市場看的不是「小火箭」，而是美國國防太空的下一輪供應鏈重組\n🔗 https://reurl.cc/dqp3bM\n\n👉 IBM(IBM)：市場看好收購Confluent，強化混合雲優勢，AI大業能否成功？\n🔗 https://reurl.cc/NN2MmQ\n\n👉 CrowdStrike (CRWD) ：化危機為轉機！ 把握AI轉型下的資安革命商機\n🔗 https://reurl.cc/0amq8A\n\n👉 Salesforce(CRM)：AI變現將進入爆發期？ Agentforce 如何打破營收瓶頸\n🔗 https://reurl.cc/Vm2xOY\n\n👉 Fabrinet(FN)： AI浪潮中掀起光通訊革命，Fabrinet的成長機會與風險\n🔗 https://reurl.cc/2la99r\n\n👉 亞德諾(ADI)：工業市場需求強勁，AI成新引擎，2026迎新成長動能\n🔗 https://reurl.cc/mkpO51\n\n👉 Zscaler(ZS)：AIF驅動成長強勁，股價暴跌！能否克服市場壓力重拾增長？\n🔗 https://reurl.cc/8beaag\n\n✅ 美股新手開戶 ✅\n【新手必讀】美股開戶、匯款、美股基礎知識\n🔗 https://reurl.cc/jD5WWZ\n\n✅ 合作邀約 ✅\njcinsightgroup@gmail.com\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "CPO / 矽光子",
+            "記憶體",
+            "ETF / 主動式基金",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從2026/04/30(四)FED最大分歧出發，延伸到巨頭財報穩了。",
+            "同時也談到#GOOG#AMZN#MS。",
+            "涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。",
+            "相關族群：CPO / 矽光子、記憶體、ETF / 主動式基金、低軌 / 衛星。"
+          ],
+          "summary500": "本集從2026/04/30(四)FED最大分歧出發，延伸到巨頭財報穩了。同時也談到#GOOG#AMZN#MS。涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。節目也關注ETF、基金與資金活水如何改變權值股與市場配置。族群配置則圍繞CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星之間的強弱與輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！ 註冊就可以先看試看課程影片& 網站功能試用 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！ 📌 Growin 個股分析（包含 AI 財報 & 新聞摘要） 📌 我的交易室 📌 資金研究員 美股財報分析 👉 Gemini 逼近、算力成本失控，OpenAI帝國防線出現裂痕？ 👉 微軟(MSFT)：AI帝國 「軍備競賽」，微軟的新護城河與變現…",
+          "transcriptPath": "Podcast/美股投資學-財女珍妮/2026-04-30/transcript.txt",
+          "summaryPath": "Podcast/美股投資學-財女珍妮/2026-04-30/summary_500.md"
+        },
+        {
+          "guid": "f64a0d7d-95ad-4e0a-9897-c1dd4eddc609",
+          "episodeNo": "",
+          "title": "2026/04/29(三) 美股爲什麼又跌了？#GLW #CLS #STX 財報",
+          "headline": "2026/04/29(三) 美股爲什麼又跌了？#GLW #CLS #STX 財報",
+          "publishedAt": "2026-04-29T09:11:38+08:00",
+          "duration": "2079",
+          "audioUrl": "https://rss.soundon.fm/rssf/4a8660a0-e0d0-490b-8d46-c28219606f47/feedurl/f64a0d7d-95ad-4e0a-9897-c1dd4eddc609/rssFileVip.mp3?timestamp=1777494009102",
+          "description": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！\n✅ 註冊就可以先看試看課程影片& 網站功能試用\n✅ 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！\n📌 Growin 個股分析（包含 AI 財報 & 新聞摘要）\n https://www.growin.ai/zh/my/analysis?utm_source=JCJENNY\n📌 我的交易室\n https://www.growin.ai/zh/my-trading-room?utm_source=JCJENNY\n📌 資金研究員\n https://www.growin.ai/zh/my-trading-room/money-flow?utm_source=JCJENNY\n\n🤍 每天早上8:30 跟大家分享投資市場大小事\n🤍 訂閱Jenny 財經分析專欄： https://reurl.cc/YqOVrl\n【追蹤各大平台最新資訊】\n🤍 IG： / jcinsightgroup\n🤍Threads： https://www.threads.net/@jcinsightgroup\n🤍 FB： / jcinsightgroup\n🤍 Podcast：財女珍妮： https://reurl.cc/XRWqYR\n🤍 著作《美股投資學》： https://reurl.cc/A2k4eK\n\n✅ 美股財報分析 ✅\n👉 Gemini 逼近、算力成本失控，OpenAI帝國防線出現裂痕？\n🔗 https://reurl.cc/VmdDz5\n\n👉 微軟(MSFT)：AI帝國 「軍備競賽」，微軟的新護城河與變現真相\n🔗 https://reurl.cc/NN7AQ6\n\n👉 特斯拉(TSLA)：當賣車不再是唯一，新商模展開！AI 與利潤率撐起新敘事\n🔗 https://reurl.cc/QVvLRp\n\n👉 ARK Big Ideas 2026：大加速時代來臨，你準備好了嗎？\n🔗 https://reurl.cc/zKanV6\n\n👉 英特爾（INTC)：夢想很豐滿，良率很骨感，靠富爸爸撐住股價還能漲？\n🔗 https://reurl.cc/8baxkX\n\n👉 Netflix (NFLX)：帝國擴張的陣痛期，是「危機」還是「轉機」？\n🔗 https://reurl.cc/k8eK6n\n\n👉 美光（MU）：當記憶體被重新定義，投資人正在面對一個不同的問題\n🔗 https://reurl.cc/eVoGMb\n\n👉 拆解「創世紀任務」：當矽谷遇上國家機器，將如何改寫美股的下一個十年？\n🔗 https://reurl.cc/nlMqY1\n\n👉 告別燒錢時代：誰掌握了 2026 年 Fintech 的「存活演算法」？\n🔗 https://reurl.cc/rKV3Yk\n\n👉 博通(AVGO)：當 AI 不再只比算力，博通將成輝達最大競爭對手嗎？\n🔗 https://reurl.cc/GGY5NW\n\n👉 Lumentum(LITE) vs. Coherent(COHR)：AI 光通訊升級下，誰掌握真正的定價權？\n🔗 https://reurl.cc/nlMql1\n\n👉 【市場議題】日本央行升息，會不會成為壓垮高估值風險資產的「黑天鵝」？\n🔗 https://reurl.cc/eVQ3gx\n\n👉 太空經濟崛起：SpaceX將上市，估值再翻倍！從火箭到衛星的投資機會\n🔗 https://reurl.cc/qKpRbn\n\n👉 Rocket Lab (RKLB) ：市場看的不是「小火箭」，而是美國國防太空的下一輪供應鏈重組\n🔗 https://reurl.cc/dqp3bM\n\n👉 IBM(IBM)：市場看好收購Confluent，強化混合雲優勢，AI大業能否成功？\n🔗 https://reurl.cc/NN2MmQ\n\n👉 CrowdStrike (CRWD) ：化危機為轉機！ 把握AI轉型下的資安革命商機\n🔗 https://reurl.cc/0amq8A\n\n👉 Salesforce(CRM)：AI變現將進入爆發期？ Agentforce 如何打破營收瓶頸\n🔗 https://reurl.cc/Vm2xOY\n\n👉 Fabrinet(FN)： AI浪潮中掀起光通訊革命，Fabrinet的成長機會與風險\n🔗 https://reurl.cc/2la99r\n\n👉 亞德諾(ADI)：工業市場需求強勁，AI成新引擎，2026迎新成長動能\n🔗 https://reurl.cc/mkpO51\n\n👉 Zscaler(ZS)：AIF驅動成長強勁，股價暴跌！能否克服市場壓力重拾增長？\n🔗 https://reurl.cc/8beaag\n\n✅ 美股新手開戶 ✅\n【新手必讀】美股開戶、匯款、美股基礎知識\n🔗 https://reurl.cc/jD5WWZ\n\n✅ 合作邀約 ✅\njcinsightgroup@gmail.com\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "CPO / 矽光子",
+            "記憶體",
+            "ETF / 主動式基金",
+            "低軌 / 衛星"
+          ],
+          "summaryBullets": [
+            "本集從2026/04/29(三)美股爲什麼又跌了出發，延伸到#GLW#CLS#STX財報。",
+            "涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。",
+            "節目也關注ETF、基金與資金活水如何改變權值股與市場配置。",
+            "相關族群：CPO / 矽光子、記憶體、ETF / 主動式基金、低軌 / 衛星。"
+          ],
+          "summary500": "本集從2026/04/29(三)美股爲什麼又跌了出發，延伸到#GLW#CLS#STX財報。涉及族群包括CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星。節目也關注ETF、基金與資金活水如何改變權值股與市場配置。族群配置則圍繞CPO/矽光子、記憶體、ETF/主動式基金、低軌/衛星之間的強弱與輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "每月僅需 6 美元就能使用這些 AI 功能，CP 值超高！推薦大家試試看！ 註冊就可以先看試看課程影片& 網站功能試用 輸入折扣碼「JENNYSP」就可以享有「任一年方案」再打 85 折的折扣！ 📌 Growin 個股分析（包含 AI 財報 & 新聞摘要） 📌 我的交易室 📌 資金研究員 🤍 每天早上8:30 跟大家分享投資市場大小事 🤍 訂閱Jenny 財經分析專欄： 【追蹤各大平台最新資訊】 🤍 IG： / jcinsightgro…",
+          "transcriptPath": "Podcast/美股投資學-財女珍妮/2026-04-29/transcript.txt",
+          "summaryPath": "Podcast/美股投資學-財女珍妮/2026-04-29/summary_500.md"
+        }
+      ]
+    },
+    {
+      "slug": "miula-viewpoint",
+      "name": "M觀點 | 科技X商業X投資",
+      "cadence": "每週 2 次",
+      "rss": "https://feeds.soundon.fm/podcasts/b8f5a471-f4f7-4763-9678-65887beda63a.xml",
+      "episodes": [
+        {
+          "guid": "36f75482-6def-4681-91c1-f937a2c89a61",
+          "episodeNo": "299",
+          "title": "EP299. 微軟放開 OpenAI、Meta 放棄 Manus、AI 又有鬼故事 | M觀點",
+          "headline": ". 微軟放開 OpenAI、Meta 放棄 Manus、AI 又有鬼故事 | M觀點",
+          "publishedAt": "2026-05-01T02:33:04+08:00",
+          "duration": "4487",
+          "audioUrl": "https://track.fstry.me/p/hr2cabaf/rss.soundon.fm/rssf/b8f5a471-f4f7-4763-9678-65887beda63a/feedurl/36f75482-6def-4681-91c1-f937a2c89a61/rssFileVip.mp3?timestamp=1777592549533",
+          "description": "試喝一個月，最愛這份【紅牛愛基】穩定感。低 GI 讓飯後不再想「登出」躺平；雙蛋白鎖住飽足感，讓你拿回零食抽屜的決定權。口感像豆漿般濃醇香，完全沒化學味！\n🔥 5/1-6/1 母親節限時超狂優惠： 🔗 https://bmai.app/ecd2681c\n💰 買一送一：$890（平均一罐只要 $445）\n🎁 下單送：日安晚安酵素體驗包（價值 $1120）\n✨ 滿額贈：滿千送白沙屯小吊飾 / 2500 送自動攪拌杯\n#紅牛愛基 #穩定動力 #低GI #糖尿病 #母親節優惠\n---\nEP299. 微軟放開 OpenAI、Meta 放棄 Manus、AI 又有鬼故事 | M觀點\n---\n(00:40) EP299 預告\n(06:04) 業配時間：紅牛愛基\n(12:03) 第一個話題：微軟放開 OpenAI\n(34:13) 第二個話題：Meta 放棄 Manus\n(50:43) 第三個話題：AI 又有鬼故事\n---\nM觀點資訊\n---\n科技巨頭解碼: https://bit.ly/2XupBZa\nM觀點 Telegram - https://t.me/miulaviewpoint\nM觀點 IG - https://www.instagram.com/miulaviewpoint/\nM觀點Podcast - https://bit.ly/34fV7so\nM報: https://bit.ly/345gBbA\nM觀點YouTube頻道訂閱 https://bit.ly/2nxHnp9\nM觀點粉絲團 https://www.facebook.com/miulaperspective/\n任何合作邀約請洽 miula@outlook.com\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集聚焦.微軟放開OpenAI、Meta放棄Manus、AI又有鬼故事。",
+            "選股面偏向比較強勢題材與回檔族群之間的輪動節奏。"
+          ],
+          "summary500": "本集聚焦.微軟放開OpenAI、Meta放棄Manus、AI又有鬼故事。選股面偏向比較強勢題材與回檔族群之間的輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "試喝一個月，最愛這份【紅牛愛基】穩定感。低 GI 讓飯後不再想「登出」躺平；雙蛋白鎖住飽足感，讓你拿回零食抽屜的決定權。口感像豆漿般濃醇香，完全沒化學味！ 💰 買一送一：$890（平均一罐只要 $445） 🎁 下單送：日安晚安酵素體驗包（價值 $1120） ✨ 滿額贈：滿千送白沙屯小吊飾 / 2500 送自動攪拌杯 EP299. 微軟放開 OpenAI、Meta 放棄 Manus、AI 又有鬼故事 | M觀點 (00:40) EP299…",
+          "transcriptPath": "Podcast/M觀點 | 科技X商業X投資/2026-05-01/transcript.txt",
+          "summaryPath": "Podcast/M觀點 | 科技X商業X投資/2026-05-01/summary_500.md"
+        },
+        {
+          "guid": "8574ac58-6c08-4b18-b7fa-0a2616c6127a",
+          "episodeNo": "298",
+          "title": "EP298. 英特爾突然爆紅、OpenAI GPT-5.5、創作者該如何用 AI | M觀點",
+          "headline": ". 英特爾突然爆紅、OpenAI GPT-5.5、創作者該如何用 AI | M觀點",
+          "publishedAt": "2026-04-27T14:38:59+08:00",
+          "duration": "5257",
+          "audioUrl": "https://track.fstry.me/p/hr2cabaf/rss.soundon.fm/rssf/b8f5a471-f4f7-4763-9678-65887beda63a/feedurl/8574ac58-6c08-4b18-b7fa-0a2616c6127a/rssFileVip.mp3?timestamp=1777333357310",
+          "description": "夏日暑假快到了，提早規劃下一檔出國旅遊吧！\n在國外上網也不用再那麼麻煩了\n由 NordVPN 所推出的 Saily eSIM 服務，真的方便好用\n下載 Saily eSIM 的 APP，在裡面購買並且啟用，eSIM 就可以開始作用\n超過 200 個地區可使用，還可以幫你追蹤網路使用量\n立刻點及專屬連結下載 Saily APP，並在結帳時使用優惠代碼 [miula]，立即享有專屬 eSIM 方案 85 折優惠！\nM觀點 X Saily eSIM - https://saily.com/miula\n#SailyeSIM\n---\nEP298. 英特爾突然爆紅、OpenAI GPT-5.5、創作者該如何用 AI | M觀點\n---\n(00:40) EP298 預告\n(02:57) 業配時間：Saily eSIM\n(06:13) 川普週末遭到槍擊 + 台積電狂漲\n(09:36) 第一個話題：英特爾突然爆紅\n(50:07) 第二個話題：OpenAI GPT-5.5\n(56:46) 第三個話題：創作者該如何用 AI\n---\nM觀點資訊\n---\n科技巨頭解碼: https://bit.ly/3koflbU\nM觀點 Telegram - https://t.me/miulaviewpoint\nM觀點 IG - https://www.instagram.com/miulaviewpoint/\nM觀點Podcast - https://bit.ly/34fV7so\nM報: https://bit.ly/345gBbA\nM觀點YouTube頻道訂閱 https://bit.ly/2nxHnp9\nM觀點粉絲團 https://www.facebook.com/miulaperspective/\n任何合作邀約請洽 miula@outlook.com\n--\nHosting provided by SoundOn",
+          "trendTags": [
+            "台積電",
+            "總經 / 油價"
+          ],
+          "summaryBullets": [
+            "本集聚焦.英特爾突然爆紅、OpenAIGPT-5.5、創作者該如何用AI。",
+            "涉及族群包括台積電、總經/油價。",
+            "族群配置則圍繞台積電、總經/油價之間的強弱與輪動節奏。",
+            "相關族群：台積電、總經 / 油價。"
+          ],
+          "summary500": "本集聚焦.英特爾突然爆紅、OpenAIGPT-5.5、創作者該如何用AI。涉及族群包括台積電、總經/油價。族群配置則圍繞台積電、總經/油價之間的強弱與輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "夏日暑假快到了，提早規劃下一檔出國旅遊吧！ 在國外上網也不用再那麼麻煩了 由 NordVPN 所推出的 Saily eSIM 服務，真的方便好用 超過 200 個地區可使用，還可以幫你追蹤網路使用量 M觀點 X Saily eSIM #SailyeSIM EP298. 英特爾突然爆紅、OpenAI GPT-5.5、創作者該如何用 AI | M觀點 (00:40) EP298 預告 (02:57) 業配時間：Saily eSIM (06:…",
+          "transcriptPath": "Podcast/M觀點 | 科技X商業X投資/2026-04-27/transcript.txt",
+          "summaryPath": "Podcast/M觀點 | 科技X商業X投資/2026-04-27/summary_500.md"
+        },
+        {
+          "guid": "0f2ee756-44c1-43d5-b64c-e2b8922853fb",
+          "episodeNo": "297",
+          "title": "EP297. 蘋果正式啟動接班、AI 前段班各有動作、SpaceX 合作 Cursor | M觀點",
+          "headline": ". 蘋果正式啟動接班、AI 前段班各有動作、SpaceX 合作 Cursor | M觀點",
+          "publishedAt": "2026-04-24T01:19:38+08:00",
+          "duration": "4307",
+          "audioUrl": "https://track.fstry.me/p/hr2cabaf/rss.soundon.fm/rssf/b8f5a471-f4f7-4763-9678-65887beda63a/feedurl/0f2ee756-44c1-43d5-b64c-e2b8922853fb/rssFileVip.mp3?timestamp=1776987065995",
+          "description": "小質屋✦組組床架｜從床架到沙發自由組合，七種規格 X 彈性進化 X 實木等級，終結家具汰換焦慮\n專屬LINK： https://mini2025.pse.is/miula2026\n專屬優惠碼：Miula250 ★嘖嘖下單輸入現折250元\n---\nEP297. 蘋果正式啟動接班、AI 前段班各有動作、SpaceX 合作 Cursor | M觀點\n---\n(00:40) EP297 預告\n(03:36) 業配時間： 小質屋✦組組床架\n(08:45) 小聊特斯拉財報\n(12:19) 第一個話題：蘋果正式啟動接班\n(37:29) 第二個話題：AI 前段班各有動作\n(52:10) 第三個話題：SpaceX 合作 Cursor\n---\nM觀點資訊\n---\n科技巨頭解碼: https://bit.ly/2XupBZa\nM觀點 Telegram - https://t.me/miulaviewpoint\nM觀點 IG - https://www.instagram.com/miulaviewpoint/\nM觀點Podcast - https://bit.ly/34fV7so\nM報: https://bit.ly/345gBbA\nM觀點YouTube頻道訂閱 https://bit.ly/2nxHnp9\nM觀點粉絲團 https://www.facebook.com/miulaperspective/\n任何合作邀約請洽 miula@outlook.com\n--\nHosting provided by SoundOn",
+          "trendTags": [],
+          "summaryBullets": [
+            "本集聚焦.蘋果正式啟動接班、AI前段班各有動作、SpaceX合作Cursor。",
+            "選股面偏向比較強勢題材與回檔族群之間的輪動節奏。",
+            "選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。"
+          ],
+          "summary500": "本集聚焦.蘋果正式啟動接班、AI前段班各有動作、SpaceX合作Cursor。選股面偏向比較強勢題材與回檔族群之間的輪動節奏。選股條件則偏向結合Q2業績、資金延續性與盤面強弱來篩選。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "小質屋✦組組床架｜從床架到沙發自由組合，七種規格 X 彈性進化 X 實木等級，終結家具汰換焦慮 專屬LINK： 嘖嘖下單輸入現折250元 EP297. 蘋果正式啟動接班、AI 前段班各有動作、SpaceX 合作 Cursor | M觀點 (00:40) EP297 預告 (03:36) 業配時間： 小質屋✦組組床架 (08:45) 小聊特斯拉財報 (12:19) 第一個話題：蘋果正式啟動接班 (37:29) 第二個話題：AI 前段班各有…",
+          "transcriptPath": "Podcast/M觀點 | 科技X商業X投資/2026-04-24/transcript.txt",
+          "summaryPath": "Podcast/M觀點 | 科技X商業X投資/2026-04-24/summary_500.md"
+        }
+      ]
+    },
+    {
+      "slug": "statementdog",
+      "name": "財報狗 - 掌握台股美股時事議題",
+      "cadence": "每日更新",
+      "rss": "https://feed.firstory.me/rss/user/clcftm46z000201z45w1c47fi",
+      "episodes": [
+        {
+          "guid": "cmolm9e0a00ie01wvgg8s4wjd",
+          "episodeNo": "",
+          "title": "519.【財經時事放大鏡】Event Trade？台積電 & Google",
+          "headline": "519.【財經時事放大鏡】Event Trade？台積電 & Google",
+          "publishedAt": "2026-05-01T06:02:16+08:00",
+          "duration": "2728",
+          "audioUrl": "https://sw.soundon.fm/p/HHZK1T/m.cdn.firstory.me/track/clcftm46z000201z45w1c47fi/cmolm9e0a00ie01wvgg8s4wjd/https%3A%2F%2Fd3mww1g1pfq2pt.cloudfront.net%2FRecord%2Fclcftm46z000201z45w1c47fi%2Fcmolm9e0a00if01wv7q9sclre.mp3?v=1777630977055",
+          "description": "挺你所想！與你一起生活的銀行\n 2026/6/30 前使用中信銀行ATM 完成指定交易就有機會抽中 10,000 點 OPENPOINT。\n 了解更多> https://fstry.pse.is/8xhc47\n  現在把「中信行動銀行 APP」設為桌面小工具 Widget， 出入帳金額不同會顯示不同的插畫圖示，超萌動作或搞怪迷因等你來蒐集！\n\n —— 以上為 Firstory Podcast 廣告 ——\n\n ▍台股拉積盤風潮將再起？\n 05:32 討論金管會放寬基金特定持股上限至 25％，且台積電為唯一符合的公司，此事件對台股的影響。\n ▍台積電北美技術論\n 11:32 台積電北美技術論壇重點。\n 15:23 討論台積電技術演進衍生的機會與受惠業者。\n ▍Google TPU V8 架構訓練、推論分化\n 24:51 Google TPU V8 架構解析。\n 26:24 AI 晶片產業訓練、推論硬體分化背後的邏輯解釋。\n 31:52 AI 訓練、推論硬體分化衍生的機會與受惠業者。\n ▍愛德萬法說重點\n 37:32 愛德萬法說重點。\n 40:00 從法說重點可能衍生出哪些台股機會，以及受惠的供應鏈。\n ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿\n ￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n Podcast 回饋表單： https://statementdog.cc/PMOa8\n Podcast 業務合作聯絡信箱：business@statementdog.com",
+          "trendTags": [
+            "台積電",
+            "ETF / 主動式基金"
+          ],
+          "summaryBullets": [
+            "本集從519.【財經時事放大鏡】EventTrade出發，延伸到台積電&Google。",
+            "涉及族群包括台積電、ETF/主動式基金。",
+            "節目也關注ETF、基金與資金活水如何改變權值股與市場配置。",
+            "相關族群：台積電、ETF / 主動式基金。"
+          ],
+          "summary500": "本集從519.【財經時事放大鏡】EventTrade出發，延伸到台積電&Google。涉及族群包括台積電、ETF/主動式基金。節目也關注ETF、基金與資金活水如何改變權值股與市場配置。除了指數表現，內容也提醒要同步觀察櫃買、中小型股與下跌家數，避免只看權值股拉抬的表面強勢。族群配置則圍繞台積電、ETF/主動式基金之間的強弱與輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "挺你所想！與你一起生活的銀行 2026/6/30 前使用中信銀行ATM 完成指定交易就有機會抽中 10,000 點 OPENPOINT。 現在把「中信行動銀行 APP」設為桌面小工具 Widget， 出入帳金額不同會顯示不同的插畫圖示，超萌動作或搞怪迷因等你來蒐集！ —— 以上為 Firstory Podcast 廣告 —— ▍台股拉積盤風潮將再起？ 05:32 討論金管會放寬基金特定持股上限至 25％，且台積電為唯一符合的公司，此事件…",
+          "transcriptPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-05-01/transcript.txt",
+          "summaryPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-05-01/summary_500.md"
+        },
+        {
+          "guid": "cmoiqkf7l02b301vqhgun8bzw",
+          "episodeNo": "",
+          "title": "518.【達人聊產業】RFID 啟動 DIGITAL 異世界的鑰匙 ft. 韋僑江鴻佑總經理",
+          "headline": "518.【達人聊產業】RFID 啟動 DIGITAL 異世界的鑰匙 ft. 韋僑江鴻佑總經理",
+          "publishedAt": "2026-04-29T06:02:10+08:00",
+          "duration": "6196",
+          "audioUrl": "https://sw.soundon.fm/p/HHZK1T/m.cdn.firstory.me/track/clcftm46z000201z45w1c47fi/cmoiqkf7l02b301vqhgun8bzw/https%3A%2F%2Fd3mww1g1pfq2pt.cloudfront.net%2FRecord%2Fclcftm46z000201z45w1c47fi%2Fcmoiqkf7l02b401vqhup16z9s.mp3?v=1777457706516",
+          "description": "挺你所想！與你一起生活的銀行\n 2026/6/30 前使用中信銀行ATM 完成指定交易就有機會抽中 10,000 點 OPENPOINT。\n 了解更多> https://fstry.pse.is/8xhc47\n  現在把「中信行動銀行 APP」設為桌面小工具 Widget， 出入帳金額不同會顯示不同的插畫圖示，超萌動作或搞怪迷因等你來蒐集！\n\n —— 以上為 Firstory Podcast 廣告 ——\n\n 要讓 AI 自數位世界落地到實體世界，進而運用在智慧工廠、智慧製造及物流上，那就必需讓自動化設備跟機器人具備即時感知，得以知曉現場的關鍵物件是什麼、在哪裡、進行到哪一道工序。\n 本集來賓是以利基客製化設計及生產 RFID 的，韋僑科技江鴻佑總經理。他為我們分享 RFID 如何為客戶實現 AIoT。\n ▍韋僑公司介紹\n 01:07 公司沿革，以及 RFID 業務介紹。\n 10:14 江總決定從投資人，到後來決定擔任公司執行長的原因。\n 23:45 公司早期與近三年，兩度獲利能力躍升的驅動因子。\n ▍RFID 產業介紹\n 42:07 RFID 技術介紹。\n 49:47 終端產業應用介紹：醫療、消費性快時尚、無人化工廠、半導體產業。\n 1:15:13 RFID 與產測器的結合，對產業未來的可能應用場景探討。\n ▍節目定番問題\n 1:37:38 江總推薦書籍。\n 1:29:25 韋僑投資人後續怎麼關注公司發展狀況？\n ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿\n ￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n Podcast 回饋表單： https://statementdog.cc/PMOa8\n Podcast 業務合作聯絡信箱：business@statementdog.com",
+          "trendTags": [
+            "半導體設備 / 廠務"
+          ],
+          "summaryBullets": [
+            "本集聚焦518.【達人聊產業】RFID啟動DIGITAL異世界的鑰匙。",
+            "涉及族群包括半導體設備/廠務。",
+            "族群配置則圍繞半導體設備/廠務之間的強弱與輪動節奏。",
+            "相關族群：半導體設備 / 廠務。"
+          ],
+          "summary500": "本集聚焦518.【達人聊產業】RFID啟動DIGITAL異世界的鑰匙。涉及族群包括半導體設備/廠務。族群配置則圍繞半導體設備/廠務之間的強弱與輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "挺你所想！與你一起生活的銀行 2026/6/30 前使用中信銀行ATM 完成指定交易就有機會抽中 10,000 點 OPENPOINT。 現在把「中信行動銀行 APP」設為桌面小工具 Widget， 出入帳金額不同會顯示不同的插畫圖示，超萌動作或搞怪迷因等你來蒐集！ —— 以上為 Firstory Podcast 廣告 —— 要讓 AI 自數位世界落地到實體世界，進而運用在智慧工廠、智慧製造及物流上，那就必需讓自動化設備跟機器人具備即時…",
+          "transcriptPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-04-29/transcript.txt",
+          "summaryPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-04-29/summary_500.md"
+        },
+        {
+          "guid": "cmobjotd10lhs01vgc13v3n0f",
+          "episodeNo": "",
+          "title": "517.【財經時事放大鏡】日本與台股都地震 x Google",
+          "headline": "517.【財經時事放大鏡】日本與台股都地震 x Google",
+          "publishedAt": "2026-04-24T07:02:09+08:00",
+          "duration": "2350",
+          "audioUrl": "https://sw.soundon.fm/p/HHZK1T/m.cdn.firstory.me/track/clcftm46z000201z45w1c47fi/cmobjotd10lhs01vgc13v3n0f/https%3A%2F%2Fd3mww1g1pfq2pt.cloudfront.net%2FRecord%2Fclcftm46z000201z45w1c47fi%2Fcmobjotd10lht01vg3sxk1kah.mp3?v=1777025452006",
+          "description": "KUMON Podcast《從學會到會學》\n 💙解鎖自學力：化被動為主動\n 💛教養不煩惱：掌握教養關鍵\n 💜超越滿分：榜樣啟發可能\n ❤️教育未來式：AI時代能力趨勢\n 5/18-5/30 免費體驗招生中，立即預約\n https://fstry.pse.is/8ynb48\n\n —— 以上為 FMTaiwan 與 Firstory Podcast 廣告 ——\n\n ▍CPU 不夠不夠\n 02:14 討論 Agentic AI 帶動 CPU 需求增加。\n 04:10 Agentic AI 若持續火熱，可能還會創造出哪些機會？\n ▍Apple 全新風貌\n 08:21 討論 Apple CEO Tim Cook 將卸任事件。\n 10:12 Iphone 將出摺疊機有哪些機會？\n ▍Google TPU 進展\n 17:07 討論 Google 正式推出第 8 代 TPU，並首度把 TPU 分成訓練、推論兩條明確產品線的意涵。\n 20:07 後續 AI 推論可能產生的機會。\n 24:09 討論聯發科已切入 Google 第八代 TPU 設計，轉型成 ASIC 公司。\n ▍日本地震\n 27:50 探討日本青森地震對各產業可能帶來的影響。\n ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿\n ￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n Podcast 回饋表單： https://statementdog.cc/PMOa8\n Podcast 業務合作聯絡信箱：business@statementdog.com",
+          "trendTags": [
+            "聯發科 / IC 設計"
+          ],
+          "summaryBullets": [
+            "本集聚焦517.【財經時事放大鏡】日本與台股都地震xGoogle。",
+            "涉及族群包括聯發科/IC設計。",
+            "族群配置則圍繞聯發科/IC設計之間的強弱與輪動節奏。",
+            "相關族群：聯發科 / IC 設計。"
+          ],
+          "summary500": "本集聚焦517.【財經時事放大鏡】日本與台股都地震xGoogle。涉及族群包括聯發科/IC設計。族群配置則圍繞聯發科/IC設計之間的強弱與輪動節奏。",
+          "transcriptStatus": "rss_description",
+          "transcriptNote": "目前先以 RSS 節目說明建立文字檔；這不是完整逐字稿。",
+          "transcriptPreview": "KUMON Podcast《從學會到會學》 💙解鎖自學力：化被動為主動 💛教養不煩惱：掌握教養關鍵 💜超越滿分：榜樣啟發可能 ❤️教育未來式：AI時代能力趨勢 5/18-5/30 免費體驗招生中，立即預約 —— 以上為 FMTaiwan 與 Firstory Podcast 廣告 —— ▍CPU 不夠不夠 02:14 討論 Agentic AI 帶動 CPU 需求增加。 04:10 Agentic AI 若持續火熱，可能還會創造出哪些機…",
+          "transcriptPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-04-24/transcript.txt",
+          "summaryPath": "Podcast/財報狗 - 掌握台股美股時事議題/2026-04-24/summary_500.md"
+        }
+      ]
+    }
+  ]
+}

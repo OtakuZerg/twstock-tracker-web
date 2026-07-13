@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "appVersion": "17.2",
+  "releaseDate": "2026-07-13",
+  "mode": "github-pages-pwa",
+  "profile": "public-pages-hardened-v2",
+  "builtAt": "2026-07-13T10:38:35.649Z",
+  "sourceDataAsOf": {
+    "state": "2026-05-12T16:00:29.175Z",
+    "research": "2026-06-24T14:02:15+08:00",
+    "podcast": "2026-05-02T23:08:05+08:00"
+  }
+}
