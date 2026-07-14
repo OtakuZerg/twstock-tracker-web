@@ -6,7 +6,10 @@ on:
   workflow_dispatch:
   schedule:
     # GitHub cron uses UTC. Offset from :00 to reduce peak-hour queue delay.
-    - cron: "7,22,37,52 * * 1-5"
+    - cron: "7 * * * 1-5"
+    - cron: "22 * * * 1-5"
+    - cron: "37 * * * 1-5"
+    - cron: "52 * * * 1-5"
 
 permissions:
   contents: read
