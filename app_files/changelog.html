@@ -1,5 +1,20 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v17.3</strong>
+              <span>2026-07-13</span>
+              <span class="cl-badge major">GitHub Pages Snapshot PWA</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>GitHub 延遲行情快照</strong>：公開 PWA 不再由瀏覽器直接跨站抓 Yahoo / TWSE / TAIFEX；改由 GitHub Actions 約每 15 分鐘抓固定白名單來源，再由網站讀取同來源 JSON。</li>
+              <li><strong>外部連結修正</strong>：網頁版交回瀏覽器原生開新分頁，並強制 <code>noopener noreferrer</code>；extension 保留原本的 tabs 開啟流程。</li>
+              <li><strong>安全發布</strong>：私有倉庫只輸出 32 個 allowlist 成品，以單一公開倉庫 deploy key 發布；快照器限制 HTTPS、固定 host/path、方法、redirect、逾時與回應大小。</li>
+              <li><strong>PWA 邊界</strong>：畫面明示排程延遲、快照產生時間與行情資料時間，不把 GitHub 排程快照宣稱為逐筆即時行情。</li>
+              <li><strong>版本一致性</strong>：manifest、main.html、APP_VERSION、Service Worker 與 bundled state 頂層 version 同步為 17.3。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v17.2</strong>
               <span>2026-07-09</span>
               <span class="cl-badge major">Command Center &amp; Radar Trust</span>

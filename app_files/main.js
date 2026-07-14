@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.2";
+const APP_VERSION = "17.3";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -12,7 +12,7 @@ const RESEARCH_DATA_SCHEMA_VERSION = 1;
 const REVENUE_HISTORY_MONTH_LIMIT = 72; // v16.7：Yahoo 5 年回補後需容納 60+ 個月（原 36）
 const QUARTERLY_MARGIN_RETENTION_QUARTERS = 20;
 const MONTHLY_REVENUE_RECHECK_TTL_MS = 6 * 60 * 60 * 1000;
-const CURRENT_HOLDINGS_PRESET_VERSION = "2026-07-13-v17.2-safe-starter";
+const CURRENT_HOLDINGS_PRESET_VERSION = "2026-07-13-v17.3-safe-starter";
 const STARTUP_DEFER_BUNDLED_STATE_MIN_FOOTPRINT = 20;
 const STARTUP_DEFER_BUNDLED_STATE_MS = 6500;
 const STARTUP_NETWORK_DEFER_MS = 15000;
@@ -5992,6 +5992,10 @@ function normalizeDownloadUrl(url) {
   return "";
 }
 
+function isPublishedWebRuntime() {
+  return typeof document !== "undefined" && document.documentElement?.dataset?.runtime === "web";
+}
+
 function openExternalLink(url) {
   const safeUrl = normalizeExternalLinkUrl(url);
   if (!safeUrl) {
@@ -6033,6 +6037,38 @@ function bundledAssetUrl(path) {
     return chrome.runtime.getURL(path);
   }
   return path;
+}
+
+async function readLimitedJsonResponse(response, maxBytes = 2 * 1024 * 1024) {
+  const announcedBytes = Number(response.headers.get("content-length") || 0);
+  if (announcedBytes > maxBytes) throw new Error("行情快照超過 2 MB 安全上限");
+  const buffer = await response.arrayBuffer();
+  if (buffer.byteLength > maxBytes) throw new Error("行情快照超過 2 MB 安全上限");
+  return JSON.parse(new TextDecoder("utf-8").decode(buffer));
+}
+
+async function loadPublishedMarketSnapshot() {
+  if (!isPublishedWebRuntime()) throw new Error("延遲快照僅供公開網站模式使用");
+  const snapshotUrl = new URL(bundledAssetUrl("data/live_market.json"), window.location.href);
+  if (snapshotUrl.origin !== window.location.origin) throw new Error("行情快照必須來自目前網站");
+  snapshotUrl.searchParams.set("app", APP_VERSION);
+  snapshotUrl.searchParams.set("ts", String(Date.now()));
+  const response = await fetch(snapshotUrl.href, {
+    method: "GET",
+    cache: "no-store",
+    credentials: "same-origin",
+    redirect: "error",
+    headers: { Accept: "application/json" }
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const payload = await readLimitedJsonResponse(response);
+  if (payload?.schemaVersion !== 1 || !payload.marketDashboardCache || typeof payload.marketDashboardCache !== "object") {
+    throw new Error("行情快照格式不相容");
+  }
+  return normalizeMarketDashboardCache({
+    ...payload.marketDashboardCache,
+    delivery: payload.marketDashboardCache.delivery || payload.delivery
+  });
 }
 
 async function fetchJson(url) {
@@ -14261,6 +14297,22 @@ function sanitizeMarketDashboardSnapshot(value, kind, errors) {
   return snapshot;
 }
 
+function normalizeMarketDashboardDelivery(value) {
+  const incoming = normalizeRecordMap(value);
+  const allowedModes = new Set(["github-actions-delayed-snapshot", "bundled-fallback"]);
+  const mode = allowedModes.has(incoming.mode) ? incoming.mode : "";
+  if (!mode) return null;
+  return {
+    mode,
+    generatedAt: String(incoming.generatedAt || "").slice(0, 40),
+    scheduleMinutes: Math.max(0, Math.min(1440, Number(incoming.scheduleMinutes) || 0)),
+    freshSources: Array.isArray(incoming.freshSources)
+      ? uniqueList(incoming.freshSources.map((item) => String(item || "").slice(0, 80)).filter(Boolean)).slice(0, 16)
+      : [],
+    note: String(incoming.note || "").slice(0, 300)
+  };
+}
+
 function normalizeMarketDashboardCache(value) {
   const incoming = normalizeRecordMap(value);
   const errors = Array.isArray(incoming.errors) ? incoming.errors.map((item) => String(item || "")).filter(Boolean) : [];
@@ -14275,7 +14327,8 @@ function normalizeMarketDashboardCache(value) {
     taiwan,
     taifexNight,
     global,
-    errors: uniqueList(errors).slice(-8)
+    errors: uniqueList(errors).slice(-8),
+    delivery: normalizeMarketDashboardDelivery(incoming.delivery)
   };
 }
 
@@ -38544,8 +38597,36 @@ function maybeRefreshTideSectorCache() {
 
 async function updateMarketDashboard(silent = false) {
   if (_marketDashboardRefreshPromise) return _marketDashboardRefreshPromise;
-  if (!silent) setStatus("正在更新大盤總覽...", "warn");
+  const webRuntime = isPublishedWebRuntime();
+  if (!silent) setStatus(webRuntime ? "正在重新讀取 GitHub 延遲快照..." : "正在更新大盤總覽...", "warn");
   _marketDashboardRefreshPromise = (async () => {
+    if (webRuntime) {
+      try {
+        state.marketDashboardCache = await loadPublishedMarketSnapshot();
+        persistStateSilently("GitHub 大盤延遲快照");
+        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        const cache = state.marketDashboardCache;
+        const sourceCount = [cache.taiwan, cache.taifexNight, ...(cache.global || [])].filter(Boolean).length;
+        if (!silent) {
+          setStatus(
+            `GitHub 延遲快照已讀取：${sourceCount}/6 項可用；排程可能延遲，非逐筆即時行情。`,
+            cache.errors.length || sourceCount < 3 ? "warn" : "good"
+          );
+        }
+        return cache;
+      } catch (error) {
+        const current = normalizeMarketDashboardCache(state.marketDashboardCache);
+        const detail = error?.message || String(error);
+        state.marketDashboardCache = normalizeMarketDashboardCache({
+          ...current,
+          errors: [...current.errors, `GitHub 延遲快照讀取失敗：${detail}`]
+        });
+        persistStateSilently("GitHub 大盤延遲快照錯誤");
+        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        if (!silent) setStatus(`GitHub 延遲快照讀取失敗：${detail}`, "error");
+        throw error;
+      }
+    }
     const errors = [];
     const taiwanResults = await Promise.allSettled([
       fetchYahooIndexSnapshot(TAIWAN_MARKET_INDEX),
@@ -41700,22 +41781,30 @@ function renderMarketDashboardTab() {
   maybeRefreshMarketCrashRiskInputs();
   maybeRefreshTideSectorCache();
   const cache = normalizeMarketDashboardCache(state.marketDashboardCache);
+  const webRuntime = isPublishedWebRuntime();
+  const delivery = cache.delivery;
   const lastUpdate = cache.fetchedAt ? formatDateTime(cache.fetchedAt) : "尚未更新";
+  const snapshotGenerated = delivery?.generatedAt ? formatDateTime(delivery.generatedAt) : "尚未產生";
+  const scheduleText = delivery?.scheduleMinutes ? `約每 ${delivery.scheduleMinutes} 分鐘排程` : "隨版本附帶的備援快照";
   container.innerHTML = `
     <div class="panel">
       <div class="section-head">
         <div>
           <h2>大盤總覽</h2>
-          <p>台股盤中線圖採 Yahoo market data；成交金額與夜盤台指期優先補 TWSE / TAIFEX 官方資料，所有交易判讀仍需交叉核對。</p>
+          <p>${webRuntime
+            ? "公開網站由 GitHub Actions 讀取固定白名單來源並產生延遲快照；排程或上游可能延遲，非逐筆即時行情，所有交易判讀仍需交叉核對。"
+            : "台股盤中線圖採 Yahoo market data；成交金額與夜盤台指期優先補 TWSE / TAIFEX 官方資料，所有交易判讀仍需交叉核對。"}</p>
         </div>
         <div class="link-row" style="margin-top:0;">
-          <button id="refreshMarketDashboardBtn" class="ghost-btn" type="button">更新大盤</button>
+          <button id="refreshMarketDashboardBtn" class="ghost-btn" type="button">${webRuntime ? "重新讀取快照" : "更新大盤"}</button>
           <button id="refreshMarketInstRankingsBtn" class="ghost-btn" type="button" data-market-action="update-market-inst">法人前10</button>
         </div>
       </div>
       <div class="note-box" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
         <div>
-          最後更新：${escapeHtml(lastUpdate)}。成交「億」若顯示待資料，通常是 TWSE 官方收盤統計尚未發布或解析失敗；線圖仍可先看盤中方向。
+          ${webRuntime
+            ? `快照產生：${escapeHtml(snapshotGenerated)}；行情更新：${escapeHtml(lastUpdate)}；${escapeHtml(scheduleText)}。成交「億」若顯示待資料，通常是官方統計尚未發布、排程延遲或解析失敗。`
+            : `最後更新：${escapeHtml(lastUpdate)}。成交「億」若顯示待資料，通常是 TWSE 官方收盤統計尚未發布或解析失敗；線圖仍可先看盤中方向。`}
           ${cache.errors.length ? `<div style="margin-top:6px;color:var(--bad);">最近錯誤：${cache.errors.map(escapeHtml).join("；")}</div>` : ""}
         </div>
         <div class="chip-row chip-row-compact" style="flex-shrink:0;">${combinedMarketStatusHtml()}</div>
@@ -43471,6 +43560,11 @@ function bindEvents() {
     if (!shouldHandleExternalLinkClick(link)) return;
     const safeUrl = normalizeExternalLinkUrl(link.getAttribute("href"));
     if (!safeUrl) return;
+    if (isPublishedWebRuntime()) {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+      return;
+    }
     event.preventDefault();
     event.stopPropagation();
     openExternalLink(safeUrl);
