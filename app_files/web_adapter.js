@@ -7,6 +7,7 @@
   const DB_NAME = "twStockWebChromeStorage_v1";
   const STORE_NAME = "kv";
   const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
+  const WEB_RUNTIME_AUDIT_LIMIT = 50;
   const WEB_FETCH_HOSTS = new Set([
     "mis.twse.com.tw", "www.twse.com.tw", "www.tpex.org.tw", "mops.twse.com.tw", "mopsfin.twse.com.tw",
     "query1.finance.yahoo.com", "query2.finance.yahoo.com", "tw.stock.yahoo.com",
@@ -19,6 +20,42 @@
     "news.cnyes.com", "api.cnyes.com", "cdn.cboe.com", "home.treasury.gov", "www.federalreserve.gov",
     "www.cmegroup.com", "www.cbc.gov.tw", "tide-tw.app"
   ]);
+
+  const webRuntimeAudit = {
+    policy: "same-origin-snapshot-only",
+    blockedCrossOriginFetches: []
+  };
+  window.__TWSTOCK_WEB_RUNTIME_AUDIT__ = webRuntimeAudit;
+
+  function recordBlockedCrossOriginFetch(url, method = "GET", caller = "fetch-text") {
+    let parsed = null;
+    try { parsed = new URL(String(url || ""), window.location.href); } catch (_) {}
+    webRuntimeAudit.blockedCrossOriginFetches.push({
+      caller,
+      method: String(method || "GET").toUpperCase(),
+      host: parsed?.hostname || "invalid-url",
+      path: parsed?.pathname || "",
+      blockedAt: new Date().toISOString()
+    });
+    if (webRuntimeAudit.blockedCrossOriginFetches.length > WEB_RUNTIME_AUDIT_LIMIT) {
+      webRuntimeAudit.blockedCrossOriginFetches.splice(0, webRuntimeAudit.blockedCrossOriginFetches.length - WEB_RUNTIME_AUDIT_LIMIT);
+    }
+  }
+  window.__TWSTOCK_RECORD_WEB_BLOCKED_FETCH__ = recordBlockedCrossOriginFetch;
+
+  // 最終防線：公開 PWA 的任何程式路徑都只能 fetch 同來源資源。
+  // 這個 adapter 在真正的 Chrome extension 環境會於檔案開頭直接 return，因此不影響 extension host permissions。
+  const nativeFetch = window.fetch.bind(window);
+  window.fetch = function webSnapshotOnlyFetch(input, init = undefined) {
+    const requestUrl = input instanceof Request ? input.url : String(input || "");
+    const parsed = new URL(requestUrl, window.location.href);
+    if (parsed.origin !== window.location.origin) {
+      const method = init?.method || (input instanceof Request ? input.method : "GET");
+      recordBlockedCrossOriginFetch(parsed.href, method, "global-fetch-guard");
+      return Promise.reject(new TypeError(`公開網站只允許同來源快照：${parsed.hostname}`));
+    }
+    return nativeFetch(input, init);
+  };
 
   function normalizedFetchUrl(value) {
     const parsed = new URL(String(value || ""), window.location.href);
@@ -141,6 +178,14 @@
     const method = String(message.method || "GET").toUpperCase();
     if (method !== "GET" && method !== "POST") throw new Error(`不允許的 HTTP 方法：${method}`);
     if (message.body && String(message.body).length > 262144) throw new Error("請求內容超過 256 KB 安全上限");
+    const parsedRequestUrl = new URL(requestUrl);
+    if (parsedRequestUrl.origin !== window.location.origin) {
+      recordBlockedCrossOriginFetch(requestUrl, method);
+      return {
+        ok: false,
+        error: `公開網站不直接讀取跨站資料：${parsedRequestUrl.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`
+      };
+    }
     const controller = new AbortController();
     const timeoutMs = Math.max(5000, Math.min(25000, Number(message.timeoutMs) || 25000));
     const timer = window.setTimeout(() => controller.abort(), timeoutMs);

@@ -1,5 +1,20 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v17.4</strong>
+              <span>2026-07-14</span>
+              <span class="cl-badge major">Web Snapshot Boundary</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>Chrome / CORS 修正</strong>：公開 PWA 啟動後只讀同來源 <code>data/live_market.json</code>，不再啟動 TAIFEX、Fed、Cboe、TPEx、Tide 等 extension 專用跨站更新鏈。</li>
+              <li><strong>執行環境隔離</strong>：Web runtime 採 <code>same-origin-snapshot-only</code>，Pages 成品 CSP 收斂為 <code>connect-src 'self'</code>；Chrome extension 保留原本 host permissions 與背景更新能力。</li>
+              <li><strong>操作語意</strong>：網頁版將智慧更新改為「重新讀取快照」，並停用只能在 extension 執行的跨站完整更新按鈕；官方與第二來源連結仍可安全開新分頁核對。</li>
+              <li><strong>回歸防護</strong>：瀏覽器 smoke gate 驗證 Web runtime 政策、零啟動跨站嘗試與 extension-only 控制項狀態，避免 CORS 重試風暴復發。</li>
+              <li><strong>版本一致性</strong>：manifest、main.html、APP_VERSION、Service Worker 與 bundled state 頂層 version 同步為 17.4。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v17.3</strong>
               <span>2026-07-13</span>
               <span class="cl-badge major">GitHub Pages Snapshot PWA</span>

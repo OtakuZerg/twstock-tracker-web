@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.3";
+const APP_VERSION = "17.4";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -6072,6 +6072,13 @@ async function loadPublishedMarketSnapshot() {
 }
 
 async function fetchJson(url) {
+  if (isPublishedWebRuntime()) {
+    const parsed = new URL(String(url || ""), window.location.href);
+    if (parsed.origin !== window.location.origin) {
+      window.__TWSTOCK_RECORD_WEB_BLOCKED_FETCH__?.(parsed.href, "GET", "fetch-json");
+      throw new Error(`公開網站不直接讀取跨站資料：${parsed.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`);
+    }
+  }
   const response = await fetch(url, { cache: "no-store" });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
@@ -16723,6 +16730,8 @@ function startupElapsedMs() {
 }
 
 function deferStartupRefresh(key, label, runner, timeout = STARTUP_NETWORK_DEFER_MS) {
+  // 公開 PWA 是 snapshot-only runtime：跨站資料由 GitHub Actions 產生，瀏覽器不排入 extension 背景抓取。
+  if (isPublishedWebRuntime()) return true;
   if (typeof window === "undefined" || startupElapsedMs() > STARTUP_NETWORK_DEFER_MS) return false;
   if (_startupDeferredRefreshKeys.has(key)) return true;
   _startupDeferredRefreshKeys.add(key);
@@ -17384,7 +17393,7 @@ function setBusy(isBusy, message = "") {
   state.busy = isBusy;
   for (const id of ["quickUpdateBtn", "topFullUpdateBtn", "updateAllBtn", "updateAllKlinesBtn", "updateRevenueBtn", "updateDividendBtn", "refreshFuturesTopBtn", "refreshFuturesBtn", "exportBtn", "updatePodcastBtn", "updateInstThemeBtn", "prewarmInst30Btn", "refreshMarketInstRankingsBtn", "loadActiveEtfDataBtn", "updateActiveEtfDataBtn", "reloadActiveEtfBtn", "updateActiveEtfAllBtn", "updateEtfNavBtn"]) {
     const element = $(id);
-    if (element) element.disabled = isBusy;
+    if (element) element.disabled = isBusy || (isPublishedWebRuntime() && element.dataset.webSnapshotOnly === "true");
   }
   document.querySelectorAll("[data-classification-repair]").forEach((element) => {
     element.disabled = isBusy;
@@ -17857,6 +17866,8 @@ function maybeRefreshMarketInstitutionalRankings() {
 let _marketCrashRiskRefreshPromise = null;
 let _marketCrashRiskBatchUpdating = false;
 let _marketCrashRiskStartupQuickTimer = null;
+let _publishedMarketSnapshotAutoAttempted = false;
+let _publishedMarketSnapshotLoadedThisSession = false;
 
 function marketCrashRiskRefreshTtlMs(now = new Date()) {
   return (isTaiwanMarketOpen(now) || isUsMarketOpen(now))
@@ -17946,6 +17957,85 @@ function recordMarketCrashRiskRefresh(payload) {
 function maybeRefreshMarketCrashRiskInputs(options = {}) {
   const force = options.force === true;
   const manual = options.manual === true;
+  if (isPublishedWebRuntime()) {
+    const checkedAt = new Date().toISOString();
+    if (_marketDashboardRefreshPromise) return _marketDashboardRefreshPromise;
+    if (_publishedMarketSnapshotAutoAttempted && !force) {
+      recordMarketCrashRiskRefresh({
+        status: _publishedMarketSnapshotLoadedThisSession ? "fresh" : "warn",
+        mode: "web-snapshot",
+        checkedAt,
+        ttlMs: marketCrashRiskRefreshTtlMs(),
+        summary: _publishedMarketSnapshotLoadedThisSession
+          ? "公開網站已讀取 GitHub Actions 同來源延遲快照；extension 專用的跨站雷達背景抓取未啟動。"
+          : "公開網站快照本次未能載入；已停止跨站背景重試，請稍後按「重新讀取快照」。",
+        tasks: [{
+          key: "marketDashboard",
+          label: "GitHub 延遲行情快照",
+          status: _publishedMarketSnapshotLoadedThisSession ? "done" : "failed",
+          ageMs: null,
+          ttlMs: marketCrashRiskRefreshTtlMs()
+        }],
+        errors: []
+      });
+      return null;
+    }
+
+    _publishedMarketSnapshotAutoAttempted = true;
+    recordMarketCrashRiskRefresh({
+      status: "running",
+      mode: manual ? "manual-web-snapshot" : "web-snapshot",
+      checkedAt,
+      startedAt: checkedAt,
+      ttlMs: marketCrashRiskRefreshTtlMs(),
+      summary: "正在讀取 GitHub Actions 同來源延遲快照；不直接跨站抓取 TAIFEX / Fed / Cboe / TPEx。",
+      tasks: [{
+        key: "marketDashboard",
+        label: "GitHub 延遲行情快照",
+        status: "running",
+        ageMs: null,
+        ttlMs: marketCrashRiskRefreshTtlMs()
+      }],
+      errors: []
+    });
+    const refresh = updateMarketDashboard(!manual)
+      .then((cache) => {
+        recordMarketCrashRiskRefresh({
+          status: "completed",
+          finishedAt: new Date().toISOString(),
+          summary: "GitHub 延遲行情快照已讀取；其他雷達因子沿用公開成品內的已驗證快取並顯示日期 / 缺口。",
+          tasks: [{
+            key: "marketDashboard",
+            label: "GitHub 延遲行情快照",
+            status: "done",
+            ageMs: 0,
+            ttlMs: marketCrashRiskRefreshTtlMs()
+          }],
+          errors: []
+        });
+        return cache;
+      })
+      .catch((error) => {
+        const message = error?.message || String(error);
+        recordMarketCrashRiskRefresh({
+          status: "error",
+          finishedAt: new Date().toISOString(),
+          summary: `GitHub 延遲行情快照讀取失敗：${message}`,
+          tasks: [{
+            key: "marketDashboard",
+            label: "GitHub 延遲行情快照",
+            status: "failed",
+            error: message,
+            ageMs: null,
+            ttlMs: marketCrashRiskRefreshTtlMs()
+          }],
+          errors: [message]
+        });
+        throw error;
+      });
+    refresh.catch(() => {});
+    return refresh;
+  }
   // 大盤頁是預設分頁且雷達可見：啟動期間不等完整 15 秒啟動預算，約 1.2 秒後就先更新雷達輸入，
   // 修正「一開始連線雷達不更新、只顯示舊快取」的問題；其他分頁維持原本的啟動延後排程。
   if (!force && options.deferred !== true && typeof window !== "undefined"
@@ -19881,6 +19971,17 @@ async function prewarmInstitutionalHistory30(options = {}) {
   const stocks = quoteTrackableStocks(sourceStocks).filter((stock) => !isEtfCode(stock.code));
   const chipCache = options.cache || createChipFetchCache();
 
+  if (isPublishedWebRuntime()) {
+    return {
+      total: stocks.length,
+      ready: stocks.filter((stock) => normalizeInstitutionalHistoryRows(state.institutional?.[stock.code]?.history, targetDays).length >= targetDays).length,
+      updated: 0,
+      failures: [],
+      skipped: "web-snapshot-only",
+      cacheText: "公開網站沿用成品快取"
+    };
+  }
+
   if (!stocks.length) {
     if (!silent) setStatus("目前主題沒有可預熱的上市櫃個股法人資料。", "warn");
     return { total: 0, ready: 0, updated: 0, failures: [], cacheText: chipCacheSummary(chipCache) };
@@ -20198,6 +20299,20 @@ function triggerQuickUpdateBackgroundSyncs() {
 }
 
 async function quickUpdateQuotes() {
+  if (isPublishedWebRuntime()) {
+    setBusy(true, "公開網站正在重新讀取 GitHub 延遲行情快照...");
+    try {
+      const cache = await updateMarketDashboard(true);
+      const sourceCount = [cache?.taiwan, cache?.taifexNight, ...(cache?.global || [])].filter(Boolean).length;
+      setStatus(
+        `網站快照已重新讀取：${sourceCount}/6 項可用；其他資料使用公開成品內快取，跨站即時更新請用 extension 或來源連結。`,
+        cache?.errors?.length || sourceCount < 3 ? "warn" : "good"
+      );
+      return cache;
+    } finally {
+      setBusy(false);
+    }
+  }
   const targets = quoteTrackableStocks();
   const skipped = quoteSkippedStocks();
   setBusy(true, `智慧更新：${targets.length}/${WATCHLIST.length} 檔報價，並依 TTL 判斷同步過期來源（大盤 / 期貨 / 總經 / Tide / 法人前10 / 月營收…）...`);
@@ -21733,6 +21848,11 @@ let _idleAutoUpdateCancelled = false;
 function startAutoRefresh() {
   stopAutoRefresh();
   if (!state.autoRefreshEnabled) return;
+  if (isPublishedWebRuntime()) {
+    setStatus("公開網站由 GitHub Actions 約每 15 分鐘產生快照，不啟動 extension 輕量定時抓取。", "warn");
+    renderHero();
+    return;
+  }
   const ms = (state.autoRefreshMinutes || 5) * 60 * 1000;
   _autoRefreshNextAt = Date.now() + ms;
   _autoRefreshTimer = setInterval(async () => {
@@ -21773,6 +21893,10 @@ function stopIdleAutoUpdateTimer() {
 }
 
 function toggleIdleAutoUpdate() {
+  if (isPublishedWebRuntime()) {
+    setStatus("公開網站不執行 extension 完整更新；行情由 GitHub Actions 延遲快照提供。", "warn");
+    return;
+  }
   if (_idleAutoUpdateTimer !== null || _idleAutoUpdateRunning) {
     requestStopAutoUpdate("已手動停止");
     return;
@@ -21791,6 +21915,7 @@ function toggleIdleAutoUpdate() {
 
 function scheduleIdleAutoUpdate() {
   stopIdleAutoUpdateTimer();
+  if (isPublishedWebRuntime()) return;
   if (!state.idleAutoUpdateEnabled) return;
   if (autoUpdateLogCompletedToday(state.autoUpdateLog)) {
     const log = normalizeAutoUpdateLog(state.autoUpdateLog);
@@ -21842,6 +21967,12 @@ function queueBackgroundFullUpdateAttempt(attempt = 0, delayMs = BACKGROUND_FULL
 }
 
 function runManualFullUpdate() {
+  if (isPublishedWebRuntime()) {
+    quickUpdateQuotes().catch((error) => {
+      setStatus(`網站快照讀取失敗：${error?.message || String(error)}`, "error");
+    });
+    return;
+  }
   if (_idleAutoUpdateRunning || state.busy) {
     setStatus("已有更新任務執行中，請稍後再手動啟動。", "warn");
     return;
@@ -21946,6 +22077,12 @@ async function runIdleAutoUpdate(options = {}) {
 }
 
 function toggleAutoRefresh() {
+  if (isPublishedWebRuntime()) {
+    quickUpdateQuotes().catch((error) => {
+      setStatus(`網站快照讀取失敗：${error?.message || String(error)}`, "error");
+    });
+    return;
+  }
   state.autoRefreshEnabled = !state.autoRefreshEnabled;
   persistStateSilently("輕量定時更新");
   if (state.autoRefreshEnabled) startAutoRefresh();
@@ -21985,6 +22122,15 @@ function renderHero() {
     mktEl.innerHTML = html;
   }
   if (arEl) {
+    if (isPublishedWebRuntime()) {
+      arEl.innerHTML = `
+        <button id="arToggleBtn" class="ghost-btn" type="button" style="font-size:0.72rem;min-height:26px;padding:2px 8px;" title="重新讀取 GitHub Actions 同來源延遲行情快照；公開網站不直接跨站抓資料。">
+          ↻ 網站快照
+        </button>
+        <span style="color:var(--muted);font-size:0.72rem;">約 15 分鐘</span>
+      `;
+      return;
+    }
     const on = state.autoRefreshEnabled;
     const mins = state.autoRefreshMinutes || 5;
     const secsLeft = _autoRefreshNextAt ? Math.max(0, Math.round((_autoRefreshNextAt - Date.now()) / 1000)) : null;
@@ -25423,6 +25569,7 @@ async function fetchTrendForceMemoryPriceSnapshot() {
 // 每日自動快照：不依賴使用者開記憶體面板，讓本機趨勢 history 每天至少累積一筆
 function maybeDailyMemoryMarketSnapshot() {
   const cache = normalizeMemoryMarketCache(state.memoryMarketCache);
+  if (isPublishedWebRuntime()) return Promise.resolve(cache.snapshot);
   const lastMs = cache.snapshot && !cache.snapshot.fallbackUsed ? memorySnapshotTime(cache.snapshot) : 0;
   if (lastMs && dateKeyInTaipei(new Date(lastMs)) === dateKeyInTaipei()) return Promise.resolve(cache.snapshot);
   return updateMemoryMarketSnapshot({ silent: true });
@@ -25440,6 +25587,7 @@ function isMemoryOverviewActive() {
 function maybeRefreshMemoryMarketSnapshot(force = false) {
   if (_memoryMarketRefreshPromise) return _memoryMarketRefreshPromise;
   const cache = normalizeMemoryMarketCache(state.memoryMarketCache);
+  if (isPublishedWebRuntime()) return Promise.resolve(cache.snapshot);
   const ttl = cache.snapshot?.fallbackUsed ? 5 * 60 * 1000 : MEMORY_MARKET_CACHE_TTL_MS;
   if (!force && cache.ts && Date.now() - cache.ts < ttl) return Promise.resolve(cache.snapshot);
   if (!force && isMemoryOverviewActive() && startupElapsedMs() < STARTUP_NETWORK_DEFER_MS) {
@@ -26628,6 +26776,7 @@ async function updateBondEtfSignal(silent = false) {
 
 function maybeRefreshBondEtfSignal() {
   const cache = normalizeBondSignalCache(state.bondSignalCache);
+  if (isPublishedWebRuntime()) return Promise.resolve(cache);
   if (!cache.ts || Date.now() - cache.ts > BOND_SIGNAL_CACHE_TTL_MS) {
     updateBondEtfSignal(true).catch((error) => console.warn("updateBondEtfSignal failed", error));
   }
@@ -32858,7 +33007,7 @@ function renderInstitutionalTab(options = {}) {
   const historyRows = normalizeInstitutionalHistoryRows(inst?.history, INSTITUTIONAL_HISTORY_TARGET_DAYS);
   const inst7Rows = historyRows.slice(-7);
   const institutionalWindowHtml = renderInstitutionalWindowSummary(historyRows, stock);
-  if (historyRows.length < 3) {
+  if (historyRows.length < 3 && !isPublishedWebRuntime()) {
     const lastAutoTrigger = _autoBackfillCooldown.get(stock.code) || 0;
     if (Date.now() - lastAutoTrigger > AUTO_BACKFILL_COOLDOWN_MS) {
       _autoBackfillCooldown.set(stock.code, Date.now());
@@ -36366,6 +36515,7 @@ let _exDividendRefreshPromise = null;
 function maybeRefreshExDividendCalendar() {
   if (_exDividendRefreshPromise) return _exDividendRefreshPromise;
   const cache = normalizeExDividendCalendarState(state.exDividendCalendar);
+  if (isPublishedWebRuntime()) return Promise.resolve(cache);
   const fetchedAt = Date.parse(cache.fetchedAt || "");
   if (Number.isFinite(fetchedAt) && Date.now() - fetchedAt < EX_DIVIDEND_CACHE_TTL_MS) {
     return Promise.resolve(cache);
@@ -38603,6 +38753,7 @@ async function updateMarketDashboard(silent = false) {
     if (webRuntime) {
       try {
         state.marketDashboardCache = await loadPublishedMarketSnapshot();
+        _publishedMarketSnapshotLoadedThisSession = true;
         persistStateSilently("GitHub 大盤延遲快照");
         if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
         const cache = state.marketDashboardCache;
@@ -40627,7 +40778,7 @@ function renderMarketCrashRiskPanel() {
         <span class="chip ${escapeHtml(risk.level.tone)}">可用資料 ${formatNumber(risk.coverage, 0)}%</span>
         <span class="chip flat">最後資料 ${escapeHtml(lastUpdate)}</span>
         <span class="chip ${risk.missing.length ? "warn" : "good"}">缺口：${escapeHtml(missingText)}</span>
-        <button class="ghost-btn" type="button" data-market-action="refresh-crash-risk" style="font-size:0.86rem;min-height:32px;padding:5px 12px;font-weight:800;">重新抓取雷達</button>
+        <button class="ghost-btn" type="button" data-market-action="refresh-crash-risk" style="font-size:0.86rem;min-height:32px;padding:5px 12px;font-weight:800;">${isPublishedWebRuntime() ? "重新讀取快照" : "重新抓取雷達"}</button>
       </div>
       ${refresh.summary ? `
         <div class="note-box" style="margin-top:8px;margin-bottom:8px;font-size:0.74rem;color:var(--muted);">
@@ -41705,7 +41856,7 @@ function renderMarketCommandCenter() {
           <div class="kv-row"><span>資料覆蓋</span><strong>${formatNumber(risk.coverage, 0)}%</strong></div>
           <p style="margin:8px 0 0;color:var(--muted);font-size:0.78rem;line-height:1.5;">${escapeHtml(decision.headline)} ${escapeHtml(decision.action)}</p>
           <div class="link-row" style="margin-top:8px;">
-            <button class="link-chip inline-action-chip" type="button" data-market-action="refresh-crash-risk">更新雷達</button>
+            <button class="link-chip inline-action-chip" type="button" data-market-action="refresh-crash-risk">${isPublishedWebRuntime() ? "重新讀取快照" : "更新雷達"}</button>
           </div>
         </article>
         <article class="rank-card">
@@ -42703,9 +42854,12 @@ function renderTopNews() {
   if (!container) return;
   const cache = state.newsCache || {};
   if (!cache.items || !cache.items.length) {
+    const webRuntime = isPublishedWebRuntime();
     container.innerHTML = `
       <div class="note-box" style="margin-bottom:10px;">
-        新聞正在背景載入；若仍為空，按「更新新聞」重試。${cache.error ? `<div style="margin-top:6px;color:var(--bad);">最近錯誤：${escapeHtml(cache.error)}</div>` : ""}
+        ${webRuntime
+          ? "公開網站不直接呼叫新聞 API；請用下方原站連結查看即時新聞，或在 Chrome extension 更新新聞快取。"
+          : `新聞正在背景載入；若仍為空，按「更新新聞」重試。${cache.error ? `<div style="margin-top:6px;color:var(--bad);">最近錯誤：${escapeHtml(cache.error)}</div>` : ""}`}
       </div>
       ${renderExternalSourceLinks([
         { label: "鉅亨台股", url: "https://news.cnyes.com/news/cat/tw_stock" },
@@ -42716,6 +42870,7 @@ function renderTopNews() {
         { label: "CMoney 台股", url: "https://www.cmoney.tw/notes/news/tw" }
       ], { label: "熱門新聞入口", context: "top-news-fallback", style: "margin-top:4px;" })}
     `;
+    if (webRuntime) return;
     // 背景自動抓取
     fetchTopFinancialNews().then(() => renderTopNews()).catch(() => {});
     return;
@@ -43071,12 +43226,53 @@ function renderActiveTab(tab = state.activeTab || "market") {
     }
   } finally {
     recordPerformanceActiveTab(active, tabStartedAt);
+    configurePublishedWebControls();
   }
 }
 
 let _renderQueued = false;
 let _renderInProgress = false;
 let _renderQueuedOptions = null;
+
+function configurePublishedWebControls() {
+  if (!isPublishedWebRuntime()) return;
+  const quickButton = $("quickUpdateBtn");
+  if (quickButton) {
+    quickButton.textContent = "重新讀取快照";
+    quickButton.title = "讀取同來源 data/live_market.json；公開網站不直接跨站抓取行情。";
+    quickButton.disabled = false;
+  }
+  const fullButton = $("topFullUpdateBtn");
+  if (fullButton) fullButton.textContent = "完整更新（Extension）";
+  const unsupportedIds = [
+    "topFullUpdateBtn", "updateAllBtn", "updateAllKlinesBtn", "updateRevenueBtn", "updateDividendBtn",
+    "refreshFuturesTopBtn", "refreshFuturesBtn", "updatePodcastBtn", "updateInstThemeBtn", "prewarmInst30Btn",
+    "refreshMarketInstRankingsBtn", "updateActiveEtfDataBtn", "updateActiveEtfAllBtn", "updateEtfNavBtn",
+    "refreshMacroBtn", "refreshDispositionBtn", "refreshExDividendBtn", "refreshNewsBtn", "updateEarningsBtn", "updateBondSignalBtn"
+  ];
+  const unsupportedActions = new Set([
+    "update-revenue", "update-etf-nav", "update-active-etf", "backfill-inst", "prewarm-inst30",
+    "update-market-inst", "update-tide-sector"
+  ]);
+  unsupportedIds.forEach((id) => {
+    const button = $(id);
+    if (!button) return;
+    button.disabled = true;
+    button.dataset.webSnapshotOnly = "true";
+    button.title = "公開網站採 GitHub Actions 延遲快照；這項跨站完整更新僅供 Chrome extension。";
+  });
+  document.querySelectorAll("[data-market-action]").forEach((button) => {
+    if (!unsupportedActions.has(button.dataset.marketAction || "")) return;
+    button.disabled = true;
+    button.dataset.webSnapshotOnly = "true";
+    button.title = "公開網站採 GitHub Actions 延遲快照；這項跨站更新僅供 Chrome extension。";
+  });
+  document.querySelectorAll('[data-auto-update-action="run-now"]').forEach((button) => {
+    button.disabled = true;
+    button.dataset.webSnapshotOnly = "true";
+    button.title = "公開網站採 GitHub Actions 延遲快照；完整跨站更新僅供 Chrome extension。";
+  });
+}
 
 function normalizeRenderScope(options = {}) {
   return options?.scope === "active" ? "active" : "full";
@@ -44785,9 +44981,11 @@ function schedulePostStartupIdleTasks() {
   }, state.activeTab === "podcast" ? 2200 : STARTUP_NETWORK_DEFER_MS);
   if (shouldPrimeActiveEtfSeed()) maybeLoadVisibleActiveEtfSeed();
   // 記憶體報價每日快照：趨勢 history 每天至少累積一筆，不需要先開記憶體面板
-  setTimeout(() => {
-    scheduleIdleExecution("memory market daily snapshot", () => maybeDailyMemoryMarketSnapshot(), 6000);
-  }, STARTUP_NETWORK_DEFER_MS + STARTUP_REFRESH_ORDER.memoryMarketSnapshot * STARTUP_REFRESH_SPACING_MS);
+  if (!isPublishedWebRuntime()) {
+    setTimeout(() => {
+      scheduleIdleExecution("memory market daily snapshot", () => maybeDailyMemoryMarketSnapshot(), 6000);
+    }, STARTUP_NETWORK_DEFER_MS + STARTUP_REFRESH_ORDER.memoryMarketSnapshot * STARTUP_REFRESH_SPACING_MS);
+  }
 }
 
 async function init() {
@@ -44807,7 +45005,9 @@ async function init() {
   requestNotificationPermission();
   _startupRenderedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
   render({ immediate: true });
-  setStatus(`${cachedStateSummary()} 若要更新才需要再按更新；平常重新打開 extension 會先讀本機快取。`);
+  setStatus(isPublishedWebRuntime()
+    ? `${cachedStateSummary()} 公開網站行情會讀取 GitHub Actions 延遲快照；不直接跨站抓取資料。`
+    : `${cachedStateSummary()} 若要更新才需要再按更新；平常重新打開 extension 會先讀本機快取。`);
   schedulePostStartupIdleTasks();
   maybeTriggerFuturesSettlementReminder();
 
