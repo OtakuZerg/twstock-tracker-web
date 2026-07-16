@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "appVersion": "17.4",
-  "releaseDate": "2026-07-14",
+  "appVersion": "17.6",
+  "releaseDate": "2026-07-17",
   "mode": "github-pages-pwa",
   "profile": "public-pages-hardened-v3",
-  "builtAt": "2026-07-14T11:53:08.548Z",
+  "builtAt": "2026-07-16T17:02:34.685Z",
   "sourceDataAsOf": {
     "state": "2026-05-12T16:00:29.175Z",
     "research": "2026-06-24T14:02:15+08:00",

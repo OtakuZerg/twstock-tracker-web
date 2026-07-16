@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.4";
+const APP_VERSION = "17.6";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -838,13 +838,16 @@ const WATCHLIST = [
   { code: "2404", suffix: "TW", name: "漢唐", group: "core", sector: "無塵室/廠務工程", ref: 905, pe: 18.8, eps25: 48.08, eps26e: 68, target: 1110, order: ">1000億", overlap: 93, theme: 95, stop: 780, buy: "850-920", catalyst: "Q2招標?", risk: "Musk變數" },
   { code: "5536", suffix: "TW", name: "聖暉", group: "core", sector: "機電廠務/超純水", ref: 752, pe: 25.1, eps25: 30, eps26e: 42.5, target: 750, order: ">500億", overlap: 84, theme: 86, stop: 650, buy: "700-740", catalyst: "Q3海外訂單", risk: "規模較小" },
   { code: "6640", suffix: "TWO", name: "均華", group: "core", sector: "化學品供應/廠務耗材", ref: 1295, pe: 101.6, eps25: 12.75, eps26e: null, target: null, order: "未揭露", overlap: 88, theme: 93, stop: 1000, buy: "900-1000", catalyst: "Q4設備訂單", risk: "PE>100" },
-  { code: "6196", suffix: "TW", name: "帆宣", group: "core", sector: "廠務設計/海外建廠", ref: 310, pe: null, eps25: null, eps26e: null, target: null, order: "未揭露", overlap: 77, theme: 84, stop: 260, buy: "280-320", catalyst: "Q3工程啟動", risk: "競爭激烈" },
+  { code: "6196", suffix: "TW", name: "帆宣", group: "core", sector: "廠務設計/海外建廠", ref: 310, pe: 23.4, eps25: null, eps26e: 23.45, target: null, order: "未揭露", overlap: 77, theme: 84, stop: 260, buy: "分批研究", catalyst: "2026E EPS 成長 51.3%；6 月累計營收年增 39.5%", risk: "工程認列、資本支出與競爭風險" },
   { code: "6139", suffix: "TW", name: "亞翔", group: "core", sector: "廠務統包/建廠", ref: 597, pe: null, eps25: null, eps26e: null, target: null, order: "1753億", overlap: 85, theme: 76, stop: 520, buy: "550-590", catalyst: "Q2東協專案", risk: "未確認" },
-  { code: "6187", suffix: "TWO", name: "萬潤", group: "partial", sector: "自動化設備", ref: 942, pe: null, eps25: null, eps26e: null, target: null, order: "未揭露", overlap: 67, theme: 60, stop: 820, buy: "900-920", catalyst: "Q4設備", risk: "時程晚" },
+  { code: "6187", suffix: "TWO", name: "萬潤", group: "partial", sector: "自動化設備", ref: 942, pe: 46.6, eps25: null, eps26e: 23.97, target: null, order: "未揭露", overlap: 67, theme: 60, stop: 820, buy: "分批研究", catalyst: "2026E EPS 成長 55.0%；6 月累計營收年增 36.0%", risk: "設備驗收時程與估值波動" },
   { code: "3131", suffix: "TWO", name: "弘塑", group: "partial", sector: "濕式清洗設備/廠務", ref: 2810, pe: null, eps25: null, eps26e: null, target: null, order: "未揭露", overlap: 73, theme: 62, stop: 2500, buy: "2600-2700", catalyst: "Q3設備", risk: "不確定" },
   { code: "3583", suffix: "TW", name: "辛耘", group: "partial", sector: "半導體製程設備/管路", ref: 493, pe: null, eps25: null, eps26e: null, target: null, order: "未揭露", overlap: 62, theme: 55, stop: 440, buy: "460-480", catalyst: "Q4管路", risk: "週期晚" },
   { code: "3680", suffix: "TWO", name: "家登", group: "expand", sector: "設備/測試", ref: 410, pe: 7.9, eps25: 52, eps26e: null, target: null, order: "未揭露", overlap: null, theme: 82, stop: null, buy: "", catalyst: "光罩盒/半導體耗材", risk: "客戶與先進製程波動" },
-  { code: "1560", suffix: "TW", name: "中砂", group: "expand", sector: "特用化材", ref: 459.5, pe: 23, eps25: 20, eps26e: null, target: null, order: "未揭露", overlap: null, theme: 78, stop: null, buy: "", catalyst: "CMP耗材需求", risk: "材料價格與景氣循環" },
+  { code: "1560", suffix: "TW", name: "中砂", group: "expand", sector: "CMP耗材 / 再生晶圓", ref: 459.5, pe: 53.7, eps25: 20, eps26e: 13.25, target: null, order: "未揭露", overlap: null, theme: 78, stop: null, buy: "分批研究", catalyst: "2026E EPS 成長 42.8%；6 月累計營收年增 23.0%", risk: "高估值、材料價格與景氣循環" },
+  { code: "3413", suffix: "TW", name: "京鼎", group: "expand", sector: "半導體設備 / 真空腔體模組", ref: null, pe: 14.3, eps25: null, eps26e: 23.34, target: null, order: "待追蹤", overlap: null, theme: 76, stop: null, buy: "不追單日急漲", catalyst: "低本益比補漲；6 月營收年增 39.8%", risk: "2026E 成長相對較低、單一客戶與設備循環" },
+  { code: "7769", suffix: "TW", name: "鴻勁", group: "expand", sector: "IC 測試分選機 / 測試處理器", ref: null, pe: 55.2, eps25: null, eps26e: 121.06, target: null, order: "待追蹤", overlap: null, theme: 90, stop: null, buy: "等待估值與籌碼整理", catalyst: "2026E EPS 成長 59.9%；6 月累計營收年增 91.6%", risk: "上市歷史較短、高估值與高檔波動" },
+  { code: "8028", suffix: "TW", name: "昇陽半導體", group: "expand", sector: "再生晶圓 / 晶圓薄化", ref: null, pe: 43.3, eps25: null, eps26e: 7.22, target: null, order: "待追蹤", overlap: null, theme: 84, stop: null, buy: "小部位研究、拉回分批", catalyst: "2026E EPS 成長 65.2%；6 月累計營收年增 28.4%", risk: "估值不低、股性偏慢與產能利用率" },
   { code: "1785", suffix: "TWO", name: "光洋科", group: "expand", sector: "特用化材", ref: 96.4, pe: 27, eps25: 3.5, eps26e: null, target: null, order: "未揭露", overlap: null, theme: 72, stop: null, buy: "", catalyst: "靶材/特殊合金", risk: "短線波動與原料價格" },
   { code: "5434", suffix: "TW", name: "崇越", group: "expand", sector: "特用化材", ref: 318.5, pe: 17.7, eps25: 18, eps26e: null, target: null, order: "未揭露", overlap: null, theme: 76, stop: null, buy: "", catalyst: "特化代理與耗材", risk: "代理品項與匯率" },
   { code: "4772", suffix: "TWO", name: "台特化", group: "expand", sector: "特用化材", ref: 296.5, pe: 19.8, eps25: 15, eps26e: null, target: null, order: "未揭露", overlap: null, theme: 80, stop: null, buy: "", catalyst: "特用化學品製造", risk: "客戶認證與產能利用率" },
@@ -867,12 +870,15 @@ const STOCK_UNIVERSE = {
   "3711": { name: "日月光投控", suffix: "TW", officialIndustry: "24", sector: "封測 / 先進封裝" },
   "3374": { name: "精材", suffix: "TWO", officialIndustry: "24", sector: "晶圓級封裝 / 封裝板延伸" },
   "6770": { name: "力積電", suffix: "TW", officialIndustry: "24", sector: "晶圓代工" },
+  "3413": { name: "京鼎", suffix: "TW", officialIndustry: "31", sector: "半導體設備 / 真空腔體模組" },
   "3583": { name: "辛耘", suffix: "TW", officialIndustry: "24", sector: "半導體製程設備" },
   "6640": { name: "均華", suffix: "TWO", officialIndustry: "24", sector: "半導體設備 / 廠務耗材" },
   "3131": { name: "弘塑", suffix: "TWO", officialIndustry: "31", sector: "濕式清洗設備" },
   "3030": { name: "德律", suffix: "TW", officialIndustry: "31", sector: "檢測設備" },
   "5443": { name: "均豪", suffix: "TWO", officialIndustry: "24", sector: "自動化 / 設備" },
   "6187": { name: "萬潤", suffix: "TWO", officialIndustry: "24", sector: "自動化設備" },
+  "7769": { name: "鴻勁", suffix: "TW", officialIndustry: "24", sector: "IC 測試分選機 / 測試處理器" },
+  "8028": { name: "昇陽半導體", suffix: "TW", officialIndustry: "24", sector: "再生晶圓 / 晶圓薄化" },
   "2467": { name: "志聖", suffix: "TW", officialIndustry: "28", sector: "製程設備" },
   "6223": { name: "旺矽", suffix: "TWO", officialIndustry: "24", sector: "探針卡 / 測試介面" },
   "6683": { name: "雍智科技", suffix: "TWO", officialIndustry: "24", sector: "測試介面" },
@@ -1440,6 +1446,52 @@ const COMPANY_WEBSITES = {
   "2317": "https://www.foxconn.com"
 };
 const TSMC_PACKAGING_EXTRA_CODES = ["6442", "3163", "3363", "3450", "3081", "4979", "3583", "3653", "3533", "8021", "3665", "2392", "6190", "5269", "8086"];
+const TSMC_EQUIPMENT_ROTATION_CODES = ["3413", "6196", "6187", "7769", "1560", "8028"];
+const TSMC_EQUIPMENT_ROTATION = {
+  title: "台積電法說會登場，下一棒可能輪到設備股？",
+  eventAsOf: "2026-07-16",
+  estimateSnapshotAsOf: "2026-07-17",
+  revenueAsOf: "2026-06",
+  thesisSource: "使用者提供研究論點",
+  thesisSourceTier: "Tier 3 / 研究假設",
+  tsmcOfficial: {
+    source: "TSMC 2Q26 Results",
+    sourceTier: "Tier 1 / 公司官方",
+    url: "https://investor.tsmc.com/english/quarterly-results/2026/q2",
+    q2RevenueUsdB: 40.2,
+    q2GrossMarginPct: 67.7,
+    q2OperatingMarginPct: 60.3,
+    q3RevenueLowUsdB: 44.6,
+    q3RevenueHighUsdB: 45.8,
+    q3GrossMarginLowPct: 65,
+    q3GrossMarginHighPct: 67
+  },
+  priceReturnSnapshot: {
+    periodLabel: "2026 上半年",
+    startAsOf: "2025-12-31",
+    endAsOf: "2026-06-30",
+    verifiedAt: "2026-07-17",
+    fetchedAt: "2026-07-17",
+    confidence: "high",
+    sourceTier: "Tier 1 / 交易所官方日成交資訊",
+    values: {
+      "3413": { startClose: 277.5, endClose: 330.5, source: "TWSE STOCK_DAY", startUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20251201&stockNo=3413&response=json", endUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&stockNo=3413&response=json" },
+      "6196": { startClose: 275.0, endClose: 554.0, source: "TWSE STOCK_DAY", startUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20251201&stockNo=6196&response=json", endUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&stockNo=6196&response=json" },
+      "6187": { startClose: 364.0, endClose: 998.0, source: "TPEx 個股日成交資訊", startUrl: "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code=6187&date=2025%2F12%2F01&id=&response=json&type=Monthly", endUrl: "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code=6187&date=2026%2F06%2F01&id=&response=json&type=Monthly" },
+      "7769": { startClose: 3425.0, endClose: 6470.0, source: "TWSE STOCK_DAY", startUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20251201&stockNo=7769&response=json", endUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&stockNo=7769&response=json" },
+      "1560": { startClose: 396.5, endClose: 762.0, source: "TWSE STOCK_DAY", startUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20251201&stockNo=1560&response=json", endUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&stockNo=1560&response=json" },
+      "8028": { startClose: 178.0, endClose: 317.0, source: "TWSE STOCK_DAY", startUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20251201&stockNo=8028&response=json", endUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&stockNo=8028&response=json" }
+    }
+  },
+  rows: [
+    { code: "3413", name: "京鼎", pe: 14.3, eps26e: 23.34, epsGrowth26e: 8.9, revenueJuneYoy: 39.8, revenueCumulativeYoy: 17.7, stance: "低本益比補漲觀察", thesis: "估值在本組偏低，但 2026E 成長與累計營收增幅相對弱；不因單日帶量轉強追價。", risk: "預估獲利落空、單一客戶與設備循環。" },
+    { code: "6196", name: "帆宣", pe: 23.4, eps26e: 23.45, epsGrowth26e: 51.3, revenueJuneYoy: 121.0, revenueCumulativeYoy: 39.5, stance: "短線相對強勢觀察", thesis: "與萬潤同屬高成長組，本益比較低；先看業績延續與整理後承接。", risk: "工程認列時點、海外建廠與競爭風險。" },
+    { code: "6187", name: "萬潤", pe: 46.6, eps26e: 23.97, epsGrowth26e: 55.0, revenueJuneYoy: 87.1, revenueCumulativeYoy: 36.0, stance: "中長線成長觀察", thesis: "基本面成長與帆宣接近，但估值較高；等待股價與業績趨勢靠攏的驗證。", risk: "設備驗收時程、估值壓縮與高波動。" },
+    { code: "7769", name: "鴻勁", pe: 55.2, eps26e: 121.06, epsGrowth26e: 59.9, revenueJuneYoy: 106.5, revenueCumulativeYoy: 91.6, stance: "長線測試設備觀察", thesis: "AI 晶片測試時間與難度提升是研究主軸；『兩項市占逾五成』仍待公司法說或公開說明書逐項核對。", risk: "漲多、高估值、上市歷史較短與籌碼波動。" },
+    { code: "1560", name: "中砂", pe: 53.7, eps26e: 13.25, epsGrowth26e: 42.8, revenueJuneYoy: 16.4, revenueCumulativeYoy: 23.0, stance: "耗材 / 再生晶圓觀察", thesis: "與昇陽半導體部分受惠方向相近；獲利預估成長優於營收實績增幅。", risk: "估值偏高、產能利用率與材料景氣循環。" },
+    { code: "8028", name: "昇陽半導體", pe: 43.3, eps26e: 7.22, epsGrowth26e: 65.2, revenueJuneYoy: 33.6, revenueCumulativeYoy: 28.4, stance: "基本面成長 / 分批觀察", thesis: "本組 2026E EPS 成長最高，但歷史股性偏慢；以小部位研究、拉回再評估。", risk: "估值不低、產能擴充與需求落差。" }
+  ]
+};
 const COPOS_CORE_CODES = ["3583", "3131", "3680", "2464", "6187", "2467", "7734", "6664", "3535", "3167", "6789", "2330"];
 const COPOS_RELATED_CODES = uniqueList([
   ...COPOS_CORE_CODES,
@@ -1491,7 +1543,7 @@ const THEME_MEMBERS = [
       // CoWoS / 先進封裝 設備
       "6640", "3131", "6187", "3583", "2464", "2467", "7734", "3535", "3167", "6789", "2360",
       // 設備 / 測試
-      "3030", "5443", "6223", "6683", "6515", "6510", "3680", "8027", "6664", "3450",
+      "3030", "5443", "6223", "6683", "6515", "6510", "3680", "8027", "6664", "3450", ...TSMC_EQUIPMENT_ROTATION_CODES,
       // 封測 / OSAT
       "3711", "2449", "6239",
       // PCB / 載板 / 材料
@@ -1680,7 +1732,9 @@ const AI_SUPPLY_CHAIN_STOCKS = {
   "5347": { name: "世界", suffix: "TWO", sector: "晶圓代工 / 車用工控成熟製程" },
   "3131": { name: "弘塑", suffix: "TWO", sector: "濕製程設備 / 先進封裝設備" },
   "3583": { name: "辛耘", suffix: "TW", sector: "再生晶圓 / 半導體製程設備" },
+  "3413": { name: "京鼎", suffix: "TW", sector: "半導體設備 / 真空腔體模組" },
   "6187": { name: "萬潤", suffix: "TWO", sector: "封裝設備 / 半導體自動化" },
+  "7769": { name: "鴻勁", suffix: "TW", sector: "IC 測試分選機 / 測試處理器" },
   "6510": { name: "精測", suffix: "TWO", sector: "IC 測試介面 / 探針卡" },
   "6196": { name: "帆宣", suffix: "TW", sector: "半導體廠務工程 / 系統整合" },
   "5536": { name: "聖暉*", suffix: "TWO", sector: "無塵室 / 機電 / 廠務工程" },
@@ -1878,7 +1932,7 @@ const AI_SUPPLY_CHAIN_STOCKS = {
 };
 
 const AI_SUPPLY_CHAIN_THEME_CODES = {
-  tsmc: uniqueList(["2330", "3711", "6770", "5347", "3131", "3583", "6187", "6510", "6196", "5536", "2404", "5538", "2467", "5443", "6640", "4763", "1723", "4739", "1773", "4721", "1560", "4766", "8028", "3595", "2449", "3264", "6223", "6789", "6257", "6239", ...AI_FACTORY_TSMC_SPILLOVER_CODES]),
+  tsmc: uniqueList(["2330", "3711", "6770", "5347", "3131", "3583", "6187", "6510", "6196", "5536", "2404", "5538", "2467", "5443", "6640", "4763", "1723", "4739", "1773", "4721", "1560", "4766", "8028", "3595", "2449", "3264", "6223", "6789", "6257", "6239", ...TSMC_EQUIPMENT_ROTATION_CODES, ...AI_FACTORY_TSMC_SPILLOVER_CODES]),
   cpo: uniqueList(["2330", "3711", "6223", "6510", "3081", "3450", "4979", "3363", "3234", "4908", "4977", "6442", "3163", "7402", "2345", "3380", "6285", "3596", "5388", "3704", "2347", "3008", "3406", "3019", "3362", "6209", "3665", ...NEXT_WAVE_LAYER2_CPO_CODES]),
   pcb: uniqueList(["3037", "3189", "8046", "8150", "2327", "2313", "2368", "2383", "3044", "4958", "6269", "6274", "6213", "8358", "3305", "3715", "5469", "5439", "2402", "6153", "2385", "6191", "1815", "1802", "8039", "4766", ...NEXT_WAVE_LAYER1_PCB_CODES, ...UNDERDEVELOPED_HIGH_SPEED_BACKPLANE_CODES]),
   advancedPackaging: ADVANCED_PACKAGING_CODES,
@@ -2327,7 +2381,7 @@ const PODCAST_TOPIC_RULES = [
   { label: "CPO / 矽光子", keywords: ["cpo", "矽光子", "co-packaged optics", "co packaged optics", "光通訊", "fau", "光學耦合", "準直鏡"] },
   { label: "蘋概 / 光學鏡頭", keywords: ["蘋概", "蘋果供應鏈", "iphone", "apple supply chain", "大立光", "玉晶光", "亞光", "光學鏡頭"] },
   { label: "記憶體", keywords: ["記憶體", "dram", "nand", "南亞科", "華邦電", "群聯"] },
-  { label: "半導體設備 / 廠務", keywords: ["設備", "廠務", "漢唐", "聖暉", "亞翔", "帆宣", "均華", "萬潤", "弘塑", "辛耘"] },
+  { label: "半導體設備 / 廠務", keywords: ["設備", "廠務", "漢唐", "聖暉", "亞翔", "帆宣", "均華", "萬潤", "弘塑", "辛耘", "京鼎", "鴻勁", "中砂", "昇陽半導體"] },
   { label: "ETF / 主動式基金", keywords: ["etf", "主動式", "基金", "981a", "00981a"] },
   { label: "重電 / 電網", keywords: ["重電", "電網", "變壓器", "華城", "中興電", "士電", "亞力"] },
   { label: "低軌 / 衛星", keywords: ["低軌", "衛星", "昇達科", "金寶", "kinpo"] },
@@ -2423,6 +2477,7 @@ const STOCK_MAP = new Map(WATCHLIST.map((stock) => [stock.code, stock]));
 const THEME_SUBCATEGORIES = {
   tsmc: {
     "AI factory 台積電外溢鏈": AI_FACTORY_TSMC_SPILLOVER_CODES,
+    "法說後設備觀察": TSMC_EQUIPMENT_ROTATION_CODES,
     "廠務核心":   ["2404", "5536", "6196", "6139", "6691", "6125"],
     "CoWoS設備":  ["6640", "3131", "6187", "3583", "2464", "2467", "7734", "3535", "3167", "6789", "2360"],
     "封測OSAT":   ["3711", "2449", "6239"],
@@ -22253,6 +22308,7 @@ function jumpToSearchResult(code, context = "搜尋前往") {
   persistStateSilently(context);
   render();
   switchTab("report");
+  compactMobileSidebarAfterNavigation({ scrollToMain: true });
   return true;
 }
 
@@ -22865,12 +22921,16 @@ function revenueHistoryRowsForCode(code) {
     if (!row || typeof row !== "object" || Array.isArray(row)) return;
     const month = normalizeMonthKey(row.yearMonth || row.period || row.date || row.fetchedAt);
     if (!month) return;
+    const existing = byMonth.get(month) || {};
     byMonth.set(month, {
       yearMonth: month,
-      yoyPct: toNumber(row.yoyPct),
-      momPct: toNumber(row.momPct),
-      current: toNumber(row.current),
-      fetchedAt: row.fetchedAt || ""
+      yoyPct: toNumber(row.yoyPct) ?? existing.yoyPct ?? null,
+      momPct: toNumber(row.momPct) ?? existing.momPct ?? null,
+      cumulativeYoyPct: toNumber(row.cumulativeYoyPct) ?? existing.cumulativeYoyPct ?? null,
+      current: toNumber(row.current) ?? existing.current ?? null,
+      source: row.source || existing.source || "",
+      sourceTier: row.sourceTier || existing.sourceTier || "",
+      fetchedAt: row.fetchedAt || existing.fetchedAt || ""
     });
   };
   for (const row of (Array.isArray(state.revenueHistory?.[code]) ? state.revenueHistory[code] : [])) addRow(row);
@@ -37561,11 +37621,249 @@ function revenueTrendVerdict(stats, quarters, years) {
 
 // v17.1：30% 年增門檻（影片概念，台灣平均年增長基準）——營收年增與獲利(EPS)年增均須 ≥ 30%
 const GROWTH_GATE_THRESHOLD = 30;
-function thirtyPercentGrowthCheck(code) {
+const PRICE_FUNDAMENTAL_DIVERGENCE_RULES = Object.freeze({
+  alertMinPriceReturnPct: 70,
+  alertGapPct: 40,
+  watchMinPriceReturnPct: 40,
+  watchGapPct: 25
+});
+
+function cumulativeRevenueGrowthInfo(code) {
   const hist = revenueHistoryRowsForCode(code);
   const latest = hist.at(-1) || null;
-  // 營收年增：累計年增優先（同影片「營收累計成長」欄），否則用最新單月 YoY
-  const revYoY = toNumber(latest?.cumulativeYoyPct) ?? toNumber(latest?.yoyPct);
+  const explicit = toNumber(latest?.cumulativeYoyPct);
+  if (explicit !== null) {
+    return {
+      value: explicit,
+      yearMonth: latest.yearMonth || "",
+      label: `${latest.yearMonth || "最新"} 累計營收 YoY`,
+      source: latest.source || revenueFor(code)?.source || "月營收快取",
+      sourceTier: latest.sourceTier || revenueFor(code)?.sourceTier || ""
+    };
+  }
+  const latestYear = revenueYearRows(hist, 5).at(-1) || null;
+  if (latestYear && latestYear.yoyPct !== null) {
+    return {
+      value: latestYear.yoyPct,
+      yearMonth: latest?.yearMonth || "",
+      label: `${latestYear.year} 累計 ${latestYear.monthCount} 個月營收 YoY`,
+      source: latest?.source || revenueFor(code)?.source || "月營收歷史計算",
+      sourceTier: latest?.sourceTier || revenueFor(code)?.sourceTier || ""
+    };
+  }
+  return {
+    value: toNumber(latest?.yoyPct),
+    yearMonth: latest?.yearMonth || "",
+    label: latest?.yearMonth ? `${latest.yearMonth} 單月營收 YoY（累計待補）` : "營收成長待補",
+    source: latest?.source || revenueFor(code)?.source || "",
+    sourceTier: latest?.sourceTier || revenueFor(code)?.sourceTier || ""
+  };
+}
+
+function monthEndDate(yearMonth) {
+  const month = normalizeMonthKey(yearMonth);
+  if (!month) return "";
+  const [year, monthNumber] = month.split("-").map(Number);
+  if (!year || !monthNumber) return "";
+  return `${year}-${pad2(monthNumber)}-${pad2(new Date(year, monthNumber, 0).getDate())}`;
+}
+
+function priceReturnForRevenuePeriod(code, yearMonth, fallbackSnapshot = null) {
+  const month = normalizeMonthKey(yearMonth);
+  if (!month) return { available: false, reason: "缺營收年月，無法建立同期間股價比較" };
+  const year = Number(month.slice(0, 4));
+  const startMonth = `${year - 1}-12`;
+  const startCutoff = `${startMonth}-31`;
+  const endCutoff = monthEndDate(month);
+  const rows = latestKlines(code)
+    .map((row) => ({ ...row, close: toNumber(row?.close), date: String(row?.date || "") }))
+    .filter((row) => row.date && row.close !== null && row.close > 0)
+    .sort((left, right) => left.date.localeCompare(right.date));
+  const startRow = rows.filter((row) => row.date.startsWith(startMonth) && row.date <= startCutoff).at(-1) || null;
+  const endRow = rows.filter((row) => row.date.startsWith(month) && row.date <= endCutoff).at(-1) || null;
+  if (startRow && endRow) {
+    return {
+      available: true,
+      priceReturnPct: (endRow.close - startRow.close) / startRow.close * 100,
+      startDate: startRow.date,
+      startClose: startRow.close,
+      endDate: endRow.date,
+      endClose: endRow.close,
+      source: [startRow.source, endRow.source].filter(Boolean).filter((item, index, all) => all.indexOf(item) === index).join(" + ") || "本機日線快取",
+      sourceTier: /TWSE|TPEx|櫃買|證交所/i.test(`${startRow.source || ""} ${endRow.source || ""}`) ? "Tier 1 / 交易所官方" : "本機日線快取",
+      asOf: endRow.date,
+      fetchedAt: state.klineUpdatedAt || "",
+      confidence: /TWSE|TPEx|櫃買|證交所/i.test(`${startRow.source || ""} ${endRow.source || ""}`) ? "high" : "medium",
+      sourceUrl: "",
+      fallbackUsed: false
+    };
+  }
+  const startClose = toNumber(fallbackSnapshot?.startClose);
+  const endClose = toNumber(fallbackSnapshot?.endClose);
+  if (startClose !== null && startClose > 0 && endClose !== null && endClose > 0) {
+    return {
+      available: true,
+      priceReturnPct: (endClose - startClose) / startClose * 100,
+      startDate: fallbackSnapshot.startDate || `${year - 1}-12-31`,
+      startClose,
+      endDate: fallbackSnapshot.endDate || endCutoff,
+      endClose,
+      source: fallbackSnapshot.source || "交易所官方區間快照",
+      sourceTier: fallbackSnapshot.sourceTier || "Tier 1 / 交易所官方",
+      asOf: fallbackSnapshot.endDate || endCutoff,
+      fetchedAt: fallbackSnapshot.fetchedAt || fallbackSnapshot.verifiedAt || "",
+      confidence: fallbackSnapshot.confidence || "high",
+      sourceUrl: fallbackSnapshot.endUrl || fallbackSnapshot.sourceUrl || "",
+      fallbackUsed: true
+    };
+  }
+  const missing = [startRow ? "" : `${startMonth} 年底收盤`, endRow ? "" : `${month} 月底收盤`].filter(Boolean).join("、");
+  return { available: false, reason: `缺 ${missing || "同期間日線"}；不能把缺值視為無風險` };
+}
+
+function analyzePriceFundamentalDivergence({ priceInfo, revenueGrowthPct, earningsGrowthPct, revenueLabel = "累計營收 YoY", earningsLabel = "獲利 / EPS 成長", estimateUnverified = false }) {
+  const priceReturnPct = toNumber(priceInfo?.priceReturnPct);
+  const revenueGrowth = toNumber(revenueGrowthPct);
+  const earningsGrowth = toNumber(earningsGrowthPct);
+  const availableGrowth = [revenueGrowth, earningsGrowth].filter((value) => value !== null);
+  if (!priceInfo?.available || priceReturnPct === null || !availableGrowth.length) {
+    return {
+      level: "missing",
+      label: "股價 × 基本面待補",
+      priceReturnPct,
+      revenueGrowthPct: revenueGrowth,
+      earningsGrowthPct: earningsGrowth,
+      priceInfo,
+      detail: priceInfo?.reason || "缺同期間股價、累計營收或獲利成長，暫不判定脫鉤。",
+      action: "先補同期間日線與累計營收 / EPS；缺資料不等於沒有估值風險。",
+      confidence: "low"
+    };
+  }
+  const strongestFundamentalGrowth = Math.max(...availableGrowth);
+  const broadGapPct = priceReturnPct - strongestFundamentalGrowth;
+  const revenueGapPct = revenueGrowth === null ? null : priceReturnPct - revenueGrowth;
+  const earningsGapPct = earningsGrowth === null ? null : priceReturnPct - earningsGrowth;
+  const rules = PRICE_FUNDAMENTAL_DIVERGENCE_RULES;
+  const outrunsAll = priceReturnPct >= rules.alertMinPriceReturnPct && broadGapPct >= rules.alertGapPct;
+  const outrunsRevenue = revenueGapPct !== null && priceReturnPct >= rules.alertMinPriceReturnPct && revenueGapPct >= rules.alertGapPct;
+  const watchGap = priceReturnPct >= rules.watchMinPriceReturnPct && broadGapPct >= rules.watchGapPct;
+  let level = "balanced";
+  let label = "尚未明顯脫鉤";
+  let detail = `同期間股價 ${formatPct(priceReturnPct)}；尚未同時大幅超過可用的營收與獲利成長。`;
+  let action = "仍需搭配估值、毛利率、營益率、訂單與基期判讀；未觸發警示不代表便宜。";
+  if (outrunsAll) {
+    level = "alert";
+    label = "股價明顯領先基本面";
+    detail = `同期間股價 ${formatPct(priceReturnPct)}，比目前較強的基本面成長 ${formatPct(strongestFundamentalGrowth)} 還高 ${formatNumber(broadGapPct, 1)} 個百分點；估值或情緒可能已過度提前反映。`;
+    action = "優先回查 EPS 是否再上修、毛利率 / 營益率是否擴張、訂單與產能是否新增；若沒有新佐證，需留意估值收斂。";
+  } else if (outrunsRevenue) {
+    level = "watch";
+    label = "股價領先營收，獲利假設待驗證";
+    detail = `同期間股價 ${formatPct(priceReturnPct)}，領先${revenueLabel} ${formatPct(revenueGrowth)} 達 ${formatNumber(revenueGapPct, 1)} 個百分點${earningsGrowth !== null ? `；${earningsLabel} ${formatPct(earningsGrowth)} 可部分解釋` : ""}。`;
+    action = `確認成長是否真由毛利率、產品組合或訂單升級帶動${estimateUnverified ? "；目前獲利數字屬未複核預估，不能直接當作已實現" : ""}。`;
+  } else if (watchGap) {
+    level = "watch";
+    label = "漲幅開始領先基本面";
+    detail = `同期間股價 ${formatPct(priceReturnPct)}，領先目前較強的基本面成長 ${formatPct(strongestFundamentalGrowth)} 達 ${formatNumber(broadGapPct, 1)} 個百分點。`;
+    action = "檢查是否有尚未反映在營收的 EPS / 毛利率上修；若沒有，避免只因價格動能追高。";
+  }
+  return {
+    level,
+    label,
+    priceReturnPct,
+    revenueGrowthPct: revenueGrowth,
+    earningsGrowthPct: earningsGrowth,
+    revenueGapPct,
+    earningsGapPct,
+    broadGapPct,
+    strongestFundamentalGrowth,
+    priceInfo,
+    revenueLabel,
+    earningsLabel,
+    detail,
+    action,
+    confidence: estimateUnverified ? "medium" : (priceInfo.confidence || "medium")
+  };
+}
+
+function equipmentPriceFundamentalDivergence(row, snapshot = TSMC_EQUIPMENT_ROTATION) {
+  const fallbackBase = snapshot.priceReturnSnapshot?.values?.[row.code] || null;
+  const fallbackSnapshot = fallbackBase ? {
+    ...fallbackBase,
+    startDate: snapshot.priceReturnSnapshot.startAsOf,
+    endDate: snapshot.priceReturnSnapshot.endAsOf,
+    sourceTier: snapshot.priceReturnSnapshot.sourceTier,
+    fetchedAt: snapshot.priceReturnSnapshot.fetchedAt,
+    confidence: snapshot.priceReturnSnapshot.confidence
+  } : null;
+  return analyzePriceFundamentalDivergence({
+    priceInfo: priceReturnForRevenuePeriod(row.code, snapshot.revenueAsOf, fallbackSnapshot),
+    revenueGrowthPct: row.revenueCumulativeYoy,
+    earningsGrowthPct: row.epsGrowth26e,
+    revenueLabel: "1–6 月累計營收 YoY",
+    earningsLabel: "2026E EPS 成長",
+    estimateUnverified: true
+  });
+}
+
+function companyPriceFundamentalDivergence(code) {
+  const revenueInfo = cumulativeRevenueGrowthInfo(code);
+  const stock = STOCK_MAP.get(code) || null;
+  const eps25 = toNumber(stock?.eps25);
+  const eps26 = toNumber(stock?.eps26e);
+  const epsGrowth = eps25 !== null && eps25 > 0 && eps26 !== null ? (eps26 - eps25) / eps25 * 100 : null;
+  const equipmentRow = TSMC_EQUIPMENT_ROTATION.rows.find((row) => row.code === code) || null;
+  const fallbackBase = revenueInfo.yearMonth === TSMC_EQUIPMENT_ROTATION.revenueAsOf
+    ? TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot?.values?.[code]
+    : null;
+  const fallbackSnapshot = fallbackBase ? {
+    ...fallbackBase,
+    startDate: TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot.startAsOf,
+    endDate: TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot.endAsOf,
+    sourceTier: TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot.sourceTier,
+    fetchedAt: TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot.fetchedAt,
+    confidence: TSMC_EQUIPMENT_ROTATION.priceReturnSnapshot.confidence
+  } : null;
+  return analyzePriceFundamentalDivergence({
+    priceInfo: priceReturnForRevenuePeriod(code, revenueInfo.yearMonth, fallbackSnapshot),
+    revenueGrowthPct: revenueInfo.value ?? equipmentRow?.revenueCumulativeYoy,
+    earningsGrowthPct: epsGrowth ?? equipmentRow?.epsGrowth26e,
+    revenueLabel: revenueInfo.label,
+    earningsLabel: epsGrowth !== null ? "EPS 年增" : "2026E EPS 成長",
+    estimateUnverified: epsGrowth === null && Boolean(equipmentRow)
+  });
+}
+
+function renderPriceFundamentalDivergence(result, { compact = false } = {}) {
+  const price = result.priceReturnPct !== null && result.priceReturnPct !== undefined ? formatPct(result.priceReturnPct) : "待補";
+  const revenue = result.revenueGrowthPct !== null && result.revenueGrowthPct !== undefined ? formatPct(result.revenueGrowthPct) : "待補";
+  const earnings = result.earningsGrowthPct !== null && result.earningsGrowthPct !== undefined ? formatPct(result.earningsGrowthPct) : "待補";
+  const pricePeriod = result.priceInfo?.startDate && result.priceInfo?.endDate ? `${result.priceInfo.startDate} → ${result.priceInfo.endDate}` : "同期間待補";
+  const sourceLink = result.priceInfo?.sourceUrl
+    ? `<a href="${escapeHtml(result.priceInfo.sourceUrl)}" target="_blank" rel="noopener noreferrer">官方股價區間</a>`
+    : "";
+  const confidenceLabel = { high: "高", medium: "中", low: "低" }[result.confidence] || "待補";
+  return `
+    <div class="price-fundamental-divergence${compact ? " compact" : ""}" data-price-fundamental-divergence data-divergence-level="${escapeHtml(result.level)}">
+      <div class="price-fundamental-head">
+        <strong>${escapeHtml(result.label)}</strong>
+        <span>${escapeHtml(pricePeriod)}</span>
+      </div>
+      <div class="price-fundamental-values">
+        <span>股價 <b>${price}</b></span>
+        <span>累計營收 <b>${revenue}</b></span>
+        <span>獲利 / EPS <b>${earnings}</b></span>
+      </div>
+      <p>${escapeHtml(result.detail)}</p>
+      <small>${escapeHtml(result.action)}｜判讀信心：${escapeHtml(confidenceLabel)}${result.priceInfo?.source ? `｜股價來源：${escapeHtml(result.priceInfo.source)}${result.priceInfo.fallbackUsed ? "（固定官方快照）" : ""}` : ""}${result.priceInfo?.sourceTier ? `｜${escapeHtml(result.priceInfo.sourceTier)}` : ""}${sourceLink ? `｜${sourceLink}` : ""}</small>
+    </div>
+  `;
+}
+
+function thirtyPercentGrowthCheck(code) {
+  const revenueGrowth = cumulativeRevenueGrowthInfo(code);
+  // 營收年增：累計年增優先；歷史足夠時用本機同月份集合計算，最後才退回最新單月 YoY
+  const revYoY = revenueGrowth.value;
   const stock = STOCK_MAP.get(code) || null;
   const eps25 = toNumber(stock?.eps25);
   const eps26 = toNumber(stock?.eps26e);
@@ -37783,6 +38081,7 @@ function renderCompanyQualityCard(code) {
   const valuationBandLabel = priceModel?.ready && curPrice !== null
     ? (curPrice <= priceModel.buyHigh ? "落在情境買進帶" : curPrice >= priceModel.sellLow ? "接近情境減碼帶" : "情境中性區")
     : "";
+  const divergence = companyPriceFundamentalDivergence(code);
   return `
     <div class="panel-lite" data-company-quality style="margin-top:12px;">
       <div class="section-head">
@@ -37803,6 +38102,10 @@ function renderCompanyQualityCard(code) {
               <div style="margin-top:4px;font-size:0.68rem;color:var(--muted);">台灣平均年增約 30%，雙軌達標才算贏過平均。</div>
             `;
           })()}
+        </div>
+        <div class="report-card" data-company-price-fundamental>
+          <h3>股價 × 基本面脫鉤檢查</h3>
+          ${renderPriceFundamentalDivergence(divergence, { compact: true })}
         </div>
         <div class="report-card">
           <h3>估值（官方）</h3>
@@ -43113,6 +43416,109 @@ function overviewDeferredPlaceholder(id) {
   container.innerHTML = `<div class="empty">區塊分批載入中...</div>`;
 }
 
+function equipmentOfficialCompanyUrl(stock) {
+  if (!stock) return "https://mops.twse.com.tw/mops/web/index";
+  if (stock.suffix === "TWO") {
+    return "https://www.tpex.org.tw/web/regular_emerging/corporateInfo/regular/regular_stock.php?l=zh-tw";
+  }
+  return `https://www.twse.com.tw/IIH2/zh/company/information.html?code=${encodeURIComponent(stock.code)}`;
+}
+
+function equipmentRevenueSourceUrl(stock) {
+  return stock?.suffix === "TWO"
+    ? "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O"
+    : "https://openapi.twse.com.tw/v1/opendata/t187ap05_L";
+}
+
+function renderEquipmentRotationPanel() {
+  const container = $("equipmentRotationPanel");
+  if (!container) return;
+  if (state.filter !== "tsmc") {
+    container.innerHTML = "";
+    return;
+  }
+
+  const snapshot = TSMC_EQUIPMENT_ROTATION;
+  const official = snapshot.tsmcOfficial;
+  const cards = snapshot.rows.map((row) => {
+    const stock = STOCK_MAP.get(row.code) || { code: row.code, name: row.name, suffix: "TW" };
+    const yahooSuffix = stock.suffix === "TWO" ? "TWO" : "TW";
+    const divergence = equipmentPriceFundamentalDivergence(row, snapshot);
+    return `
+      <article class="equipment-stock-card" data-equipment-code="${escapeHtml(row.code)}" data-revenue-verified="true" data-equipment-divergence="${escapeHtml(divergence.level)}">
+        <div class="equipment-stock-head">
+          <div>
+            <span class="equipment-code">${escapeHtml(row.code)}.${escapeHtml(yahooSuffix)}</span>
+            <h3>${escapeHtml(row.name)}</h3>
+          </div>
+          <span class="equipment-stance">${escapeHtml(row.stance)}</span>
+        </div>
+        <div class="equipment-metric-grid" aria-label="${escapeHtml(row.name)}研究快照">
+          <div><span>本益比*</span><strong>${formatNumber(row.pe, 1)}×</strong></div>
+          <div><span>2026E EPS*</span><strong>${formatNumber(row.eps26e, 2)}</strong></div>
+          <div><span>2026E 成長*</span><strong>${formatPercentMetric(row.epsGrowth26e, 1)}</strong></div>
+          <div><span>6 月營收 YoY</span><strong>${formatPercentMetric(row.revenueJuneYoy, 1)}</strong></div>
+          <div><span>1–6 月累計 YoY</span><strong>${formatPercentMetric(row.revenueCumulativeYoy, 1)}</strong></div>
+          <div><span>1–6 月股價</span><strong>${divergence.priceReturnPct !== null && divergence.priceReturnPct !== undefined ? formatPct(divergence.priceReturnPct) : "待補日線"}</strong></div>
+        </div>
+        ${renderPriceFundamentalDivergence(divergence, { compact: true })}
+        <p class="equipment-thesis">${escapeHtml(row.thesis)}</p>
+        <p class="equipment-risk"><strong>風險：</strong>${escapeHtml(row.risk)}</p>
+        <button class="equipment-report-btn" type="button" data-equipment-stock-code="${escapeHtml(row.code)}">開啟 ${escapeHtml(row.name)} 個股研究</button>
+        <div class="link-row equipment-link-row" aria-label="${escapeHtml(row.name)}核對連結">
+          <a class="link-chip" href="https://tw.stock.yahoo.com/quote/${encodeURIComponent(row.code)}.${encodeURIComponent(yahooSuffix)}" target="_blank" rel="noopener noreferrer">Yahoo 報價</a>
+          <a class="link-chip" href="${escapeHtml(equipmentOfficialCompanyUrl(stock))}" target="_blank" rel="noopener noreferrer">${stock.suffix === "TWO" ? "TPEx" : "TWSE"} 公司資料</a>
+          <a class="link-chip" href="${escapeHtml(equipmentRevenueSourceUrl(stock))}" target="_blank" rel="noopener noreferrer">官方月營收 API</a>
+          <a class="link-chip" href="https://mops.twse.com.tw/mops/web/t21sc04" target="_blank" rel="noopener noreferrer">MOPS 月營收</a>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <section class="panel equipment-rotation-panel" data-equipment-rotation-panel>
+      <div class="equipment-hero">
+        <div>
+          <div class="equipment-eyebrow">TSMC 2Q26 後續研究 · 法說已於 ${escapeHtml(snapshot.eventAsOf)} 結束</div>
+          <h2>${escapeHtml(snapshot.title)}</h2>
+          <p>研究情境：台積電法說後若先整理，設備股的短期波動可能更大；若基本面未轉弱且台積電重新轉強，設備股可能出現較高彈性。這是<strong>待回測的研究假設</strong>，不是已證實因果或買賣訊號。</p>
+        </div>
+        <span class="equipment-status">已校正事件日期</span>
+      </div>
+
+      <div class="equipment-official-grid">
+        <div class="equipment-official-card">
+          <span>2Q26 官方實績</span>
+          <strong>營收 US$${formatNumber(official.q2RevenueUsdB, 2)}B</strong>
+          <small>毛利率 ${formatPercentMetric(official.q2GrossMarginPct, 1)} · 營益率 ${formatPercentMetric(official.q2OperatingMarginPct, 1)}</small>
+        </div>
+        <div class="equipment-official-card">
+          <span>3Q26 官方展望</span>
+          <strong>US$${formatNumber(official.q3RevenueLowUsdB, 1)}–${formatNumber(official.q3RevenueHighUsdB, 1)}B</strong>
+          <small>毛利率區間 ${formatPercentMetric(official.q3GrossMarginLowPct, 0)}–${formatPercentMetric(official.q3GrossMarginHighPct, 0)}</small>
+        </div>
+        <div class="equipment-source-card">
+          <strong>來源邊界</strong>
+          <span>台積電實績 / 展望：Tier 1 官方</span>
+          <span>6 月營收：TWSE / TPEx 官方 API 已核對</span>
+          <span>本益比 / 2026E EPS：使用者快照，⚠️ 待券商原始報告複核</span>
+        </div>
+      </div>
+
+      <div class="equipment-flow" aria-label="研究驗證流程">
+        <span>① 法說後是否整理</span><b>→</b><span>② 設備股是否量縮止穩</span><b>→</b><span>③ 台積 / 設備重新轉強</span><b>→</b><span>④ 月營收與獲利預估續強</span>
+      </div>
+
+      <div class="equipment-disclaimer">
+        <strong>資料狀態：</strong>民國 115 年 6 月營收年增值已與 TWSE / TPEx 官方 API 逐檔核對，四捨五入後與截圖一致；2026 上半年股價漲幅以 2025-12-31 至 2026-06-30 交易所官方收盤計算。標有 * 的本益比、2026E EPS 與成長率沒有附原始券商報告，僅作研究排序，不進入交易雷達分數。股價領先營收 / EPS 的警示是估值與預期檢查，不等同公司基本面造假或確定賣出訊號。
+        <a href="${escapeHtml(official.url)}" target="_blank" rel="noopener noreferrer">台積電 2Q26 官方法說資料</a>
+      </div>
+
+      <div class="equipment-stock-grid">${cards}</div>
+    </section>
+  `;
+}
+
 function scheduleOverviewRenderChunk(token, delayMs, sections) {
   setTimeout(() => {
     if (token !== _overviewRenderToken || state.activeTab !== "overview") return;
@@ -43129,6 +43535,7 @@ function renderOverviewStaged() {
   renderSection("記憶體報價", renderMemoryMarketPanel, "memoryMarketPanel");
   renderSection("金融股研究框架", renderFinancialPanel, "financialPanel");
   renderSection("好老闆研究框架", renderGoodBossPanel, "goodBossPanel");
+  renderSection("法說後設備股觀察", renderEquipmentRotationPanel, "equipmentRotationPanel");
   renderSection("主題分類稽核", renderClassificationAuditPanel, "classificationAuditPanel");
   if (cardsArePrimary) renderSection("個股卡片", renderCards, "cardsGrid");
 
@@ -43749,6 +44156,29 @@ function applyChartAction(action, delta = 0) {
   render();
 }
 
+function isCompactMobileLayout() {
+  return typeof window !== "undefined" && window.matchMedia?.("(max-width: 900px)").matches;
+}
+
+function setMobileSidebarTools(open) {
+  const sidebar = document.querySelector(".sidebar");
+  const button = $("mobileSidebarToggle");
+  if (!sidebar || !button) return;
+  const expanded = Boolean(open);
+  sidebar.classList.toggle("mobile-tools-open", expanded);
+  button.setAttribute("aria-expanded", expanded ? "true" : "false");
+  button.textContent = expanded ? "收起工具" : "主題 / 股池";
+}
+
+function compactMobileSidebarAfterNavigation(options = {}) {
+  if (!isCompactMobileLayout()) return;
+  setMobileSidebarTools(false);
+  if (!options.scrollToMain) return;
+  window.requestAnimationFrame(() => {
+    document.querySelector(".main-content")?.scrollIntoView({ block: "start", behavior: "smooth" });
+  });
+}
+
 function bindEvents() {
   document.body.addEventListener("click", (event) => {
     const link = event.target.closest("a[href]");
@@ -43767,7 +44197,29 @@ function bindEvents() {
   }, true);
 
   document.querySelectorAll(".tab-btn").forEach((button) => {
-    button.addEventListener("click", () => switchTab(button.dataset.tabTarget));
+    button.addEventListener("click", () => {
+      switchTab(button.dataset.tabTarget);
+      compactMobileSidebarAfterNavigation({ scrollToMain: true });
+    });
+  });
+
+  $("mobileSidebarToggle")?.addEventListener("click", () => {
+    const sidebar = document.querySelector(".sidebar");
+    setMobileSidebarTools(!sidebar?.classList.contains("mobile-tools-open"));
+  });
+
+  document.body.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-equipment-stock-code]");
+    if (!button) return;
+    const code = button.dataset.equipmentStockCode;
+    if (!STOCK_MAP.has(code)) return;
+    state.selectedCode = code;
+    state.filter = "tsmc";
+    state.search = "";
+    persistStateSilently("設備股研究卡選股");
+    render();
+    switchTab("report");
+    compactMobileSidebarAfterNavigation({ scrollToMain: true });
   });
 
   document.body.addEventListener("click", (event) => {
@@ -43853,6 +44305,7 @@ function bindEvents() {
     if (isEtfTrackingThemeFilter(state.filter)) state.activeTab = "active-etf";
     persistStateSilently("主題分頁");
     render();
+    compactMobileSidebarAfterNavigation({ scrollToMain: true });
   });
 
   document.addEventListener("click", (event) => {
@@ -44989,10 +45442,12 @@ function schedulePostStartupIdleTasks() {
 }
 
 async function init() {
-  try {
-    await Promise.race([initFSSync(), timeoutAfter(800, "File sync init")]);
-  } catch (error) {
-    console.warn("initFSSync skipped", error);
+  if (!isPublishedWebRuntime()) {
+    try {
+      await Promise.race([initFSSync(), timeoutAfter(800, "File sync init")]);
+    } catch (error) {
+      console.warn("initFSSync skipped", error);
+    }
   }
   await loadState();
   normalizeStateAfterLoad();
