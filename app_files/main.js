@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.6";
+const APP_VERSION = "17.7";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -22915,7 +22915,45 @@ function monotonicDirection(values) {
   return "mixed";
 }
 
+const _revenueHistoryDerivedCache = new Map();
+const REVENUE_HISTORY_DERIVED_CACHE_LIMIT = 480;
+const EMPTY_REVENUE_HISTORY_ROWS = Object.freeze([]);
+
+function rememberRevenueHistoryDerived(code, value) {
+  _revenueHistoryDerivedCache.set(code, value);
+  if (_revenueHistoryDerivedCache.size <= REVENUE_HISTORY_DERIVED_CACHE_LIMIT) return;
+  const oldestKey = _revenueHistoryDerivedCache.keys().next().value;
+  if (oldestKey !== undefined) _revenueHistoryDerivedCache.delete(oldestKey);
+}
+
+function revenueHistoryCacheSignature(historyRows, currentRevenue) {
+  const first = historyRows[0] || {};
+  const latest = historyRows.at(-1) || {};
+  return [
+    historyRows.length,
+    first.yearMonth || first.period || "",
+    first.current ?? "",
+    latest.yearMonth || latest.period || "",
+    latest.current ?? "",
+    latest.yoyPct ?? "",
+    latest.cumulativeYoyPct ?? "",
+    currentRevenue?.yearMonth || currentRevenue?.period || "",
+    currentRevenue?.current ?? "",
+    currentRevenue?.yoyPct ?? "",
+    currentRevenue?.cumulativeYoyPct ?? ""
+  ].join("|");
+}
+
 function revenueHistoryRowsForCode(code) {
+  const historyRows = Array.isArray(state.revenueHistory?.[code]) ? state.revenueHistory[code] : EMPTY_REVENUE_HISTORY_ROWS;
+  const currentRevenue = revenueFor(code);
+  const signature = revenueHistoryCacheSignature(historyRows, currentRevenue);
+  const cached = _revenueHistoryDerivedCache.get(code);
+  if (cached && cached.historyRows === historyRows && cached.currentRevenue === currentRevenue && cached.signature === signature) {
+    recordPerformanceCache("revenueHistoryRows", "hit");
+    return cached.rows;
+  }
+  recordPerformanceCache("revenueHistoryRows", "miss");
   const byMonth = new Map();
   const addRow = (row) => {
     if (!row || typeof row !== "object" || Array.isArray(row)) return;
@@ -22933,9 +22971,11 @@ function revenueHistoryRowsForCode(code) {
       fetchedAt: row.fetchedAt || existing.fetchedAt || ""
     });
   };
-  for (const row of (Array.isArray(state.revenueHistory?.[code]) ? state.revenueHistory[code] : [])) addRow(row);
-  addRow(revenueFor(code));
-  return [...byMonth.values()].sort((a, b) => a.yearMonth.localeCompare(b.yearMonth));
+  for (const row of historyRows) addRow(row);
+  addRow(currentRevenue);
+  const rows = [...byMonth.values()].sort((a, b) => a.yearMonth.localeCompare(b.yearMonth));
+  rememberRevenueHistoryDerived(code, { historyRows, currentRevenue, signature, rows });
+  return rows;
 }
 
 function holdingRevenueSignal(code) {
@@ -37627,6 +37667,17 @@ const PRICE_FUNDAMENTAL_DIVERGENCE_RULES = Object.freeze({
   watchMinPriceReturnPct: 40,
   watchGapPct: 25
 });
+const _priceFundamentalPeriodCache = new Map();
+const PRICE_FUNDAMENTAL_PERIOD_CACHE_LIMIT = 240;
+const EMPTY_PRICE_FUNDAMENTAL_KLINES = Object.freeze([]);
+
+function rememberPriceFundamentalPeriod(key, value) {
+  _priceFundamentalPeriodCache.set(key, value);
+  if (_priceFundamentalPeriodCache.size <= PRICE_FUNDAMENTAL_PERIOD_CACHE_LIMIT) return value.result;
+  const oldestKey = _priceFundamentalPeriodCache.keys().next().value;
+  if (oldestKey !== undefined) _priceFundamentalPeriodCache.delete(oldestKey);
+  return value.result;
+}
 
 function cumulativeRevenueGrowthInfo(code) {
   const hist = revenueHistoryRowsForCode(code);
@@ -37668,21 +37719,49 @@ function monthEndDate(yearMonth) {
   return `${year}-${pad2(monthNumber)}-${pad2(new Date(year, monthNumber, 0).getDate())}`;
 }
 
-function priceReturnForRevenuePeriod(code, yearMonth, fallbackSnapshot = null) {
+function priceReturnForRevenuePeriod(code, yearMonth, fallbackSnapshot = null, options = {}) {
   const month = normalizeMonthKey(yearMonth);
   if (!month) return { available: false, reason: "缺營收年月，無法建立同期間股價比較" };
   const year = Number(month.slice(0, 4));
   const startMonth = `${year - 1}-12`;
   const startCutoff = `${startMonth}-31`;
   const endCutoff = monthEndDate(month);
-  const rows = latestKlines(code)
-    .map((row) => ({ ...row, close: toNumber(row?.close), date: String(row?.date || "") }))
-    .filter((row) => row.date && row.close !== null && row.close > 0)
-    .sort((left, right) => left.date.localeCompare(right.date));
-  const startRow = rows.filter((row) => row.date.startsWith(startMonth) && row.date <= startCutoff).at(-1) || null;
-  const endRow = rows.filter((row) => row.date.startsWith(month) && row.date <= endCutoff).at(-1) || null;
+  const rows = Array.isArray(state.klines?.[code]) ? state.klines[code] : EMPTY_PRICE_FUNDAMENTAL_KLINES;
+  if (!rows.length && options.hydrate !== false) queueKlineHydration([code], "priceFundamentalPeriod");
+  const fallbackSignature = [
+    fallbackSnapshot?.startDate || "",
+    fallbackSnapshot?.startClose ?? "",
+    fallbackSnapshot?.endDate || "",
+    fallbackSnapshot?.endClose ?? "",
+    fallbackSnapshot?.source || "",
+    fallbackSnapshot?.sourceTier || "",
+    fallbackSnapshot?.endUrl || fallbackSnapshot?.sourceUrl || "",
+    fallbackSnapshot?.fetchedAt || fallbackSnapshot?.verifiedAt || "",
+    fallbackSnapshot?.confidence || ""
+  ].join("|");
+  const cacheKey = `${code}|${month}`;
+  const cached = _priceFundamentalPeriodCache.get(cacheKey);
+  if (cached && cached.rows === rows && cached.fallbackSignature === fallbackSignature) {
+    recordPerformanceCache("priceFundamentalPeriod", "hit");
+    return cached.result;
+  }
+  recordPerformanceCache("priceFundamentalPeriod", "miss");
+  let startRow = null;
+  let endRow = null;
+  // 日線本身通常已排序；直接單次掃描可避免每張卡重建、過濾及排序整份陣列。
+  for (const row of rows) {
+    const date = String(row?.date || "");
+    const close = toNumber(row?.close);
+    if (!date || close === null || close <= 0) continue;
+    if (date.startsWith(startMonth) && date <= startCutoff && (!startRow || date > startRow.date)) {
+      startRow = { ...row, date, close };
+    }
+    if (date.startsWith(month) && date <= endCutoff && (!endRow || date > endRow.date)) {
+      endRow = { ...row, date, close };
+    }
+  }
   if (startRow && endRow) {
-    return {
+    return rememberPriceFundamentalPeriod(cacheKey, { rows, fallbackSignature, result: {
       available: true,
       priceReturnPct: (endRow.close - startRow.close) / startRow.close * 100,
       startDate: startRow.date,
@@ -37696,12 +37775,12 @@ function priceReturnForRevenuePeriod(code, yearMonth, fallbackSnapshot = null) {
       confidence: /TWSE|TPEx|櫃買|證交所/i.test(`${startRow.source || ""} ${endRow.source || ""}`) ? "high" : "medium",
       sourceUrl: "",
       fallbackUsed: false
-    };
+    } });
   }
   const startClose = toNumber(fallbackSnapshot?.startClose);
   const endClose = toNumber(fallbackSnapshot?.endClose);
   if (startClose !== null && startClose > 0 && endClose !== null && endClose > 0) {
-    return {
+    return rememberPriceFundamentalPeriod(cacheKey, { rows, fallbackSignature, result: {
       available: true,
       priceReturnPct: (endClose - startClose) / startClose * 100,
       startDate: fallbackSnapshot.startDate || `${year - 1}-12-31`,
@@ -37715,10 +37794,14 @@ function priceReturnForRevenuePeriod(code, yearMonth, fallbackSnapshot = null) {
       confidence: fallbackSnapshot.confidence || "high",
       sourceUrl: fallbackSnapshot.endUrl || fallbackSnapshot.sourceUrl || "",
       fallbackUsed: true
-    };
+    } });
   }
   const missing = [startRow ? "" : `${startMonth} 年底收盤`, endRow ? "" : `${month} 月底收盤`].filter(Boolean).join("、");
-  return { available: false, reason: `缺 ${missing || "同期間日線"}；不能把缺值視為無風險` };
+  return rememberPriceFundamentalPeriod(cacheKey, {
+    rows,
+    fallbackSignature,
+    result: { available: false, reason: `缺 ${missing || "同期間日線"}；不能把缺值視為無風險` }
+  });
 }
 
 function analyzePriceFundamentalDivergence({ priceInfo, revenueGrowthPct, earningsGrowthPct, revenueLabel = "累計營收 YoY", earningsLabel = "獲利 / EPS 成長", estimateUnverified = false }) {
@@ -37797,7 +37880,7 @@ function equipmentPriceFundamentalDivergence(row, snapshot = TSMC_EQUIPMENT_ROTA
     confidence: snapshot.priceReturnSnapshot.confidence
   } : null;
   return analyzePriceFundamentalDivergence({
-    priceInfo: priceReturnForRevenuePeriod(row.code, snapshot.revenueAsOf, fallbackSnapshot),
+    priceInfo: priceReturnForRevenuePeriod(row.code, snapshot.revenueAsOf, fallbackSnapshot, { hydrate: false }),
     revenueGrowthPct: row.revenueCumulativeYoy,
     earningsGrowthPct: row.epsGrowth26e,
     revenueLabel: "1–6 月累計營收 YoY",
@@ -37854,8 +37937,11 @@ function renderPriceFundamentalDivergence(result, { compact = false } = {}) {
         <span>累計營收 <b>${revenue}</b></span>
         <span>獲利 / EPS <b>${earnings}</b></span>
       </div>
-      <p>${escapeHtml(result.detail)}</p>
-      <small>${escapeHtml(result.action)}｜判讀信心：${escapeHtml(confidenceLabel)}${result.priceInfo?.source ? `｜股價來源：${escapeHtml(result.priceInfo.source)}${result.priceInfo.fallbackUsed ? "（固定官方快照）" : ""}` : ""}${result.priceInfo?.sourceTier ? `｜${escapeHtml(result.priceInfo.sourceTier)}` : ""}${sourceLink ? `｜${sourceLink}` : ""}</small>
+      <details class="price-fundamental-detail"${compact ? "" : " open"}>
+        <summary>判讀依據與下一步</summary>
+        <p>${escapeHtml(result.detail)}</p>
+        <small>${escapeHtml(result.action)}｜判讀信心：${escapeHtml(confidenceLabel)}${result.priceInfo?.source ? `｜股價來源：${escapeHtml(result.priceInfo.source)}${result.priceInfo.fallbackUsed ? "（固定官方快照）" : ""}` : ""}${result.priceInfo?.sourceTier ? `｜${escapeHtml(result.priceInfo.sourceTier)}` : ""}${sourceLink ? `｜${sourceLink}` : ""}</small>
+      </details>
     </div>
   `;
 }
@@ -38243,9 +38329,66 @@ function renderRevenuePullInPanel() {
   `;
 }
 
+let _revenueDeferredRenderToken = 0;
+
+function scheduleRevenueDeferredRender(token, code) {
+  const run = () => {
+    if (token !== _revenueDeferredRenderToken || state.activeTab !== "revenue") return;
+    const mount = $("revenueDeferredInsights");
+    if (!mount || mount.dataset.revenueCode !== code) return;
+    const startedAt = performanceDiagnosticsNow();
+    try {
+      mount.innerHTML = renderCompanyQualityCard(code);
+      mount.dataset.deferredStatus = "partial";
+      mount.dataset.companyRenderMs = String(Math.round(performanceDiagnosticsDuration(startedAt) || 0));
+    } catch (error) {
+      mount.dataset.deferredStatus = "error";
+      mount.innerHTML = `<div class="empty">延後研究區塊載入失敗：${escapeHtml(error?.message || String(error))}</div>`;
+      recordPerformanceRenderBlock("個股營收公司快篩", startedAt, { fallbackId: "revenueDeferredInsights", ok: false, tab: "revenue" });
+      return;
+    }
+    recordPerformanceRenderBlock("個股營收公司快篩", startedAt, { fallbackId: "revenueDeferredInsights", ok: true, tab: "revenue" });
+    const finish = () => {
+      if (token !== _revenueDeferredRenderToken || state.activeTab !== "revenue") return;
+      const currentMount = $("revenueDeferredInsights");
+      if (!currentMount || currentMount.dataset.revenueCode !== code) return;
+      const pullInStartedAt = performanceDiagnosticsNow();
+      try {
+        currentMount.insertAdjacentHTML("beforeend", renderRevenuePullInPanel());
+        currentMount.dataset.deferredStatus = "ready";
+        currentMount.dataset.pullInRenderMs = String(Math.round(performanceDiagnosticsDuration(pullInStartedAt) || 0));
+        currentMount.dataset.renderMs = String(
+          Number(currentMount.dataset.companyRenderMs || 0) + Number(currentMount.dataset.pullInRenderMs || 0)
+        );
+      } catch (error) {
+        currentMount.dataset.deferredStatus = "error";
+        currentMount.insertAdjacentHTML("beforeend", `<div class="empty">供應鏈動能載入失敗：${escapeHtml(error?.message || String(error))}</div>`);
+      } finally {
+        recordPerformanceRenderBlock("個股營收供應鏈動能", pullInStartedAt, {
+          fallbackId: "revenueDeferredInsights",
+          ok: currentMount.dataset.deferredStatus === "ready",
+          tab: "revenue"
+        });
+      }
+    };
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(() => setTimeout(finish, 0));
+    } else {
+      setTimeout(finish, 16);
+    }
+  };
+  const afterPaint = () => setTimeout(run, 0);
+  if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(afterPaint);
+  } else {
+    setTimeout(run, 16);
+  }
+}
+
 function renderRevenueLinksTab() {
   const container = $("revenueContent");
   if (!container) return;
+  const deferredToken = ++_revenueDeferredRenderToken;
   const selected = String(state.revenueTabCode || state.selectedCode || "2330").trim().toUpperCase();
   const stock = revenueLinksStockFor(selected);
   const holdings = (state.holdings || [])
@@ -38276,7 +38419,9 @@ function renderRevenueLinksTab() {
           </div>
         </div>
         ${renderRevenueDashboardCard(stock.code)}
-        ${renderCompanyQualityCard(stock.code)}
+        <div id="revenueDeferredInsights" class="deferred-insights" data-revenue-code="${escapeHtml(stock.code)}" data-deferred-status="pending" aria-live="polite">
+          <div class="deferred-insights-placeholder"><span></span><span></span><small>公司體質與供應鏈動能將在首畫面後載入…</small></div>
+        </div>
         <div class="report-grid" style="margin-top:12px;">
           ${groups.map((group) => `
             <div class="report-card">
@@ -38289,7 +38434,7 @@ function renderRevenueLinksTab() {
         </div>
         ${renderRevenueLocalDataCard(stock.code)}
       ` : `<div class="empty">請輸入股號。</div>`}
-      ${renderRevenuePullInPanel()}
+      ${stock ? "" : renderRevenuePullInPanel()}
       <div class="note-box" style="margin-top:12px;">
         連結樣式已於 2026-07-02 逐一驗證（財報狗 / 玩股網 / Yahoo / Goodinfo 均回 200）。MacroMicro 無可驗證的個股營收頁，總經 / 產業圖表請至「總體經濟與風險」分頁。Goodinfo 有流量限制，開啟過快可能出現驗證頁。
       </div>
@@ -38304,6 +38449,7 @@ function renderRevenueLinksTab() {
       }
     });
   }
+  if (stock) scheduleRevenueDeferredRender(deferredToken, stock.code);
 }
 
 // ── 總體經濟頁 ────────────────────────────────────────────────────────────────
@@ -43440,6 +43586,7 @@ function renderEquipmentRotationPanel() {
 
   const snapshot = TSMC_EQUIPMENT_ROTATION;
   const official = snapshot.tsmcOfficial;
+  queueKlineHydration(snapshot.rows.map((row) => row.code), "equipmentRotation");
   const cards = snapshot.rows.map((row) => {
     const stock = STOCK_MAP.get(row.code) || { code: row.code, name: row.name, suffix: "TW" };
     const yahooSuffix = stock.suffix === "TWO" ? "TWO" : "TW";
@@ -43462,15 +43609,18 @@ function renderEquipmentRotationPanel() {
           <div><span>1–6 月股價</span><strong>${divergence.priceReturnPct !== null && divergence.priceReturnPct !== undefined ? formatPct(divergence.priceReturnPct) : "待補日線"}</strong></div>
         </div>
         ${renderPriceFundamentalDivergence(divergence, { compact: true })}
-        <p class="equipment-thesis">${escapeHtml(row.thesis)}</p>
-        <p class="equipment-risk"><strong>風險：</strong>${escapeHtml(row.risk)}</p>
         <button class="equipment-report-btn" type="button" data-equipment-stock-code="${escapeHtml(row.code)}">開啟 ${escapeHtml(row.name)} 個股研究</button>
-        <div class="link-row equipment-link-row" aria-label="${escapeHtml(row.name)}核對連結">
-          <a class="link-chip" href="https://tw.stock.yahoo.com/quote/${encodeURIComponent(row.code)}.${encodeURIComponent(yahooSuffix)}" target="_blank" rel="noopener noreferrer">Yahoo 報價</a>
-          <a class="link-chip" href="${escapeHtml(equipmentOfficialCompanyUrl(stock))}" target="_blank" rel="noopener noreferrer">${stock.suffix === "TWO" ? "TPEx" : "TWSE"} 公司資料</a>
-          <a class="link-chip" href="${escapeHtml(equipmentRevenueSourceUrl(stock))}" target="_blank" rel="noopener noreferrer">官方月營收 API</a>
-          <a class="link-chip" href="https://mops.twse.com.tw/mops/web/t21sc04" target="_blank" rel="noopener noreferrer">MOPS 月營收</a>
-        </div>
+        <details class="equipment-card-detail">
+          <summary>研究說明與核對來源</summary>
+          <p class="equipment-thesis">${escapeHtml(row.thesis)}</p>
+          <p class="equipment-risk"><strong>風險：</strong>${escapeHtml(row.risk)}</p>
+          <div class="link-row equipment-link-row" aria-label="${escapeHtml(row.name)}核對連結">
+            <a class="link-chip" href="https://tw.stock.yahoo.com/quote/${encodeURIComponent(row.code)}.${encodeURIComponent(yahooSuffix)}" target="_blank" rel="noopener noreferrer">Yahoo 報價</a>
+            <a class="link-chip" href="${escapeHtml(equipmentOfficialCompanyUrl(stock))}" target="_blank" rel="noopener noreferrer">${stock.suffix === "TWO" ? "TPEx" : "TWSE"} 公司資料</a>
+            <a class="link-chip" href="${escapeHtml(equipmentRevenueSourceUrl(stock))}" target="_blank" rel="noopener noreferrer">官方月營收 API</a>
+            <a class="link-chip" href="https://mops.twse.com.tw/mops/web/t21sc04" target="_blank" rel="noopener noreferrer">MOPS 月營收</a>
+          </div>
+        </details>
       </article>
     `;
   }).join("");

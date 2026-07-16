@@ -1,5 +1,20 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v17.7</strong>
+              <span>2026-07-17</span>
+              <span class="cl-badge major">Mobile UI &amp; Render Performance</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>設備卡精簡</strong>：六檔卡片先顯示關鍵數字、脫鉤狀態與研究按鈕；論點、風險和核對連結改為可觸控展開，390px 手機收合卡高度上限 464px。</li>
+              <li><strong>分段渲染</strong>：個股營收頁先畫營收儀表板與連結，再跨兩個畫面週期載入公司體質快篩與供應鏈動能，減少切頁同步長任務。</li>
+              <li><strong>衍生快取</strong>：月營收歷史與同期間股價比較加入 bounded cache；股價期間計算改為單次掃描日線，設備六卡共用批次 hydration。</li>
+              <li><strong>螢幕外繪製</strong>：設備卡與延後研究區塊使用 <code>content-visibility: auto</code> 與 intrinsic size，降低長頁面的 layout / paint 成本。</li>
+              <li><strong>回歸防護</strong>：新增手機收合、高度、content visibility、快取命中與分段狀態 gates；32-file Pages artifact 正式子路徑全分頁 smoke 通過，app shell 1,627ms。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v17.6</strong>
               <span>2026-07-17</span>
               <span class="cl-badge major">Price / Fundamentals Divergence</span>

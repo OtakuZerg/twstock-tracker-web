@@ -5,12 +5,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; font-src 'self' data:; media-src 'self' blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
-  <title>台股追蹤 v17.6</title>
+  <title>台股追蹤 v17.7</title>
   <meta name="theme-color" content="#f4efe8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="台股追蹤" />
-  <meta name="application-version" content="v17.6" />
+  <meta name="application-version" content="v17.7" />
   <meta name="application-release-date" content="2026-07-17" />
   <meta property="og:image" content="https://otakuzerg.github.io/twstock-tracker-web/assets/icons/app-cover.png" />
   <link rel="manifest" href="site.webmanifest" />
@@ -3406,7 +3406,7 @@
       cursor: pointer;
     }
 
-    /* ── v17.6 台積法說後設備股研究卡 / 股價基本面脫鉤檢查 ── */
+    /* ── v17.7 台積法說後設備股研究卡 / 股價基本面脫鉤與手機渲染優化 ── */
     .equipment-rotation-panel {
       overflow: hidden;
       border-color: rgba(11, 109, 119, 0.25);
@@ -3528,6 +3528,8 @@
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.86);
       box-shadow: 0 8px 22px rgba(35, 26, 17, 0.05);
+      content-visibility: auto;
+      contain-intrinsic-size: auto 430px;
     }
     .equipment-stock-head {
       display: flex;
@@ -3603,6 +3605,37 @@
       font-weight: 900;
       cursor: pointer;
     }
+    .equipment-card-detail,
+    .price-fundamental-detail {
+      min-width: 0;
+    }
+    .equipment-card-detail {
+      margin-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .equipment-card-detail summary,
+    .price-fundamental-detail summary {
+      display: flex;
+      align-items: center;
+      min-height: 40px;
+      color: var(--accent);
+      font-size: 0.73rem;
+      font-weight: 900;
+      cursor: pointer;
+      list-style: none;
+    }
+    .equipment-card-detail summary::-webkit-details-marker,
+    .price-fundamental-detail summary::-webkit-details-marker { display: none; }
+    .equipment-card-detail summary::after,
+    .price-fundamental-detail summary::after {
+      content: "＋";
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .equipment-card-detail[open] summary::after,
+    .price-fundamental-detail[open] summary::after { content: "－"; }
+    .equipment-card-detail .equipment-thesis { margin-top: 2px; }
     .equipment-link-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3699,9 +3732,44 @@
       color: var(--accent);
       font-weight: 850;
     }
+    .price-fundamental-detail {
+      border-top: 1px solid rgba(91, 76, 61, 0.14);
+    }
+    .price-fundamental-detail summary { min-height: 34px; }
+    .price-fundamental-detail p + small {
+      display: block;
+      margin-top: 5px;
+    }
     .price-fundamental-divergence.compact {
       margin-bottom: 10px;
       padding: 10px;
+    }
+
+    .deferred-insights {
+      min-height: 82px;
+      content-visibility: auto;
+      contain-intrinsic-size: auto 720px;
+    }
+    .deferred-insights-placeholder {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px dashed var(--line-strong);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.48);
+    }
+    .deferred-insights-placeholder span {
+      display: block;
+      width: min(100%, 420px);
+      height: 9px;
+      border-radius: 999px;
+      background: var(--surface-muted);
+    }
+    .deferred-insights-placeholder span:nth-child(2) { width: min(72%, 280px); }
+    .deferred-insights-placeholder small {
+      color: var(--muted);
+      font-size: 0.72rem;
     }
 
     .news-headline-link {
@@ -4410,9 +4478,14 @@
     @media (max-width: 650px) {
       .equipment-stock-grid { grid-template-columns: 1fr; }
       .equipment-stock-card { padding: 13px; }
+      .equipment-metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .equipment-metric-grid div { padding: 7px 5px; }
+      .equipment-metric-grid span { font-size: 0.6rem; }
+      .equipment-metric-grid strong { font-size: 0.82rem; }
       .equipment-link-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .price-fundamental-head { display: grid; }
       .price-fundamental-values { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .equipment-card-detail summary { min-height: 44px; }
     }
 
     /* ── 量化篩選表 ── */
@@ -5096,7 +5169,7 @@
         <!-- Brand -->
         <div class="sidebar-brand">
           <span class="sidebar-brand-title">台股追蹤</span>
-          <span class="sidebar-brand-ver">v17.6</span>
+          <span class="sidebar-brand-ver">v17.7</span>
           <span class="sidebar-brand-date" data-release-date="2026-07-17">2026-07-17</span>
           <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" type="button" aria-expanded="false" aria-controls="filterRow sidebarPoolManager holdingsManager">主題 / 股池</button>
         </div>
