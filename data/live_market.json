@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "delivery": {
     "mode": "bundled-fallback",
-    "generatedAt": "2026-07-16T17:33:48.013Z",
+    "generatedAt": "2026-07-17T12:40:45.465Z",
     "scheduleMinutes": 0,
     "freshSources": [],
     "note": "版本附帶的隱私清理備援快照；公開站部署後改由 GitHub Actions 定時產生延遲行情。"
@@ -11,7 +11,7 @@
     "errors": [],
     "delivery": {
       "mode": "bundled-fallback",
-      "generatedAt": "2026-07-16T17:33:48.013Z",
+      "generatedAt": "2026-07-17T12:40:45.465Z",
       "scheduleMinutes": 0,
       "freshSources": [],
       "note": "版本附帶的隱私清理備援快照；公開站部署後改由 GitHub Actions 定時產生延遲行情。"
