@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.7";
+const APP_VERSION = "17.8";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -471,13 +471,15 @@ const THEME_ORDER = [
   "passive",    // 19. 被動元件
   "goodboss",   // 20. 好老闆 / 制度型經營者
   "other",      // 21. 其他觀察
-  RETIREMENT_THEME_KEY // 22. 退休核心
+  RETIREMENT_THEME_KEY, // 22. 退休核心
+  "aws"         // 23. AWS 供應鏈（保留既有主題編號）
 ];
 
 const THEME_LABELS = {
   all: "全部",
   holdings: "目前持股",
   tsmc: "台積電相關",
+  aws: "AWS 供應鏈",
   cpo: "CPO / 矽光子",
   pcb: "ABF / PCB / CCL",
   advancedPackaging: "先進封裝CoWoS/CoPoS",
@@ -932,6 +934,7 @@ const STOCK_UNIVERSE = {
   "2301": { name: "光寶科", suffix: "TW", officialIndustry: "25", sector: "伺服器電源" },
   "6282": { name: "康舒", suffix: "TW", officialIndustry: "28", sector: "電源供應" },
   "6781": { name: "AES-KY", suffix: "TW", officialIndustry: "28", sector: "BBU / 電池備援 / AI 伺服器電力管理" },
+  "6831": { name: "邁科", suffix: "TW", sector: "散熱模組 / AI 伺服器散熱" },
   "6435": { name: "大中", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / AI 伺服器電源散熱延伸" },
   "8261": { name: "富鼎", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / 功率元件" },
   "5299": { name: "杰力", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / 功率元件延伸" },
@@ -1492,6 +1495,27 @@ const TSMC_EQUIPMENT_ROTATION = {
     { code: "8028", name: "昇陽半導體", pe: 43.3, eps26e: 7.22, epsGrowth26e: 65.2, revenueJuneYoy: 33.6, revenueCumulativeYoy: 28.4, stance: "基本面成長 / 分批觀察", thesis: "本組 2026E EPS 成長最高，但歷史股性偏慢；以小部位研究、拉回再評估。", risk: "估值不低、產能擴充與需求落差。" }
   ]
 };
+const AWS_SUPPLY_CHAIN_CODES = ["3661", "6669", "2301", "2345", "3017", "6831", "2368", "5439", "8210", "6781", "3211"];
+const AWS_SUPPLY_CHAIN_SNAPSHOT = {
+  title: "AWS 台灣供應鏈研究快照",
+  asOf: "2026-07-17",
+  verifiedAt: "2026-07-18",
+  priceSourceTier: "Tier 1 / TWSE、TPEx 官方日成交資訊",
+  estimateSourceTier: "Tier 3 / 使用者研究快照，待公司法說或券商原始報告複核",
+  rows: [
+    { stage: "晶片／ASIC", code: "3661", name: "世芯-KY", close: 3480, awsRevenuePct: 65, eps27e: 170, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=3661&response=json" },
+    { stage: "ODM／AI 伺服器", code: "6669", name: "緯穎", close: 4620, awsRevenuePct: 50, eps27e: 561, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=6669&response=json" },
+    { stage: "電源", code: "2301", name: "光寶科", close: 196.5, awsRevenuePct: 30, eps27e: 16, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=2301&response=json" },
+    { stage: "網通", code: "2345", name: "智邦", close: 2090, awsRevenuePct: 55, eps27e: 115, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=2345&response=json" },
+    { stage: "散熱", code: "3017", name: "奇鋐", close: 2200, awsRevenuePct: 35, eps27e: 155, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=3017&response=json" },
+    { stage: "散熱", code: "6831", name: "邁科", close: 612, awsRevenuePct: 70, eps27e: null, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=6831&response=json" },
+    { stage: "PCB", code: "2368", name: "金像電", close: 927, awsRevenuePct: 35, eps27e: 66, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=2368&response=json" },
+    { stage: "CCL／PCB", code: "5439", name: "高技", close: 262, awsRevenuePct: 50, eps27e: null, market: "TWO", priceSource: "TPEx 個股日成交資訊", priceUrl: "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code=5439&date=2026%2F07%2F17&id=&response=json&type=Daily" },
+    { stage: "機構件", code: "8210", name: "勤誠", close: 1095, awsRevenuePct: 65, eps27e: 68, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=8210&response=json" },
+    { stage: "BBU", code: "6781", name: "AES-KY", close: 960, awsRevenuePct: 70, eps27e: 55, market: "TW", priceSource: "TWSE STOCK_DAY", priceUrl: "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260717&stockNo=6781&response=json" },
+    { stage: "BBU", code: "3211", name: "順達", close: 385.5, awsRevenuePct: 45, eps27e: null, market: "TWO", priceSource: "TPEx 個股日成交資訊", priceUrl: "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code=3211&date=2026%2F07%2F17&id=&response=json&type=Daily" }
+  ]
+};
 const COPOS_CORE_CODES = ["3583", "3131", "3680", "2464", "6187", "2467", "7734", "6664", "3535", "3167", "6789", "2330"];
 const COPOS_RELATED_CODES = uniqueList([
   ...COPOS_CORE_CODES,
@@ -1527,7 +1551,7 @@ const ADVANCED_PACKAGING_CODES = uniqueList([
 const OPTICAL_LENS_CODES = uniqueList(["3008", "3406", "3019", "3362", "6209"]);
 const APPLE_SUPPLY_CHAIN_CODES = uniqueList(["3008", "3406", "3019", "2317", "2382", "3231", "2324", "4938", "4958", "6269"]);
 const CPO_OPTICAL_WATCH_CODES = uniqueList([...OPTICAL_LENS_CODES, "3218"]);
-const CONCEPT_ROTATION_THEME_KEYS = ["tsmc", "cpo", "pcb", "advancedPackaging", "network", "memory", "thermal", "grid", "icdesign", "ems", "robot", "passive"];
+const CONCEPT_ROTATION_THEME_KEYS = ["tsmc", "aws", "cpo", "pcb", "advancedPackaging", "network", "memory", "thermal", "grid", "icdesign", "ems", "robot", "passive"];
 
 const THEME_MEMBERS = [
   { key: HOLDINGS_THEME_KEY, title: "目前持股 / 自訂清單", codes: CURRENT_HOLDINGS_SEED.map((entry) => entry.code) },
@@ -1555,6 +1579,12 @@ const THEME_MEMBERS = [
       // TSMC 封裝延伸
       ...TSMC_PACKAGING_EXTRA_CODES
     ])
+  },
+  {
+    key: "aws",
+    title: "AWS 供應鏈",
+    sector: "AWS / ASIC / AI 伺服器 / 網通 / 散熱 / PCB / BBU",
+    codes: AWS_SUPPLY_CHAIN_CODES
   },
   { key: "cpo", title: "CPO / 矽光子 / 光通訊 / 高速傳輸", codes: uniqueList(["3711", "6451", "3450", "3265", "6257", "6223", "3363", "3163", "3008", "3081", "2455", "6442", "4991", "2345", "3380", "4979", "3491", "6285", "3665", "3533", ...SILICON_PHOTONICS_CODES, ...CPO_MODULE_WATCH_CODES]) },
   { key: "pcb", title: "ABF / PCB / CCL / 銅箔基板 / 電子組裝材料 / 伺服器板", codes: uniqueList(["3037", "3189", "8046", "4958", "2368", "3044", "2313", "2367", "3374", "8021", "6664", "8027", "2383", "6213", "6274", "8358", "3305", ...PCB_EXPANDED_RESEARCH_CODES]) },
@@ -1933,6 +1963,7 @@ const AI_SUPPLY_CHAIN_STOCKS = {
 
 const AI_SUPPLY_CHAIN_THEME_CODES = {
   tsmc: uniqueList(["2330", "3711", "6770", "5347", "3131", "3583", "6187", "6510", "6196", "5536", "2404", "5538", "2467", "5443", "6640", "4763", "1723", "4739", "1773", "4721", "1560", "4766", "8028", "3595", "2449", "3264", "6223", "6789", "6257", "6239", ...TSMC_EQUIPMENT_ROTATION_CODES, ...AI_FACTORY_TSMC_SPILLOVER_CODES]),
+  aws: AWS_SUPPLY_CHAIN_CODES,
   cpo: uniqueList(["2330", "3711", "6223", "6510", "3081", "3450", "4979", "3363", "3234", "4908", "4977", "6442", "3163", "7402", "2345", "3380", "6285", "3596", "5388", "3704", "2347", "3008", "3406", "3019", "3362", "6209", "3665", ...NEXT_WAVE_LAYER2_CPO_CODES]),
   pcb: uniqueList(["3037", "3189", "8046", "8150", "2327", "2313", "2368", "2383", "3044", "4958", "6269", "6274", "6213", "8358", "3305", "3715", "5469", "5439", "2402", "6153", "2385", "6191", "1815", "1802", "8039", "4766", ...NEXT_WAVE_LAYER1_PCB_CODES, ...UNDERDEVELOPED_HIGH_SPEED_BACKPLANE_CODES]),
   advancedPackaging: ADVANCED_PACKAGING_CODES,
@@ -1976,6 +2007,7 @@ function applyAiSupplyChainExpansion() {
 }
 
 const LABEL_CODESETS = {
+  awsSupplyChain: AWS_SUPPLY_CHAIN_CODES,
   cowos: uniqueList(["6187", "3131", "6640", "8027", "2360", "3583", "2464", "3711", "2449", "6239", "3037", "8046", "1560", "6139", "5536", "2330", ...ADVANCED_PACKAGING_COWOS_CODES]),
   cowosEquipment: uniqueList(["6187", "3131", "6640", "8027", "2360", "3583", "2464", "2467"]),
   cowosOsatTest: ["3711", "2449", "6239"],
@@ -2080,6 +2112,7 @@ const LABEL_CODESETS = {
 };
 
 const RESEARCH_LABEL_RULES = [
+  { key: "awsSupplyChain", label: "AWS 供應鏈", codes: LABEL_CODESETS.awsSupplyChain, aliases: ["aws", "amazon web services", "aws 概念股", "aws供應鏈", "aws 營收占比"] },
   { key: "cowos", label: "CoWoS", codes: LABEL_CODESETS.cowos, aliases: ["cowos", "co-wos", "先進封裝", "advanced packaging"] },
   { key: "cowosEquipment", label: "CoWoS-設備", codes: LABEL_CODESETS.cowosEquipment, aliases: ["cowos 設備", "cowos equipment"] },
   { key: "cowosOsatTest", label: "CoWoS-封測測試", codes: LABEL_CODESETS.cowosOsatTest, aliases: ["cowos 封測", "cowos 測試"] },
@@ -2486,6 +2519,17 @@ const THEME_SUBCATEGORIES = {
     "材料/耗材":  ["1560", "1785", "5434", "4772", "4749", "1711"],
     "PCB/載板":   ["3037", "3189", "8046", "2383", "6213", "6274", "8358"],
     "晶圓代工":   ["2330", "6770", "3374"]
+  },
+  aws: {
+    "晶片／ASIC": ["3661"],
+    "ODM／AI 伺服器": ["6669"],
+    "電源": ["2301"],
+    "網通": ["2345"],
+    "散熱": ["3017", "6831"],
+    "PCB": ["2368"],
+    "CCL／PCB": ["5439"],
+    "機構件": ["8210"],
+    "BBU": ["6781", "3211"]
   },
   cpo: {
     "AI networking / 光通訊核心": ["2345", "6442", "3081"],
@@ -43576,6 +43620,92 @@ function equipmentRevenueSourceUrl(stock) {
     : "https://openapi.twse.com.tw/v1/opendata/t187ap05_L";
 }
 
+function renderAwsSupplyChainPanel() {
+  const container = $("awsSupplyChainPanel");
+  if (!container) return;
+  if (state.filter !== "aws") {
+    container.innerHTML = "";
+    return;
+  }
+
+  const snapshot = AWS_SUPPLY_CHAIN_SNAPSHOT;
+  const stages = uniqueList(snapshot.rows.map((row) => row.stage));
+  const cards = snapshot.rows.map((row) => {
+    const stock = STOCK_MAP.get(row.code) || { code: row.code, name: row.name, suffix: row.market };
+    const yahooSuffix = row.market === "TWO" ? "TWO" : "TW";
+    return `
+      <article class="equipment-stock-card aws-stock-card" data-aws-code="${escapeHtml(row.code)}" data-price-verified="true" data-estimate-unverified="true">
+        <div class="equipment-stock-head">
+          <div>
+            <span class="equipment-code">${escapeHtml(row.code)}.${escapeHtml(yahooSuffix)}</span>
+            <h3>${escapeHtml(row.name)}</h3>
+          </div>
+          <span class="equipment-stance">${escapeHtml(row.stage)}</span>
+        </div>
+        <div class="equipment-metric-grid aws-metric-grid" aria-label="${escapeHtml(row.name)} AWS 研究快照">
+          <div><span>7/17 收盤</span><strong>${formatNumber(row.close, Number.isInteger(row.close) ? 0 : 1)} 元</strong></div>
+          <div><span>AWS 營收占比*</span><strong>${formatNumber(row.awsRevenuePct, 0)}%</strong></div>
+          <div><span>2027E EPS*</span><strong>${row.eps27e === null ? "未提供" : `${formatNumber(row.eps27e, 0)} 元`}</strong></div>
+        </div>
+        <button class="equipment-report-btn" type="button" data-aws-stock-code="${escapeHtml(row.code)}">開啟 ${escapeHtml(row.name)} 個股研究</button>
+        <details class="equipment-card-detail">
+          <summary>資料來源與風險邊界</summary>
+          <p class="equipment-thesis">收盤價已由 ${escapeHtml(row.priceSource)} 核對；AWS 營收占比與 2027E EPS 為使用者研究快照，尚未附公司法說或券商原始報告。</p>
+          <p class="equipment-risk"><strong>風險：</strong>客戶集中度、雲端資本支出週期、預估獲利落空與估值壓縮；未提供 EPS 不以缺值視為低風險。</p>
+          <div class="link-row equipment-link-row" aria-label="${escapeHtml(row.name)}核對連結">
+            <a class="link-chip" href="${escapeHtml(row.priceUrl)}" target="_blank" rel="noopener noreferrer">官方 7/17 收盤</a>
+            <a class="link-chip" href="${escapeHtml(equipmentOfficialCompanyUrl(stock))}" target="_blank" rel="noopener noreferrer">${row.market === "TWO" ? "TPEx" : "TWSE"} 公司資料</a>
+            <a class="link-chip" href="https://tw.stock.yahoo.com/quote/${encodeURIComponent(row.code)}.${encodeURIComponent(yahooSuffix)}" target="_blank" rel="noopener noreferrer">Yahoo 交叉核對</a>
+            <a class="link-chip" href="https://mops.twse.com.tw/mops/web/index" target="_blank" rel="noopener noreferrer">MOPS 公開資訊</a>
+          </div>
+        </details>
+      </article>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <section class="panel equipment-rotation-panel aws-supply-panel" data-aws-supply-panel>
+      <div class="equipment-hero">
+        <div>
+          <div class="equipment-eyebrow">AWS 概念股 · 研究快照 ${escapeHtml(snapshot.asOf)}</div>
+          <h2>${escapeHtml(snapshot.title)}</h2>
+          <p>依供應環節拆成晶片、伺服器、電源、網通、散熱、PCB、機構件與 BBU。卡片只保留三個核心欄位，來源與風險預設收合，避免再把主題總覽塞成一張大表。</p>
+        </div>
+        <span class="equipment-status">11 檔 · ${stages.length} 個環節</span>
+      </div>
+
+      <div class="equipment-official-grid aws-source-grid">
+        <div class="equipment-official-card">
+          <span>官方價格核對</span>
+          <strong>11 / 11 檔一致</strong>
+          <small>2026-07-17 TWSE / TPEx 收盤</small>
+        </div>
+        <div class="equipment-official-card">
+          <span>研究欄位</span>
+          <strong>AWS 占比 / 2027E EPS</strong>
+          <small>使用者快照，待原始報告複核</small>
+        </div>
+        <div class="equipment-source-card">
+          <strong>來源邊界</strong>
+          <span>收盤：${escapeHtml(snapshot.priceSourceTier)}</span>
+          <span>占比 / EPS：${escapeHtml(snapshot.estimateSourceTier)}</span>
+          <span>未複核估值欄位不進交易雷達分數</span>
+        </div>
+      </div>
+
+      <div class="equipment-flow" aria-label="AWS 供應鏈環節">
+        ${stages.map((stage, index) => `${index ? "<b>→</b>" : ""}<span>${escapeHtml(stage)}</span>`).join("")}
+      </div>
+
+      <div class="equipment-disclaimer">
+        <strong>資料狀態：</strong>11 檔 2026-07-17 收盤已逐檔以 TWSE / TPEx 官方日成交資訊核對，全部與使用者輸入一致。標有 * 的 AWS 營收占比與 2027E EPS 尚無公司法說或券商原始報告，因此只作研究分組與後續複核清單，不代表官方揭露、獲利保證或買賣建議。
+      </div>
+
+      <div class="equipment-stock-grid aws-stock-grid">${cards}</div>
+    </section>
+  `;
+}
+
 function renderEquipmentRotationPanel() {
   const container = $("equipmentRotationPanel");
   if (!container) return;
@@ -43685,6 +43815,7 @@ function renderOverviewStaged() {
   renderSection("記憶體報價", renderMemoryMarketPanel, "memoryMarketPanel");
   renderSection("金融股研究框架", renderFinancialPanel, "financialPanel");
   renderSection("好老闆研究框架", renderGoodBossPanel, "goodBossPanel");
+  renderSection("AWS 供應鏈", renderAwsSupplyChainPanel, "awsSupplyChainPanel");
   renderSection("法說後設備股觀察", renderEquipmentRotationPanel, "equipmentRotationPanel");
   renderSection("主題分類稽核", renderClassificationAuditPanel, "classificationAuditPanel");
   if (cardsArePrimary) renderSection("個股卡片", renderCards, "cardsGrid");
@@ -44367,6 +44498,20 @@ function bindEvents() {
     state.filter = "tsmc";
     state.search = "";
     persistStateSilently("設備股研究卡選股");
+    render();
+    switchTab("report");
+    compactMobileSidebarAfterNavigation({ scrollToMain: true });
+  });
+
+  document.body.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-aws-stock-code]");
+    if (!button) return;
+    const code = button.dataset.awsStockCode;
+    if (!STOCK_MAP.has(code)) return;
+    state.selectedCode = code;
+    state.filter = "aws";
+    state.search = "";
+    persistStateSilently("AWS 供應鏈研究卡選股");
     render();
     switchTab("report");
     compactMobileSidebarAfterNavigation({ scrollToMain: true });

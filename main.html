@@ -5,12 +5,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; font-src 'self' data:; media-src 'self' blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
-  <title>台股追蹤 v17.7</title>
+  <title>台股追蹤 v17.8</title>
   <meta name="theme-color" content="#f4efe8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="台股追蹤" />
-  <meta name="application-version" content="v17.7" />
+  <meta name="application-version" content="v17.8" />
   <meta name="application-release-date" content="2026-07-17" />
   <meta property="og:image" content="https://otakuzerg.github.io/twstock-tracker-web/assets/icons/app-cover.png" />
   <link rel="manifest" href="site.webmanifest" />
@@ -3406,12 +3406,18 @@
       cursor: pointer;
     }
 
-    /* ── v17.7 台積法說後設備股研究卡 / 股價基本面脫鉤與手機渲染優化 ── */
+    /* ── v17.8 台積設備 / AWS 供應鏈研究卡與手機渲染優化 ── */
     .equipment-rotation-panel {
       overflow: hidden;
       border-color: rgba(11, 109, 119, 0.25);
       background:
         radial-gradient(circle at 100% 0, rgba(11, 109, 119, 0.10), transparent 34%),
+        rgba(255, 255, 255, 0.78);
+    }
+    .aws-supply-panel {
+      border-color: rgba(181, 84, 42, 0.24);
+      background:
+        radial-gradient(circle at 100% 0, rgba(181, 84, 42, 0.09), transparent 34%),
         rgba(255, 255, 255, 0.78);
     }
     .equipment-hero {
@@ -3531,6 +3537,7 @@
       content-visibility: auto;
       contain-intrinsic-size: auto 430px;
     }
+    .aws-stock-card { contain-intrinsic-size: auto 330px; }
     .equipment-stock-head {
       display: flex;
       align-items: flex-start;
@@ -3560,6 +3567,7 @@
       gap: 6px;
       margin-bottom: 10px;
     }
+    .aws-metric-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .equipment-metric-grid div {
       min-width: 0;
       padding: 8px;
@@ -5169,8 +5177,8 @@
         <!-- Brand -->
         <div class="sidebar-brand">
           <span class="sidebar-brand-title">台股追蹤</span>
-          <span class="sidebar-brand-ver">v17.7</span>
-          <span class="sidebar-brand-date" data-release-date="2026-07-17">2026-07-17</span>
+          <span class="sidebar-brand-ver">v17.8</span>
+          <span class="sidebar-brand-date" data-release-date="2026-07-18">2026-07-18</span>
           <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" type="button" aria-expanded="false" aria-controls="filterRow sidebarPoolManager holdingsManager">主題 / 股池</button>
         </div>
 
@@ -5238,6 +5246,7 @@
             <option value="goodboss">好老闆</option>
             <option value="other">其他觀察</option>
             <option value="retirement">退休核心</option>
+            <option value="aws">AWS 供應鏈</option>
           </select>
         </div>
 
@@ -5325,6 +5334,7 @@
 
     <section id="tab-overview" class="tab-panel">
       <div class="note-box" style="margin-bottom:12px;">主題總覽只顯示左側選取的單一族群（大盤 / 今日族群 / 全市場資訊已移到「大盤總覽」）。切換左側主題分頁即可換族群。</div>
+      <div id="awsSupplyChainPanel"></div>
       <div id="equipmentRotationPanel"></div>
       <div id="memoryMarketPanel"></div>
       <div id="financialPanel"></div>
