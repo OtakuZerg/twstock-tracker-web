@@ -1,5 +1,21 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v17.9</strong>
+              <span>2026-07-18</span>
+              <span class="cl-badge major">After-close Sync &amp; Source Health</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>單一收盤後同步</strong>：頂部移除完整更新與七個單項更新，只保留收盤後同步；先完成報價／官方估值／市值與日線，其餘到期資料進背景佇列。</li>
+              <li><strong>停止開頁抓取</strong>：舊版盤中定時、開頁完整更新與分頁自動跨站抓取不再恢復；開啟後先讀本機快取，Web 仍只讀同來源延遲快照。</li>
+              <li><strong>背景節流</strong>：大盤、期貨、法人、處置、除權息、月營收、ETF、總經、Tide、記憶體與股利依 TTL 判斷，最多兩路並行並使用 jitter backoff。</li>
+              <li><strong>來源可靠度中心</strong>：記錄來源最後成功／失敗、HTTP、bytes、耗時與連續失敗；分類 rate limit、timeout、HTTP、network、schema、no-data 與 Web runtime boundary。</li>
+              <li><strong>來源級 circuit breaker</strong>：連續三次可重試失敗才暫停單一來源，保留解除入口，不影響其他官方或備援來源。</li>
+              <li><strong>四入口導覽</strong>：主要導覽收斂為收盤研究、主題、個股、資料健康；其餘九個低頻分頁放進預設收合的研究工具。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v17.8</strong>
               <span>2026-07-18</span>
               <span class="cl-badge major">AWS Supply Chain &amp; Source Tiers</span>

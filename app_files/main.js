@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.8";
+const APP_VERSION = "17.9";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -143,6 +143,7 @@ const SCHEDULED_TASK_TTLS = {
 const BACKGROUND_FULL_UPDATE_DELAY_MS = 15 * 1000;
 const BACKGROUND_FULL_UPDATE_RETRY_MS = 15 * 1000;
 const BACKGROUND_FULL_UPDATE_MAX_RETRIES = 12;
+const TAB_OPEN_NETWORK_REFRESH_ENABLED = false;
 const BOND_SIGNAL_CACHE_TTL_MS = 60 * 60 * 1000;
 const FED_MONETARY_RSS_URL = "https://www.federalreserve.gov/feeds/press_monetary.xml";
 const FEDWATCH_TOOL_URL = "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html";
@@ -5996,20 +5997,69 @@ function yahooUrls(stock) {
   ];
 }
 
-function fetchText(url, { method = "GET", body = null, timeoutMs = null, encoding = "", contentType = "" } = {}) {
+function sourceHealthRegistry() {
+  state.performance = state.performance && typeof state.performance === "object" && !Array.isArray(state.performance)
+    ? state.performance
+    : {};
+  const reliability = globalThis.TwStockUpdateReliability;
+  state.performance.sourceHealth = reliability
+    ? reliability.normalizeRegistry(state.performance.sourceHealth)
+    : (state.performance.sourceHealth || {});
+  return state.performance.sourceHealth;
+}
+
+function sourceHealthKey(url, explicitKey = "") {
+  const reliability = globalThis.TwStockUpdateReliability;
+  return explicitKey || reliability?.sourceKeyForUrl(url) || "unknown";
+}
+
+function sourceHealthGate(url, options = {}) {
+  const reliability = globalThis.TwStockUpdateReliability;
+  const registry = sourceHealthRegistry();
+  const key = sourceHealthKey(url, options.sourceKey);
+  if (!reliability) return { reliability: null, registry, key, allowed: true };
+  const gate = reliability.canAttempt(registry, key, Date.now(), options.bypassCircuit === true);
+  return { reliability, registry, key, ...gate };
+}
+
+function sourceHealthFailureError(key, retryAt) {
+  const label = globalThis.TwStockUpdateReliability?.sourceLabel(key) || key;
+  const error = new Error(`${label} circuit open，暫停重試至 ${formatDateTime(retryAt)}`);
+  error.code = "SOURCE_CIRCUIT_OPEN";
+  error.retryAt = retryAt;
+  return error;
+}
+
+async function fetchText(url, { method = "GET", body = null, timeoutMs = null, encoding = "", contentType = "", sourceKey = "", bypassCircuit = false } = {}) {
+  const health = sourceHealthGate(url, { sourceKey, bypassCircuit });
+  if (!health.allowed) throw sourceHealthFailureError(health.key, health.retryAt);
+  const startedAt = Date.now();
+  health.reliability?.recordAttempt(health.registry, health.key, { url });
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
     return new Promise((resolve, reject) => {
       const msg = { type: "fetch-text", url, method, body, timeoutMs, encoding, contentType };
       chrome.runtime.sendMessage(msg, (response) => {
         const runtimeError = chrome.runtime.lastError;
         if (runtimeError) {
-          reject(new Error(runtimeError.message));
+          const error = new Error(runtimeError.message);
+          health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
+          reject(error);
           return;
         }
         if (!response || !response.ok) {
-          reject(new Error(response && response.error ? response.error : "fetch failed"));
+          const error = new Error(response && response.error ? response.error : "fetch failed");
+          health.reliability?.recordFailure(health.registry, health.key, error, {
+            status: response?.status,
+            latencyMs: response?.durationMs || Date.now() - startedAt
+          });
+          reject(error);
           return;
         }
+        health.reliability?.recordSuccess(health.registry, health.key, {
+          status: response.status,
+          bytes: response.bytes || String(response.text || "").length,
+          latencyMs: response.durationMs || Date.now() - startedAt
+        });
         resolve(response.text);
       });
     });
@@ -6023,16 +6073,28 @@ function fetchText(url, { method = "GET", body = null, timeoutMs = null, encodin
     opts.signal = controller.signal;
     timeout = setTimeout(() => controller.abort(), timeoutMs);
   }
-  return fetch(url, opts).then(async (response) => {
+  try {
+    const response = await fetch(url, opts);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    let text;
     if (encoding && typeof TextDecoder !== "undefined") {
       const buffer = await response.arrayBuffer();
-      return new TextDecoder(encoding).decode(buffer);
+      text = new TextDecoder(encoding).decode(buffer);
+    } else {
+      text = await response.text();
     }
-    return response.text();
-  }).finally(() => {
+    health.reliability?.recordSuccess(health.registry, health.key, {
+      status: response.status,
+      bytes: text.length,
+      latencyMs: Date.now() - startedAt
+    });
+    return text;
+  } catch (error) {
+    health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
+    throw error;
+  } finally {
     if (timeout) clearTimeout(timeout);
-  });
+  }
 }
 
 function requestBrowserDownload(url, filename) {
@@ -6171,16 +6233,33 @@ async function loadPublishedMarketSnapshot() {
 }
 
 async function fetchJson(url) {
+  const health = sourceHealthGate(url);
+  if (!health.allowed) throw sourceHealthFailureError(health.key, health.retryAt);
+  const startedAt = Date.now();
+  health.reliability?.recordAttempt(health.registry, health.key, { url });
   if (isPublishedWebRuntime()) {
     const parsed = new URL(String(url || ""), window.location.href);
     if (parsed.origin !== window.location.origin) {
       window.__TWSTOCK_RECORD_WEB_BLOCKED_FETCH__?.(parsed.href, "GET", "fetch-json");
-      throw new Error(`公開網站不直接讀取跨站資料：${parsed.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`);
+      const error = new Error(`公開網站不直接讀取跨站資料：${parsed.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`);
+      health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
+      throw error;
     }
   }
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  return response.json();
+  try {
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    health.reliability?.recordSuccess(health.registry, health.key, {
+      status: response.status,
+      bytes: Number(response.headers.get("content-length")) || 0,
+      latencyMs: Date.now() - startedAt
+    });
+    return payload;
+  } catch (error) {
+    health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
+    throw error;
+  }
 }
 
 function stripHtml(raw) {
@@ -7922,26 +8001,29 @@ function revenueHistorySparkHtml(code) {
 
 async function updateMonthlyRevenue(options = {}) {
   const normalizedOptions = options && typeof options === "object" && !("type" in options) ? options : {};
+  const silent = normalizedOptions.silent === true;
   const decision = monthlyRevenueRefreshDecision({ force: normalizedOptions.force !== false });
   if (!decision.shouldFetch) {
     const reason = decision.reason === "current-period-ready"
       ? `已有預期公告月份 ${decision.latest}`
       : `最近 ${MONTHLY_REVENUE_RECHECK_TTL_MS / 60 / 60 / 1000} 小時已檢查`;
-    setStatus(`月營收沿用長期快取：${reason}，本次不重複下載。`, "good");
+    if (!silent) setStatus(`月營收沿用長期快取：${reason}，本次不重複下載。`, "good");
     return { count: Object.keys(state.revenue || {}).length, skipped: true, decision };
   }
-  setBusy(true, "更新月營收資料...");
+  if (!silent) setBusy(true, "更新月營收資料...");
   try {
     const result = await fetchMonthlyRevenue();
     await saveState();
     await persistResearchDataLayer("monthly-revenue");
-    render();
+    if (!silent) render();
     const missingText = result.missingHoldings.length ? `；目前持股缺 ${result.missingHoldings.length} 檔` : "";
-    setStatus(`月營收更新完成：${result.count} 檔追蹤股有資料${missingText}。`, result.missingHoldings.length ? "warn" : "good");
+    if (!silent) setStatus(`月營收更新完成：${result.count} 檔追蹤股有資料${missingText}。`, result.missingHoldings.length ? "warn" : "good");
+    return result;
   } catch (e) {
-    setStatus(`月營收更新失敗：${e.message || e}`, "error");
+    if (!silent) setStatus(`月營收更新失敗：${e.message || e}`, "error");
+    throw e;
   } finally {
-    setBusy(false);
+    if (!silent) setBusy(false);
   }
 }
 
@@ -16366,7 +16448,7 @@ function buildResearchDataPayload() {
       syncFile: RESEARCH_DATA_SYNC_FILE_NAME,
       monthlyRevenueRetentionMonths: REVENUE_HISTORY_MONTH_LIMIT,
       quarterlyMarginRetentionQuarters: QUARTERLY_MARGIN_RETENTION_QUARTERS,
-      monthlyRevenueUpdate: "完整更新只在缺資料或預期公告月份尚未取得時下載；手動月營收更新可強制重新抓取。",
+      monthlyRevenueUpdate: "收盤後背景任務只在缺資料或預期公告月份尚未取得時下載；手動月營收更新仍可強制重新抓取。",
       quarterlyMarginUpdate: "CSV 匯入後增量合併，不以月營收替代季報三率。"
     }
   };
@@ -17473,6 +17555,7 @@ function podcastDigestNeedsRefresh(maxAgeMs = PODCAST_AUTO_REFRESH_TTL_MS) {
 }
 
 function maybeRefreshPodcastFeeds() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const digest = state.podcast || {};
   const shows = Array.isArray(digest.shows) ? digest.shows : [];
   if (shows.length && !podcastDigestNeedsRefresh(SCHEDULED_TASK_TTLS.podcast)) return;
@@ -17952,6 +18035,7 @@ async function updateMarketInstitutionalRankings(silent = false) {
 }
 
 function maybeRefreshMarketInstitutionalRankings() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const cache = normalizeMarketInstitutionalRankings(state.marketInstitutionalRankings);
   const now = new Date();
   const ttl = isTaiwanMarketOpen(now) ? 10 * 60 * 1000 : 60 * 60 * 1000;
@@ -18056,6 +18140,7 @@ function recordMarketCrashRiskRefresh(payload) {
 function maybeRefreshMarketCrashRiskInputs(options = {}) {
   const force = options.force === true;
   const manual = options.manual === true;
+  if (!force && !TAB_OPEN_NETWORK_REFRESH_ENABLED) return null;
   if (isPublishedWebRuntime()) {
     const checkedAt = new Date().toISOString();
     if (_marketDashboardRefreshPromise) return _marketDashboardRefreshPromise;
@@ -20248,6 +20333,7 @@ function taskFreshnessInfo(value, ttlMs) {
 }
 
 function runScheduledBackgroundTasks(tasks, group = "background") {
+  const concurrency = 2;
   const started = [];
   const skipped = [];
   const failed = [];
@@ -20285,8 +20371,10 @@ function runScheduledBackgroundTasks(tasks, group = "background") {
       } catch (error) {
         lastError = error;
         record.lastError = error && error.message ? error.message : String(error);
+        if (error?.code === "SOURCE_CIRCUIT_OPEN") break;
         if (attempt < limit && baseMs > 0) {
-          await wait(baseMs * Math.pow(2, attempt));
+          const jitter = 0.8 + Math.random() * 0.4;
+          await wait(Math.round(baseMs * Math.pow(2, attempt) * jitter));
         }
       }
     }
@@ -20296,6 +20384,7 @@ function runScheduledBackgroundTasks(tasks, group = "background") {
     console.warn(`${task.label} scheduled background task failed`, lastError);
     persistSchedulerStatus();
   }
+  const queue = [];
   for (const task of tasks) {
     const ttlMs = Number(task.ttlMs) || QUICK_UPDATE_BACKGROUND_TTL_MS;
     const freshness = taskFreshnessInfo(typeof task.timestamp === "function" ? task.timestamp() : task.timestamp, ttlMs);
@@ -20305,10 +20394,22 @@ function runScheduledBackgroundTasks(tasks, group = "background") {
     }
     const record = { label: task.label, ttlMs, status: "queued", attempts: 0, queuedAt: checkedAt };
     started.push(record);
-    runTaskWithRetry(task, record);
+    queue.push({ task, record });
   }
   persistSchedulerStatus();
-  return { started, skipped, failed, checkedAt };
+  async function drain() {
+    let next;
+    while ((next = queue.shift())) await runTaskWithRetry(next.task, next.record);
+  }
+  const done = Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, drain))
+    .then(() => {
+      persistSchedulerStatus();
+      persistStateSilently(`${group} 背景同步`);
+      if (state.activeTab === "help") renderSourceReliabilityPanel();
+      return { started, skipped, failed, checkedAt };
+    });
+  done.catch((error) => console.warn(`${group} background scheduler failed`, error));
+  return { started, skipped, failed, checkedAt, done };
 }
 
 function latestEtfNavFetchedAt() {
@@ -20318,60 +20419,60 @@ function latestEtfNavFetchedAt() {
   return times.length ? Math.max(...times) : 0;
 }
 
-// v16.8 智慧更新任務清單：一鍵依 TTL 判斷該抓什麼、新鮮的跳過；smoke 以此稽核涵蓋面
+// v17.9 收盤後背景任務：主按鈕只等待報價與日線；下列低急迫來源依 TTL、最多 2 路背景執行。
 function smartUpdateTaskDefinitions() {
   return [
     {
       label: "ETF NAV",
-      ttlMs: SCHEDULED_TASK_TTLS.etfNav,
+      ttlMs: 12 * 60 * 60 * 1000,
       timestamp: () => latestEtfNavFetchedAt(),
       run: () => updateEtfNav(true)
     },
     {
       label: "大盤總覽",
-      ttlMs: SCHEDULED_TASK_TTLS.marketDashboard,
+      ttlMs: 30 * 60 * 1000,
       timestamp: () => state.marketDashboardCache?.ts || state.marketDashboardCache?.fetchedAt,
       run: () => updateMarketDashboard(true)
     },
     {
       label: "期貨水位",
-      ttlMs: SCHEDULED_TASK_TTLS.futures,
+      ttlMs: 30 * 60 * 1000,
       timestamp: () => state.taifex?.date,
       run: () => updateFuturesData(true)
     },
     {
       label: "注意風險",
-      ttlMs: SCHEDULED_TASK_TTLS.dispositionRisk,
+      ttlMs: 12 * 60 * 60 * 1000,
       timestamp: () => state.dispositionRisk?.fetchedAt,
       run: () => updateDispositionRiskData(true)
     },
     {
       label: "記憶體報價",
-      ttlMs: SCHEDULED_TASK_TTLS.memoryMarket,
+      ttlMs: 20 * 60 * 60 * 1000,
       timestamp: () => state.memoryMarketCache?.ts,
       run: () => maybeDailyMemoryMarketSnapshot()
     },
     {
       label: "總經 / VIX",
-      ttlMs: SCHEDULED_TASK_TTLS.macroSnapshot,
+      ttlMs: 6 * 60 * 60 * 1000,
       timestamp: () => state.macroCache?.ts,
       run: () => updateMacroSnapshot(true)
     },
     {
       label: "Tide 板塊資金",
-      ttlMs: SCHEDULED_TASK_TTLS.tideSector,
+      ttlMs: 6 * 60 * 60 * 1000,
       timestamp: () => state.tideSectorCache?.fetchedAt,
       run: () => updateTideSectorCache(true)
     },
     {
       label: "法人前10",
-      ttlMs: SCHEDULED_TASK_TTLS.institutionalTop,
+      ttlMs: 12 * 60 * 60 * 1000,
       timestamp: () => normalizeMarketInstitutionalRankings(state.marketInstitutionalRankings).fetchedAt,
       run: () => updateMarketInstitutionalRankings(true)
     },
     {
       label: "處置 / 注意股",
-      ttlMs: SCHEDULED_TASK_TTLS.disposition,
+      ttlMs: 12 * 60 * 60 * 1000,
       timestamp: () => state.disposition?.fetchedAt,
       run: () => updateDispositionData(true)
     },
@@ -20387,14 +20488,38 @@ function smartUpdateTaskDefinitions() {
       timestamp: () => state.revenueMeta?.fetchedAt,
       // updateMonthlyRevenue 內建公告月份 / TTL 判斷，force:false 時不會重複下載
       run: () => (monthlyRevenueRefreshDecision({ force: false }).shouldFetch
-        ? updateMonthlyRevenue({ force: false })
+        ? updateMonthlyRevenue({ force: false, silent: true, reason: "after-close-background" })
         : Promise.resolve())
+    },
+    {
+      label: "股利資料",
+      ttlMs: 7 * ONE_DAY_MS,
+      timestamp: () => state.dividends?.fetchedAt,
+      run: () => updateDividendData(true)
+    },
+    {
+      label: "法人近30日",
+      ttlMs: 20 * 60 * 60 * 1000,
+      timestamp: () => latestDateLabel(quoteTrackableStocks(filteredStocks()).map((stock) => state.institutional?.[stock.code]?.date)),
+      run: () => prewarmInstitutionalHistory30({ silent: true })
+    },
+    {
+      label: "美債 ETF 燈號",
+      ttlMs: 20 * 60 * 60 * 1000,
+      timestamp: () => state.bondSignalCache?.fetchedAt || state.bondSignalCache?.ts,
+      run: () => updateBondEtfSignal(true)
+    },
+    {
+      label: "主動式 ETF 持股",
+      ttlMs: 20 * 60 * 60 * 1000,
+      timestamp: () => state.activeEtf?.lastSuccessAt || state.activeEtf?.generatedAt,
+      run: () => updateAllActiveEtfs({ silent: true })
     }
   ];
 }
 
 function triggerQuickUpdateBackgroundSyncs() {
-  return runScheduledBackgroundTasks(smartUpdateTaskDefinitions(), "quickBackgroundSync");
+  return runScheduledBackgroundTasks(smartUpdateTaskDefinitions(), "afterCloseBackgroundSync");
 }
 
 async function quickUpdateQuotes() {
@@ -20574,11 +20699,7 @@ async function updateAllStocks() {
     }
   }
 
-  // ── Step 2.5：ETF 淨值更新（靜默，與估值並行的前置步驟）──
-  updateEtfNav(true).catch(() => {});
-  updateMarketDashboard(true).catch(() => {});
-
-  // ── Step 3：官方估值（今日已抓則跳過）──
+  // ── Step 3：官方估值（今日已抓則跳過）；ETF / 大盤改由 v17.9 背景 TTL 佇列處理，避免重複請求 ──
   setStatus("同步官方估值（今日已有則略過）...");
   const valuationSummary = await refreshOfficialValuations(targets);
   if (valuationSummary.skipped?.length) setStatus(`估值沿用今日快取（${valuationSummary.skipped.join("/")}），節省時間。`);
@@ -21708,7 +21829,7 @@ function buildDataHealthSummary() {
     layers,
     staleLayers,
     action: fullNeeded ? "full" : quickNeeded ? "quick" : "none",
-    actionLabel: fullNeeded ? "完整更新" : quickNeeded ? "智慧更新" : "暫不用更新",
+    actionLabel: fullNeeded || quickNeeded ? "收盤後同步" : "暫不用更新",
     fullNeeded,
     quickNeeded,
     autoFreshness: freshness
@@ -21816,6 +21937,16 @@ function autoUpdateStepTelemetry(key) {
       source: topCountSummary(successSources.map((source) => source.label || source.source || source.name), 3) || "MoneyDJ / ETF資訊網 / WantGoo / Investing"
     };
   }
+  if (key === "background") {
+    const scheduler = state.performance?.updateScheduler?.afterCloseBackgroundSync || {};
+    const started = Array.isArray(scheduler.started) ? scheduler.started : [];
+    const skipped = Array.isArray(scheduler.skipped) ? scheduler.skipped : [];
+    const failed = Array.isArray(scheduler.failed) ? scheduler.failed : [];
+    return {
+      detail: `排入 ${started.length} 項；仍新略過 ${skipped.length} 項；目前失敗 ${failed.length} 項`,
+      source: "TTL 背景佇列（最多 2 路）"
+    };
+  }
   return { detail: "", source: "" };
 }
 
@@ -21827,30 +21958,17 @@ function elapsedMsLabel(ms) {
 }
 
 const AUTO_UPDATE_STEPS = [
-  { key: "quotes", label: "報價 / 官方估值 / 市值", run: () => updateAllStocks() },
-  { key: "klines", label: "全部日線", run: () => updateAllKlines() },
-  { key: "revenue", label: "月營收", run: () => updateMonthlyRevenue({ force: false, reason: "daily-full-update" }) },
-  { key: "dividends", label: "股利 / 除權息日曆", run: async () => {
-    const dividends = await updateDividendData(true);
-    const calendar = await updateExDividendCalendar(true);
-    return { dividends, calendar };
-  } },
-  { key: "futures", label: "期貨水位", run: () => updateFuturesData(true) },
-  { key: "chips30", label: "法人近30日快取", run: () => prewarmInstitutionalHistory30({ silent: true }) },
-  { key: "market", label: "大盤總覽", run: () => updateMarketDashboard(true) },
-  { key: "dispositionRisk", label: "處置 / 注意風險", run: () => updateDispositionAllData(true) },
-  { key: "marketInst", label: "三大法人前10", run: () => updateMarketInstitutionalRankings(true) },
-  { key: "bond", label: "美債 ETF 燈號", run: () => updateBondEtfSignal(true) },
-  { key: "etfNav", label: "ETF NAV / 折溢價", run: () => updateEtfNav(true) },
-  { key: "activeEtf", label: "主動式 ETF 持股", run: () => updateAllActiveEtfs({ silent: true }) }
+  { key: "quotes", label: "收盤報價 / 官方估值 / 市值", run: () => updateAllStocks() },
+  { key: "klines", label: "收盤日線", run: () => updateAllKlines() },
+  { key: "background", label: "背景到期任務", run: () => triggerQuickUpdateBackgroundSyncs() }
 ];
 
-const LIGHT_AUTO_REFRESH_HELP = "輕量定時：5 / 10 / 15 分鐘排程。台股盤中更新報價、官方估值與市值；美股盤前 / 盤中更新大盤總覽。不是日常完整流程。";
-const DAILY_FULL_UPDATE_HELP = "日常完整更新：報價 / 官方估值 / 市值、全部日線、月營收、股利、期貨、法人近30日、大盤、處置 / 注意風險、三大法人前10、美債燈號、ETF NAV、主動 ETF 持股。";
-const DAILY_FULL_UPDATE_EXCLUSION = "不含 Podcast RSS、逐字稿、借券 SBL 完整回補、法人 60 / 90 / 130 日深度回補。";
-const FAST_UPDATE_HELP = "智慧更新：日常一鍵用這顆。更新即時報價，並自動依 TTL 判斷哪些來源過期需要抓（大盤、期貨、總經 / VIX、Tide、法人前10、處置注意股、除權息日曆、月營收、ETF NAV、記憶體報價），仍新鮮的自動略過；不重新抓取日線、股利、法人30日或 ETF 持股（那些請用完整更新）。";
+const LIGHT_AUTO_REFRESH_HELP = "v17.9 起停用開頁與盤中定時抓取；主要工作型態改為收盤後研究。";
+const DAILY_FULL_UPDATE_HELP = "收盤後同步：先完成報價 / 官方估值 / 市值與日線，再把大盤、期貨、法人、處置、除權息、月營收、ETF、總經、Tide、記憶體與股利依 TTL 排入最多 2 路背景佇列。";
+const DAILY_FULL_UPDATE_EXCLUSION = "Podcast、新聞、借券 SBL 與法人 60 / 90 / 130 日深度回補維持使用時才抓。";
+const FAST_UPDATE_HELP = DAILY_FULL_UPDATE_HELP;
 const FULL_UPDATE_HELP = `${DAILY_FULL_UPDATE_HELP} ${DAILY_FULL_UPDATE_EXCLUSION}`;
-const BACKGROUND_FULL_UPDATE_HELP = `背景完整：預設關閉；手動開啟後，之後開啟 extension 才會自動排入日常完整更新。若本日已完成會跳過。${FULL_UPDATE_HELP}`;
+const BACKGROUND_FULL_UPDATE_HELP = "v17.9 起不再於開啟 extension 後自動跑完整更新；請在收盤後按一次「收盤後同步」。";
 
 function normalizeAutoUpdateLog(input) {
   const allowed = new Set(["idle", "pending", "running", "stopping", "completed", "cancelled", "skipped", "warn", "error"]);
@@ -21930,7 +22048,7 @@ function requestStopAutoUpdate(reason = "使用者停止") {
       stopRequestedAt: new Date().toISOString(),
       summary: `${reason}；目前步驟完成後停止`
     });
-    setStatus(`${reason}，日常完整更新會在目前步驟完成後停止。`, "warn");
+    setStatus(`${reason}，收盤後同步會在目前步驟完成後停止。`, "warn");
   }
 }
 
@@ -22060,7 +22178,7 @@ function queueBackgroundFullUpdateAttempt(attempt = 0, delayMs = BACKGROUND_FULL
       return;
     }
     runIdleAutoUpdate({ mode: "background" }).catch((error) => {
-      setStatus(`背景完整更新失敗：${error?.message || String(error)}`, "error");
+      setStatus(`背景同步失敗：${error?.message || String(error)}`, "error");
     });
   }, delayMs);
 }
@@ -22078,7 +22196,7 @@ function runManualFullUpdate() {
   }
   _idleAutoUpdateCancelled = false;
   runIdleAutoUpdate({ mode: "manual" }).catch((error) => {
-    setStatus(`手動日常完整更新失敗：${error?.message || String(error)}`, "error");
+    setStatus(`收盤後同步失敗：${error?.message || String(error)}`, "error");
   });
 }
 
@@ -22104,7 +22222,7 @@ async function runIdleAutoUpdate(options = {}) {
     const startedAt = new Date().toISOString();
     setAutoUpdateLogPatch({ status: "running", currentKey: def.key, currentLabel: def.label });
     markAutoUpdateStep(def.key, { status: "running", startedAt, finishedAt: null, durationMs: null, detail: "", source: "", error: "" });
-    setStatus(`${mode === "manual" ? "手動" : "背景"}日常完整更新：${def.label}...`, "warn");
+    setStatus(`${mode === "manual" ? "收盤後同步" : "背景同步"}：${def.label}...`, "warn");
     try {
       await def.run();
       completed.push(def.label);
@@ -22147,7 +22265,7 @@ async function runIdleAutoUpdate(options = {}) {
         currentLabel: "",
         summary: `已停止；完成 ${completed.length}/${AUTO_UPDATE_STEPS.length} 個步驟`
       });
-      setStatus(`日常完整更新已停止；已完成 ${completed.length} 個步驟。`, "warn");
+      setStatus(`收盤後同步已停止；已完成 ${completed.length} 個步驟。`, "warn");
     } else if (failed.length) {
       setAutoUpdateLogPatch({
         status: "warn",
@@ -22156,7 +22274,7 @@ async function runIdleAutoUpdate(options = {}) {
         currentLabel: "",
         summary: `完成但有 ${failed.length} 個步驟待重試`
       });
-      setStatus(`日常完整更新完成但有 ${failed.length} 個步驟待重試：${failed.slice(0, 2).join("；")}${failed.length > 2 ? "…" : ""}`, "warn");
+      setStatus(`收盤後同步完成但有 ${failed.length} 個核心步驟待重試：${failed.slice(0, 2).join("；")}${failed.length > 2 ? "…" : ""}`, "warn");
     } else {
       setAutoUpdateLogPatch({
         status: "completed",
@@ -22165,12 +22283,12 @@ async function runIdleAutoUpdate(options = {}) {
         currentLabel: "",
         summary: `完成 ${completed.length}/${AUTO_UPDATE_STEPS.length} 個步驟`
       });
-      setStatus(`日常完整更新完成：${completed.join("、")}。`, "good");
+      setStatus(`收盤後核心同步完成：${completed.join("、")}；非急資料會繼續在背景執行。`, "good");
     }
   } finally {
     _idleAutoUpdateRunning = false;
     _idleAutoUpdateCancelled = false;
-    persistStateSilently("日常完整更新流程");
+    persistStateSilently("收盤後同步流程");
     renderHero();
   }
 }
@@ -22221,33 +22339,9 @@ function renderHero() {
     mktEl.innerHTML = html;
   }
   if (arEl) {
-    if (isPublishedWebRuntime()) {
-      arEl.innerHTML = `
-        <button id="arToggleBtn" class="ghost-btn" type="button" style="font-size:0.72rem;min-height:26px;padding:2px 8px;" title="重新讀取 GitHub Actions 同來源延遲行情快照；公開網站不直接跨站抓資料。">
-          ↻ 網站快照
-        </button>
-        <span style="color:var(--muted);font-size:0.72rem;">約 15 分鐘</span>
-      `;
-      return;
-    }
-    const on = state.autoRefreshEnabled;
-    const mins = state.autoRefreshMinutes || 5;
-    const secsLeft = _autoRefreshNextAt ? Math.max(0, Math.round((_autoRefreshNextAt - Date.now()) / 1000)) : null;
-    const idleOn = state.idleAutoUpdateEnabled === true;
-    const idlePending = _idleAutoUpdateTimer !== null;
-    const idleRunning = _idleAutoUpdateRunning;
-    const freshness = autoUpdateLogFreshness(state.autoUpdateLog);
-    const idleLabel = idleRunning ? "背景完整中" : idlePending ? "背景完整待命" : freshness.freshToday ? "本日已完整" : "背景完整";
-    arEl.innerHTML = `
-      <button id="arToggleBtn" class="${on ? "secondary-btn" : "ghost-btn"}" type="button" style="font-size:0.72rem;min-height:26px;padding:2px 8px;" title="${escapeHtml(LIGHT_AUTO_REFRESH_HELP)}">
-        ${on ? "⏸ 輕量定時" : "▶ 輕量定時"}
-      </button>
-      ${on ? `<span style="color:var(--muted);font-size:0.72rem;">${[5,10,15].map(m => `<span data-ar-mins="${m}" style="cursor:pointer;padding:0 4px;${m === mins ? "color:var(--accent);font-weight:700;" : ""}">${m}m</span>`).join("|")}</span>` : ""}
-      ${on && secsLeft !== null ? `<span style="color:var(--muted);font-size:0.72rem;">（${secsLeft}s）</span>` : ""}
-      <button id="idleAutoUpdateToggleBtn" class="${idleOn ? "secondary-btn" : "ghost-btn"}" type="button" style="font-size:0.72rem;min-height:26px;padding:2px 8px;" title="${escapeHtml(BACKGROUND_FULL_UPDATE_HELP)}">
-        ${idleOn ? idleLabel : "背景完整關"}
-      </button>
-    `;
+    arEl.innerHTML = isPublishedWebRuntime()
+      ? `<span class="chip flat" title="公開網站只讀 GitHub Actions 同來源延遲快照">Web 延遲快照｜不自動跨站</span>`
+      : `<span class="chip flat" title="開頁只讀本機快取；收盤後按一次同步">收盤後研究｜開頁不自動抓取</span>`;
   }
 }
 
@@ -23442,7 +23536,7 @@ function renderFinancialDataLayerSummary() {
       </div>
       <div class="kv-row"><span>內建 / 本機來源</span><strong style="font-size:0.76rem;">${escapeHtml(loadedSources)}</strong></div>
       <div class="kv-row"><span>增量儲存</span><strong style="font-size:0.76rem;">${escapeHtml(runtimeText)}；${escapeHtml(syncText)}</strong></div>
-      <div class="kv-row"><span>更新策略</span><strong style="font-size:0.76rem;">月營收已有預期公告月份時，完整更新不重複下載；手動更新可強制重新抓取。季報三率只增量合併新季度。</strong></div>
+      <div class="kv-row"><span>更新策略</span><strong style="font-size:0.76rem;">月營收已有預期公告月份時，收盤後背景任務不重複下載；手動更新可強制重新抓取。季報三率只增量合併新季度。</strong></div>
     </div>
   `;
 }
@@ -23948,7 +24042,7 @@ function renderConceptRotationPanel() {
           </article>
         </div>
       ` : `
-        <div class="empty">尚無可計算的概念股報價。請先按「智慧更新」或「完整更新」。</div>
+        <div class="empty">尚無可計算的概念股報價。請在收盤後按「收盤後同步」。</div>
       `}
     </div>
   `;
@@ -25729,6 +25823,7 @@ function isMemoryOverviewActive() {
 }
 
 function maybeRefreshMemoryMarketSnapshot(force = false) {
+  if (!force && !TAB_OPEN_NETWORK_REFRESH_ENABLED) return Promise.resolve(null);
   if (_memoryMarketRefreshPromise) return _memoryMarketRefreshPromise;
   const cache = normalizeMemoryMarketCache(state.memoryMarketCache);
   if (isPublishedWebRuntime()) return Promise.resolve(cache.snapshot);
@@ -25972,7 +26067,7 @@ function renderMemoryMarketPanel() {
       </div>
       <details class="note-box" style="margin-bottom:14px;" open>
         <summary style="cursor:pointer;font-weight:850;">報價趨勢線（本機累積 snapshot）</summary>
-        <p class="snapshot-trend-note" style="margin:8px 0 10px;">公開報價頁主要提供目前表格；extension 會把每次成功抓到的 snapshot 存進本機 history，畫出 DDR4 / DDR5 / NAND / 模組 / 合約價趨勢。啟動與日常完整更新時每天自動補一筆快照，不需要先開此面板；長期 $/GB 歷史請用下方 Stanford DAM 連結。</p>
+        <p class="snapshot-trend-note" style="margin:8px 0 10px;">公開報價頁主要提供目前表格；extension 會把每次成功抓到的 snapshot 存進本機 history，畫出 DDR4 / DDR5 / NAND / 模組 / 合約價趨勢。收盤後同步會依 TTL 在背景補每日快照；長期 $/GB 歷史請用下方 Stanford DAM 連結。</p>
         ${memoryTrendChartsHtml(snapshot, cache.history)}
       </details>
       <details class="note-box" style="margin-bottom:14px;" open>
@@ -26919,6 +27014,7 @@ async function updateBondEtfSignal(silent = false) {
 }
 
 function maybeRefreshBondEtfSignal() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const cache = normalizeBondSignalCache(state.bondSignalCache);
   if (isPublishedWebRuntime()) return Promise.resolve(cache);
   if (!cache.ts || Date.now() - cache.ts > BOND_SIGNAL_CACHE_TTL_MS) {
@@ -31371,7 +31467,7 @@ function renderDiscoveryCandidates(options = {}) {
       </div>
     `}
     <div class="discovery-grid">
-      ${renderDiscoveryTable("左側交易：好公司倒楣事 / 回測月季線 / 底部翻揚", leftRows, "left", "目前沒有符合左側條件的標的。請先完整更新日線、籌碼、月營收與估值。", tableLimit)}
+      ${renderDiscoveryTable("左側交易：好公司倒楣事 / 回測月季線 / 底部翻揚", leftRows, "left", "目前沒有符合左側條件的標的。請先執行收盤後同步，補齊日線、籌碼、月營收與估值。", tableLimit)}
       ${renderDiscoveryTable("右側交易：突破整理 / 主升段 / 籌碼轉強", rightRows, "right", "目前沒有符合右側突破條件的標的。", tableLimit)}
       ${renderDiscoveryTable("避開清單：量價背離或出貨警訊", riskRows, "right", "目前沒有明顯高風險警訊。", tableLimit)}
     </div>
@@ -35796,6 +35892,7 @@ async function updateDispositionData(silent = false) {
 }
 
 function maybeRefreshDispositionData() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const fetchedAt = Date.parse(state.disposition?.fetchedAt || "");
   const stale = !Number.isFinite(fetchedAt) || Date.now() - fetchedAt > DISPOSITION_CACHE_TTL_MS;
   if (stale) {
@@ -35882,6 +35979,7 @@ async function updateDispositionAllData(silent = false) {
 }
 
 function maybeRefreshDispositionRiskData() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const fetchedAt = Date.parse(state.dispositionRisk?.fetchedAt || "");
   const stale = !Number.isFinite(fetchedAt) || Date.now() - fetchedAt > DISPOSITION_CACHE_TTL_MS;
   if (stale) {
@@ -36657,6 +36755,7 @@ function renderDispositionTab() {
 let _exDividendRefreshPromise = null;
 
 function maybeRefreshExDividendCalendar() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   if (_exDividendRefreshPromise) return _exDividendRefreshPromise;
   const cache = normalizeExDividendCalendarState(state.exDividendCalendar);
   if (isPublishedWebRuntime()) return Promise.resolve(cache);
@@ -38832,6 +38931,7 @@ async function updateMacroSnapshot(silent = false) {
 }
 
 function maybeRefreshMacroSnapshot() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const cache = normalizeMacroCache(state.macroCache);
   if (!cache.ts || Date.now() - cache.ts > MACRO_CACHE_TTL_MS) {
     const run = () => updateMacroSnapshot(true).catch((error) => console.warn("updateMacroSnapshot failed", error));
@@ -39230,6 +39330,7 @@ async function updateTideSectorCache(silent = false) {
 }
 
 function maybeRefreshTideSectorCache() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const cache = normalizeTideSectorCache(state.tideSectorCache);
   if (!cache.ts || Date.now() - cache.ts > TIDE_SECTOR_CACHE_TTL_MS) {
     const run = () => updateTideSectorCache(true).catch((error) => console.warn("updateTideSectorCache failed", error));
@@ -39311,6 +39412,7 @@ async function updateMarketDashboard(silent = false) {
 }
 
 function maybeRefreshMarketDashboard() {
+  if (!TAB_OPEN_NETWORK_REFRESH_ENABLED) return;
   const cache = normalizeMarketDashboardCache(state.marketDashboardCache);
   const now = new Date();
   // 美股開盤期間縮短 TTL 至 5 分鐘；其他時段 30 分鐘才重新抓取
@@ -39412,7 +39514,7 @@ function marketHeatLevel(score, coverage) {
     return {
       label: "資料不足",
       tone: "flat",
-      detail: "可用資料權重偏低，請先更新大盤、總經、期貨與日線後再判讀。"
+      detail: "可用資料權重偏低，請先執行收盤後同步，補齊大盤、總經、期貨與日線後再判讀。"
     };
   }
   if (score >= 76) {
@@ -40246,7 +40348,7 @@ function crashRiskLevel(score, coverage, override = null) {
     return {
       label: "資料不足",
       tone: "flat",
-      headline: "急殺風險：資料不足，先更新大盤 / 期貨 / 總經 / 日線",
+      headline: "急殺風險：資料不足，先執行收盤後同步",
       action: "不要把缺資料解讀成低風險；先補 TAIFEX、TWSE、VIX 與 TAIEX 日線。"
     };
   }
@@ -40551,7 +40653,7 @@ function marketCrashRiskIndexLeadFactor(cache) {
   if (txfPct === null && taiwanPct === null) {
     return {
       factor: null,
-      missing: marketHeatMissing("crash", "台指期 / 大盤跌幅", "按「更新大盤」後取得台指期夜盤與加權指數快照。", "Yahoo / TAIFEX", 16)
+      missing: marketHeatMissing("crash", "台指期 / 大盤跌幅", "收盤後同步會在背景補台指期夜盤與加權指數快照。", "Yahoo / TAIFEX", 16)
     };
   }
   // 連續計分：跌幅在 ramp 區間內線性給分，分數隨每日實際值微動
@@ -41024,13 +41126,13 @@ function marketCrashRiskFreshness(risk) {
     return {
       tone: "warn",
       label: latestFetch ? "昨日更新" : "昨日資料",
-      detail: `最後抓取 ${latestFetch || "待補"}；最新市場日期 ${latestSource || "待補"}。開啟大盤頁會自動補抓，不必跑完整更新。`
+      detail: `最後抓取 ${latestFetch || "待補"}；最新市場日期 ${latestSource || "待補"}。開頁不自動抓取；請在收盤後同步補資料。`
     };
   }
   return {
     tone: "down",
     label: `過期 ${formatNumber(daysOld, 0)} 天`,
-    detail: `最後抓取 ${latestFetch || latestSource}，分數可能只是舊快取，所以看起來每天一樣；開啟大盤頁會自動重新抓取雷達輸入資料，失敗才沿用已存最佳快取。`
+    detail: `最後抓取 ${latestFetch || latestSource}，分數可能只是舊快取，所以看起來每天一樣；開頁不自動抓取，請以收盤後同步補資料，失敗時才沿用已存最佳快取。`
   };
 }
 
@@ -41044,7 +41146,7 @@ function marketCrashRiskDecisionState(risk, freshness) {
       tone: "danger",
       label: "不採信",
       headline: "雷達資料不足，先補資料再判斷。",
-      action: "先按「重新抓取雷達」或「智慧更新」，不要用目前分數調整部位。"
+      action: "先按「重新抓取雷達」或「收盤後同步」，不要用目前分數調整部位。"
     };
   }
   if (stale) {
@@ -41052,7 +41154,7 @@ function marketCrashRiskDecisionState(risk, freshness) {
       tone: "danger",
       label: "不採信舊快取",
       headline: "分數可能只是舊快取，所以會看起來每天一樣。",
-      action: "先更新大盤 / 期貨 / 總經 / 法人前10；更新失敗時只看各因子 asOf，不把總分當今日訊號。"
+      action: "先執行收盤後同步；更新失敗時只看各因子 asOf，不把總分當今日訊號。"
     };
   }
   if (coverage < 60 || pending) {
@@ -41133,7 +41235,7 @@ function buildMarketCrashRiskKeyBearChecks() {
       label: "利空二：外資大量賣超",
       tone: "warn",
       value: "法人排行資料待更新",
-      detail: "按「重新抓取雷達」或法人前10更新後，此處會以官方 T86 前 10 排行 proxy 判斷外資是否大量賣超。",
+      detail: "收盤後同步補齊法人前 10 後，此處會以官方 T86 前 10 排行 proxy 判斷外資是否大量賣超。",
       source: "TWSE / TPEx T86",
       asOf: "",
       url: "https://www.twse.com.tw/zh/trading/foreign/bfi82u.html"
@@ -41231,7 +41333,7 @@ function renderMarketCrashRiskPanel() {
         }
         return `
       <div class="market-heat-actions" data-crash-risk-trend style="align-items:center;">
-        ${crashRiskTrendSparkHtml(combined) || `<span class="chip flat">趨勢線需要 TAIEX 日線 ≥ 61 根；請先按「更新大盤」或完整更新</span>`}
+        ${crashRiskTrendSparkHtml(combined) || `<span class="chip flat">趨勢線需要 TAIEX 日線 ≥ 61 根；請先執行收盤後同步</span>`}
         ${backfillCount ? `<span class="chip flat">含回推 ${formatNumber(backfillCount, 0)} 天</span>` : ""}
         ${deltaChip}
       </div>
@@ -41418,7 +41520,7 @@ function marketLineChartHtml(series, label, options = {}) {
   const rows = normalizeMarketSeries(series).map((point) => ({ close: point.value }));
   const color = options.color || "var(--accent)";
   if (rows.length < 2) {
-    return `<div class="note-box" style="margin-top:8px;font-size:0.78rem;color:var(--muted);">線圖資料尚不足；按「更新大盤」後會重新抓取 Yahoo / TAIFEX 回傳序列。</div>`;
+    return `<div class="note-box" style="margin-top:8px;font-size:0.78rem;color:var(--muted);">線圖資料尚不足；收盤後同步會在背景補 Yahoo / TAIFEX 回傳序列。</div>`;
   }
   const latest = rows.at(-1)?.close;
   const first = rows[0]?.close;
@@ -41485,7 +41587,7 @@ function renderMarketIndexCard(item, options = {}) {
           <span class="chip flat">待更新</span>
         </div>
         ${renderInlineSourceLinks(inlineLinks, { label: options.inlineLinkLabel || "", context: inlineContext })}
-        <div class="empty">尚無資料。請按「更新大盤」或「完整更新」取得最新行情；下方連結可先人工核對。</div>
+        <div class="empty">尚無資料。請執行「收盤後同步」補齊行情；下方連結可先人工核對。</div>
         ${renderExternalSourceLinks(fallbackLinks, { label: "行情來源 / 核對連結", context: `market-index-${options.contextKey || "empty"}`, style: "margin-top:8px;" })}
       </div>
     `;
@@ -41590,17 +41692,15 @@ function renderDataHealthPanel() {
   const staleText = health.staleLayers.length
     ? `需補：${health.staleLayers.slice(0, 4).map((layer) => layer.label).join("、")}${health.staleLayers.length > 4 ? "…" : ""}`
     : "各主要資料層目前足夠支撐看盤判讀";
-  const actionButton = health.action === "full"
-    ? `<button class="secondary-btn" type="button" data-auto-update-action="run-now">完整更新</button>`
-    : health.action === "quick"
-      ? `<button class="secondary-btn" type="button" data-market-action="quick-update">智慧更新</button>`
-      : "";
+  const actionButton = health.action === "none"
+    ? ""
+    : `<button class="secondary-btn" type="button" data-auto-update-action="run-now">${isPublishedWebRuntime() ? "重新讀取快照" : "收盤後同步"}</button>`;
   return `
     <div id="dataHealthPanel" class="data-health-panel">
       <div class="data-health-head">
         <div class="data-health-title">
           <h3>資料健康總分</h3>
-          <p>依報價、日線、籌碼、ETF、月營收與大盤快取覆蓋率 / 日期計分；低分時優先顯示該用快速更新或完整更新。</p>
+          <p>依報價、日線、籌碼、ETF、月營收與大盤快取覆蓋率 / 日期計分；收盤後只需按一次同步，未到期資料會略過。</p>
         </div>
         <div class="data-health-score ${health.tone}">
           <strong>${formatNumber(health.overall, 0)}</strong>
@@ -41617,6 +41717,61 @@ function renderDataHealthPanel() {
       </div>
     </div>
   `;
+}
+
+function renderSourceReliabilityPanel() {
+  const container = $("sourceReliabilityPanel");
+  if (!container) return;
+  const reliability = globalThis.TwStockUpdateReliability;
+  const rows = reliability ? reliability.healthRows(sourceHealthRegistry()) : [];
+  const scheduler = state.performance?.updateScheduler?.afterCloseBackgroundSync || {};
+  const started = Array.isArray(scheduler.started) ? scheduler.started : [];
+  const skipped = Array.isArray(scheduler.skipped) ? scheduler.skipped : [];
+  const failed = Array.isArray(scheduler.failed) ? scheduler.failed : [];
+  const running = started.filter((row) => ["queued", "running", "retrying"].includes(row.status)).length;
+  const blocked = rows.filter((row) => Date.parse(row.nextRetryAt || "") > Date.now()).length;
+  const unhealthy = rows.filter((row) => row.consecutiveFailures > 0).length;
+  const modeLabel = isPublishedWebRuntime() ? "Web 延遲快照" : "Extension 收盤後同步";
+  const sourceRows = rows.map((row) => {
+    const isBlocked = Date.parse(row.nextRetryAt || "") > Date.now();
+    const tone = isBlocked || row.consecutiveFailures >= 3 ? "down" : row.consecutiveFailures ? "warn" : row.lastSuccess ? "up" : "flat";
+    const status = isBlocked ? "暫停重試" : row.consecutiveFailures ? row.lastCategoryLabel || "失敗" : row.lastSuccess ? "可用" : "待使用";
+    return `
+      <tr data-source-health-row="${escapeHtml(row.key)}">
+        <td><strong>${escapeHtml(row.label)}</strong><br><small>${escapeHtml(row.key)}</small></td>
+        <td><span class="chip ${tone}">${escapeHtml(status)}</span></td>
+        <td>${escapeHtml(row.lastSuccess ? formatDateTime(row.lastSuccess) : "-")}</td>
+        <td>${formatNumber(row.lastLatencyMs || 0, 0)} ms<br><small>${row.lastBytes ? `${formatNumber(row.lastBytes, 0)} bytes` : ""}</small></td>
+        <td>${formatNumber(row.consecutiveFailures || 0, 0)}${row.lastError ? `<br><small title="${escapeHtml(row.lastError)}">${escapeHtml(row.lastError.slice(0, 72))}${row.lastError.length > 72 ? "…" : ""}</small>` : ""}</td>
+        <td>${isBlocked ? `<button class="link-chip inline-action-chip" type="button" data-source-health-reset="${escapeHtml(row.key)}">解除並允許下次重試</button><br><small>${escapeHtml(formatDateTime(row.nextRetryAt))}</small>` : "-"}</td>
+      </tr>`;
+  }).join("");
+  container.innerHTML = `
+    ${renderDataHealthPanel()}
+    <div class="panel-lite" data-source-reliability-center style="margin-top:14px;">
+      <div class="section-head">
+        <div>
+          <h3>來源可靠度與背景佇列</h3>
+          <p>${escapeHtml(modeLabel)}｜來源失敗會分類並保留 last success；連續 3 次可重試失敗才暫停單一來源，不影響其他來源。</p>
+        </div>
+        <div class="chip-row chip-row-compact">
+          <span class="chip flat">背景執行 ${formatNumber(running, 0)}</span>
+          <span class="chip flat">新鮮略過 ${formatNumber(skipped.length, 0)}</span>
+          <span class="chip ${failed.length ? "warn" : "up"}">任務失敗 ${formatNumber(failed.length, 0)}</span>
+          <span class="chip ${blocked ? "down" : "flat"}">來源暫停 ${formatNumber(blocked, 0)}</span>
+        </div>
+      </div>
+      <p class="note-box" style="margin:0;">開頁不自動跨站抓取。收盤後同步先完成報價與日線，其他來源依 TTL 以最多 2 路背景執行；Podcast、新聞、SBL 與深度法人回補仍為使用時才抓。</p>
+      <details style="margin-top:12px;" ${unhealthy || blocked ? "open" : ""}>
+        <summary>來源明細 ${rows.length ? `（${formatNumber(rows.length, 0)} 個）` : "（尚無請求紀錄）"}</summary>
+        <div class="table-wrap" style="margin-top:10px;">
+          <table>
+            <thead><tr><th>來源</th><th>狀態</th><th>最後成功</th><th>耗時 / bytes</th><th>連續失敗</th><th>重試</th></tr></thead>
+            <tbody>${sourceRows || `<tr><td colspan="6">尚無來源請求；收盤後同步或使用特定研究工具後會開始記錄。</td></tr>`}</tbody>
+          </table>
+        </div>
+      </details>
+    </div>`;
 }
 
 function dailyChangePctInfo(stock) {
@@ -41830,12 +41985,12 @@ function renderAutoUpdateRunPanel() {
   const completed = log.steps.filter((step) => step.status === "completed").length;
   const failed = log.steps.filter((step) => step.status === "error").length;
   const running = log.status === "running" || log.status === "stopping" || log.status === "pending";
-  const sourceLabel = log.mode === "manual" ? "手動啟動日常完整更新" : "開啟後背景自動更新";
+  const sourceLabel = log.mode === "manual" ? "手動啟動收盤後同步" : "背景同步";
   return `
     <div id="autoUpdateRunPanel" class="auto-update-panel">
       <div class="auto-update-head">
         <div>
-          <h3>日常完整更新流程</h3>
+          <h3>收盤後同步流程</h3>
           <p>${escapeHtml(sourceLabel)}｜${escapeHtml(log.summary || (log.currentLabel ? `目前：${log.currentLabel}` : "尚未執行"))}</p>
         </div>
         <div class="chip-row chip-row-compact">
@@ -41843,7 +41998,7 @@ function renderAutoUpdateRunPanel() {
           <span class="chip ${statusToneClass(freshness.tone)}">${escapeHtml(freshness.label)}</span>
           <span class="chip">完成 ${formatNumber(completed, 0)}/${formatNumber(log.steps.length, 0)}</span>
           ${failed ? `<span class="chip warn">待重試 ${formatNumber(failed, 0)}</span>` : ""}
-          ${running ? `<button class="link-chip inline-action-chip" type="button" data-auto-update-action="stop">停止本次</button>` : `<button class="link-chip inline-action-chip" type="button" data-auto-update-action="run-now">完整更新</button>`}
+          ${running ? `<button class="link-chip inline-action-chip" type="button" data-auto-update-action="stop">停止本次</button>` : `<button class="link-chip inline-action-chip" type="button" data-auto-update-action="run-now">收盤後同步</button>`}
         </div>
       </div>
       <div class="auto-update-steps">
@@ -42300,7 +42455,7 @@ function marketCommandStockState() {
 
 function renderMarketCommandThemeRows(rows) {
   const list = Array.isArray(rows) ? rows.slice(0, 4) : [];
-  if (!list.length) return `<div class="empty">族群趨勢資料待補；先按智慧更新補報價、日線、月營收與籌碼。</div>`;
+  if (!list.length) return `<div class="empty">族群趨勢資料待補；請在收盤後同步報價與日線，其餘月營收、籌碼會依 TTL 背景補齊。</div>`;
   return list.map((row, index) => `
     <div class="rank-row" data-theme-action-filter="${escapeHtml(row.key)}" style="cursor:pointer;">
       <span>
@@ -43909,6 +44064,7 @@ function renderActiveTab(tab = state.activeTab || "market") {
     } else if (active === "macro") {
       renderSection("總體經濟", renderMacroTab, "macroContent");
     } else if (active === "help") {
+      renderSection("資料可靠度", renderSourceReliabilityPanel, "sourceReliabilityPanel");
       renderSection("效能診斷", renderPerformanceDiagnosticsPanel, "performanceDiagnosticsPanel");
       renderSection("版本日誌", renderChangelogPanel, "changelogMount");
     }
@@ -44480,8 +44636,21 @@ function bindEvents() {
   document.querySelectorAll(".tab-btn").forEach((button) => {
     button.addEventListener("click", () => {
       switchTab(button.dataset.tabTarget);
+      button.closest("details")?.removeAttribute("open");
       compactMobileSidebarAfterNavigation({ scrollToMain: true });
     });
+  });
+
+  document.body.addEventListener("click", (event) => {
+    const reset = event.target.closest("[data-source-health-reset]");
+    if (!reset) return;
+    const key = reset.dataset.sourceHealthReset;
+    const reliability = globalThis.TwStockUpdateReliability;
+    if (!key || !reliability) return;
+    reliability.resetCircuit(sourceHealthRegistry(), key);
+    persistStateSilently(`解除 ${key} 來源暫停`);
+    renderSourceReliabilityPanel();
+    setStatus(`${reliability.sourceLabel(key)} 已解除暫停；下次收盤後同步會重新嘗試。`, "good");
   });
 
   $("mobileSidebarToggle")?.addEventListener("click", () => {
@@ -44894,7 +45063,8 @@ function bindEvents() {
     if (marketActionButton) {
       const action = marketActionButton.dataset.marketAction;
       if (action === "quick-update") {
-        quickUpdateQuotes().catch((err) => setStatus(`智慧更新失敗：${err?.message || String(err)}`, "error"));
+        if (isPublishedWebRuntime()) quickUpdateQuotes().catch((err) => setStatus(`網站快照讀取失敗：${err?.message || String(err)}`, "error"));
+        else runManualFullUpdate();
         return;
       }
       if (action === "update-revenue") {
@@ -45269,16 +45439,19 @@ function bindEvents() {
     }
   });
 
-  $("quickUpdateBtn").addEventListener("click", quickUpdateQuotes);
-  $("updateAllBtn").addEventListener("click", updateAllStocks);
-  $("updateAllKlinesBtn").addEventListener("click", updateAllKlines);
-  $("updateRevenueBtn").addEventListener("click", () => updateMonthlyRevenue({ force: true, reason: "manual" }));
-  $("updateDividendBtn").addEventListener("click", () => {
+  $("quickUpdateBtn")?.addEventListener("click", () => {
+    if (isPublishedWebRuntime()) quickUpdateQuotes().catch((error) => setStatus(`網站快照讀取失敗：${error?.message || String(error)}`, "error"));
+    else runManualFullUpdate();
+  });
+  $("updateAllBtn")?.addEventListener("click", updateAllStocks);
+  $("updateAllKlinesBtn")?.addEventListener("click", updateAllKlines);
+  $("updateRevenueBtn")?.addEventListener("click", () => updateMonthlyRevenue({ force: true, reason: "manual" }));
+  $("updateDividendBtn")?.addEventListener("click", () => {
     updateDividendData(false)
       .then(() => updateExDividendCalendar(false))
       .catch(() => {});
   });
-  $("refreshFuturesTopBtn").addEventListener("click", () => {
+  $("refreshFuturesTopBtn")?.addEventListener("click", () => {
     updateFuturesData(false).catch(() => {});
   });
 
@@ -45300,7 +45473,7 @@ function bindEvents() {
     return count;
   });
 
-  $("updateActiveEtfDataBtn").addEventListener("click", () => {
+  $("updateActiveEtfDataBtn")?.addEventListener("click", () => {
     updateAllActiveEtfs().catch((error) => {
       setStatus(`主動式 ETF 完整更新失敗：${error && error.message ? error.message : String(error)}`, "error");
     });
@@ -45728,12 +45901,7 @@ function schedulePostStartupIdleTasks() {
       }), 2200);
   }, state.activeTab === "podcast" ? 2200 : STARTUP_NETWORK_DEFER_MS);
   if (shouldPrimeActiveEtfSeed()) maybeLoadVisibleActiveEtfSeed();
-  // 記憶體報價每日快照：趨勢 history 每天至少累積一筆，不需要先開記憶體面板
-  if (!isPublishedWebRuntime()) {
-    setTimeout(() => {
-      scheduleIdleExecution("memory market daily snapshot", () => maybeDailyMemoryMarketSnapshot(), 6000);
-    }, STARTUP_NETWORK_DEFER_MS + STARTUP_REFRESH_ORDER.memoryMarketSnapshot * STARTUP_REFRESH_SPACING_MS);
-  }
+  // v17.9：開頁只做本機 hydration；記憶體與其他網路來源改由收盤後背景 TTL 佇列處理。
 }
 
 async function init() {
@@ -45746,6 +45914,10 @@ async function init() {
   }
   await loadState();
   normalizeStateAfterLoad();
+  // v17.9 收盤後研究模式：舊版曾開啟的盤中定時 / 開頁完整更新不再自動恢復。
+  state.autoRefreshEnabled = false;
+  state.idleAutoUpdateEnabled = false;
+  state.idleAutoUpdateUserOptIn = false;
   startResearchDataLayerLoad("startup-deferred");
   applyCustomGroupsToFilters();   // 自定義類股整合進 filter 系統
   applyUserThemeAdditions();      // 使用者自選股池整合進內建主題
@@ -45761,11 +45933,7 @@ async function init() {
   schedulePostStartupIdleTasks();
   maybeTriggerFuturesSettlementReminder();
 
-  // 輕量定時：恢復上次設定
-  if (state.autoRefreshEnabled) startAutoRefresh();
-  scheduleIdleAutoUpdate();
-
-  // 更新模式按鈕（委派）
+  // 更新模式按鈕（委派）；v17.9 不再於開頁自動排入網路更新。
   document.body.addEventListener("click", (e) => {
     if (e.target.closest("#arToggleBtn")) { toggleAutoRefresh(); return; }
     if (e.target.closest("#idleAutoUpdateToggleBtn")) { toggleIdleAutoUpdate(); return; }
