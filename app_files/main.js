@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "17.9";
+const APP_VERSION = "18.0";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -894,6 +894,17 @@ const STOCK_UNIVERSE = {
   "4749": { name: "新應材", suffix: "TWO", officialIndustry: "24", sector: "CMP研磨液 / 半導體材料" },
   "1711": { name: "永光", suffix: "TW", officialIndustry: "21", sector: "光阻 / 染料 / 特化" },
   "8358": { name: "金居", suffix: "TWO", officialIndustry: "28", sector: "銅箔 / CCL材料" },
+  "1303": { name: "南亞", suffix: "TW", officialIndustry: "03", sector: "PCB 上游垂直整合 / 樹脂 / 玻纖布 / 銅箔 / CCL" },
+  "5340": { name: "建榮", suffix: "TWO", officialIndustry: "28", sector: "電子級玻纖布 / CCL 上游" },
+  "5475": { name: "德宏", suffix: "TWO", officialIndustry: "28", sector: "電子級玻纖布 / CCL 上游" },
+  "4989": { name: "榮科", suffix: "TW", officialIndustry: "28", sector: "電解銅箔 / PCB 材料" },
+  "4764": { name: "雙鍵", suffix: "TW", officialIndustry: "21", sector: "高速 CCL 樹脂 / 特用化學" },
+  "4722": { name: "國精化", suffix: "TW", officialIndustry: "21", sector: "低介電樹脂 / 電子化學材料" },
+  "3430": { name: "奇鈦科", suffix: "TWO", officialIndustry: "21", sector: "光安定劑 / 抗氧化劑 / 特殊添加劑" },
+  "2441": { name: "超豐", suffix: "TW", officialIndustry: "24", sector: "IC 封裝 / 測試" },
+  "6147": { name: "頎邦", suffix: "TWO", officialIndustry: "24", sector: "顯示驅動 IC / 封裝測試" },
+  "8110": { name: "華東", suffix: "TW", officialIndustry: "24", sector: "記憶體 IC 封裝 / 測試" },
+  "2329": { name: "華泰", suffix: "TW", officialIndustry: "24", sector: "IC 封裝 / 測試" },
   "3305": { name: "昇貿", suffix: "TW", officialIndustry: "31", sector: "焊錫材料 / BGA錫球 / 電子組裝材料" },
   "2404": { name: "漢唐", suffix: "TW", officialIndustry: "31", sector: "無塵室 / 廠務工程" },
   "5536": { name: "聖暉*", suffix: "TWO", officialIndustry: "31", sector: "機電廠務 / 超純水" },
@@ -1517,6 +1528,50 @@ const AWS_SUPPLY_CHAIN_SNAPSHOT = {
     { stage: "BBU", code: "3211", name: "順達", close: 385.5, awsRevenuePct: 45, eps27e: null, market: "TWO", priceSource: "TPEx 個股日成交資訊", priceUrl: "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock?code=3211&date=2026%2F07%2F17&id=&response=json&type=Daily" }
   ]
 };
+const PCB_MATERIALS_CODES = [
+  "1802", "1815", "1303", "5340", "5475",
+  "8358", "4989",
+  "4764", "4722", "1717", "1711", "3430",
+  "2383", "6274", "6213",
+  "3037", "8046", "3189", "8021"
+];
+const TSMC_RELATED_OSAT_CODES = [
+  "3711", "2449", "6239", "3264", "6257", "3265", "3374",
+  "2441", "6147", "8150", "8131", "8110", "2329"
+];
+const PCB_MATERIALS_SNAPSHOT = {
+  title: "PCB／ABF／CCL 原料供應鏈",
+  asOf: "2026-07-19",
+  rankingSource: "Tier 3 / 使用者研究定位，不進入交易雷達分數",
+  productSource: "公司官網、年報或 TWSE／TPEx 產業鏈資料；AI 純度與缺料敘事仍需持續複核",
+  copperFoilLadder: ["RTF／VLP", "HVLP1", "HVLP2／3", "HVLP4"],
+  priorityGroups: [
+    { key: "shortage", label: "第一組：缺料／漲價主軸", codes: ["1802", "1815", "8358", "4764", "4722"] },
+    { key: "integrated", label: "第二組：整合型、風險較分散", codes: ["1303", "1717"] },
+    { key: "validation", label: "第三組：需求驗證／下游受惠", codes: ["2383", "6274", "3037", "8046", "3189", "8021"] }
+  ],
+  rows: [
+    { code: "1802", name: "台玻", stage: "玻纖紗／布", products: "Low Dk、Low CTE 高階玻纖布", aiPosition: "AI CCL、ABF／BT 載板上游", userPosition: "最直接高階材料股", priorityRank: 1, sourceUrl: "https://www.taiwanglass.com/about.php?sid=2", sourceLabel: "台玻 2025 展望／纖維事業" },
+    { code: "1815", name: "富喬", stage: "玻纖紗／布", products: "電子級玻纖紗、玻纖布；Low Dk／Low CTE 布種待逐項複核", aiPosition: "AI 伺服器板、高速交換器、載板", userPosition: "高純度、高彈性", priorityRank: 2, sourceUrl: "https://www.ffg.com.tw/product1.asp", sourceLabel: "富喬產品頁" },
+    { code: "1303", name: "南亞", stage: "垂直整合", products: "玻纖布、環氧樹脂、銅箔、CCL", aiPosition: "涵蓋 PCB 多段上游與板材", userPosition: "最完整、業務較分散", priorityRank: 6, sourceUrl: "https://www.npc.com.tw/j2npc/zhtw/prodcate/Electronic%20Material", sourceLabel: "南亞電子材料產品頁" },
+    { code: "5340", name: "建榮", stage: "玻纖紗／布", products: "電子級玻纖布", aiPosition: "一般及部分高階 CCL 上游", userPosition: "次要追蹤", sourceUrl: "https://ic.tpex.org.tw/company_chain.php?stk_code=5340", sourceLabel: "TPEx 產業價值鏈" },
+    { code: "5475", name: "德宏", stage: "玻纖紗／布", products: "電子級玻纖布、石英纖維紗／布", aiPosition: "CCL 上游、高頻通訊材料", userPosition: "小型、波動較高", sourceUrl: "https://ic.tpex.org.tw/company_list.php?stk=5475&stkName=%E5%BE%B7%E5%AE%8F&t=company_product", sourceLabel: "TPEx 公司產品資料" },
+    { code: "8358", name: "金居", stage: "銅箔", products: "電解銅箔；VLP／HVLP 規格與量產進度待公司資料複核", aiPosition: "AI 伺服器、800G／1.6T 交換器、高階 CCL", userPosition: "最純銅箔標的", priorityRank: 3, sourceUrl: "https://ic.tpex.org.tw/company_chain.php?stk_code=8358", sourceLabel: "TPEx 產業價值鏈" },
+    { code: "4989", name: "榮科", stage: "銅箔", products: "電解銅箔", aiPosition: "PCB、電子材料", userPosition: "較偏一般銅箔循環股", sourceUrl: "https://lcyt.lcycic.com/", sourceLabel: "榮科公司官網" },
+    { code: "4764", name: "雙鍵", stage: "高速樹脂／添加劑", products: "MPPO、Hydrocarbon 等高速 CCL 樹脂布局待法說逐項複核", aiPosition: "M7／M8／M9 高階 CCL 原料", userPosition: "成長彈性高、評價也高", priorityRank: 4, sourceUrl: "http://www.dbc.com.tw/", sourceLabel: "雙鍵公司官網" },
+    { code: "4722", name: "國精化", stage: "高速樹脂／添加劑", products: "特殊電子樹脂、低介電耗損樹脂", aiPosition: "高頻 PCB、電子封裝材料", userPosition: "與雙鍵最接近", priorityRank: 5, sourceUrl: "https://www.qualipoly.com/zh-tw/product.html", sourceLabel: "國精化產品頁" },
+    { code: "1717", name: "長興", stage: "高速樹脂／添加劑", products: "合成樹脂、光固化材料、電子材料", aiPosition: "CCL、PCB、電子化學品", userPosition: "規模大、純度較低", priorityRank: 7, sourceUrl: "https://www.eternal-group.com/Product", sourceLabel: "長興產品頁" },
+    { code: "1711", name: "永光", stage: "高速樹脂／添加劑", products: "特用化學品、光固化材料", aiPosition: "PCB 油墨及電子材料", userPosition: "AI 直接度較低", sourceUrl: "https://www.ecic.com/", sourceLabel: "永光公司官網" },
+    { code: "3430", name: "奇鈦科", stage: "高速樹脂／添加劑", products: "光安定劑、抗氧化劑、特殊添加劑", aiPosition: "樹脂及電子材料添加劑", userPosition: "間接受惠", sourceUrl: "https://www.chitec.com.tw/", sourceLabel: "奇鈦科產品頁" },
+    { code: "2383", name: "台光電", stage: "CCL", products: "高階低損耗 CCL；M7／M8 分級屬市場研究口徑", aiPosition: "AI 伺服器高階 CCL", userPosition: "下游需求驗證核心", priorityRank: 8, sourceUrl: "https://www.tuc.com.tw", sourceLabel: "台光電公司官網" },
+    { code: "6274", name: "台燿", stage: "CCL", products: "高速網通、交換器、AI 伺服器 CCL", aiPosition: "高速低損耗板材", userPosition: "下游需求驗證", priorityRank: 9, sourceUrl: "https://ic.tpex.org.tw/company_chain.php?stk_code=6274", sourceLabel: "TPEx 產業價值鏈" },
+    { code: "6213", name: "聯茂", stage: "CCL", products: "高階 CCL、伺服器及車用板材料", aiPosition: "高速板材與伺服器 CCL", userPosition: "CCL 延伸追蹤", sourceUrl: "https://www.iteq.com.tw", sourceLabel: "聯茂公司官網" },
+    { code: "3037", name: "欣興", stage: "ABF 載板／PCB", products: "ABF／BT 載板、高階 PCB", aiPosition: "AI 晶片封裝與伺服器板需求驗證", userPosition: "下游需求驗證", priorityRank: 10, sourceUrl: "https://www.unimicron.com", sourceLabel: "欣興公司官網" },
+    { code: "8046", name: "南電", stage: "ABF 載板／PCB", products: "ABF／BT 載板、PCB", aiPosition: "AI／HPC 載板需求驗證", userPosition: "下游需求驗證", priorityRank: 11, sourceUrl: "https://www.nanyapcb.com.tw/", sourceLabel: "南電公司官網" },
+    { code: "3189", name: "景碩", stage: "ABF 載板／PCB", products: "ABF／BT 載板", aiPosition: "AI／HPC 載板需求驗證", userPosition: "下游需求驗證", priorityRank: 12, sourceUrl: "https://www.kinsus.com.tw/", sourceLabel: "景碩公司官網" },
+    { code: "8021", name: "尖點", stage: "PCB 耗材", products: "PCB 鑽針、鑽孔服務", aiPosition: "高階多層板製程耗材與需求驗證", userPosition: "下游需求驗證", priorityRank: 13, sourceUrl: "https://ic.tpex.org.tw/company_chain.php?stk_code=8021", sourceLabel: "TPEx 產業價值鏈" }
+  ]
+};
 const COPOS_CORE_CODES = ["3583", "3131", "3680", "2464", "6187", "2467", "7734", "6664", "3535", "3167", "6789", "2330"];
 const COPOS_RELATED_CODES = uniqueList([
   ...COPOS_CORE_CODES,
@@ -1570,7 +1625,7 @@ const THEME_MEMBERS = [
       // 設備 / 測試
       "3030", "5443", "6223", "6683", "6515", "6510", "3680", "8027", "6664", "3450", ...TSMC_EQUIPMENT_ROTATION_CODES,
       // 封測 / OSAT
-      "3711", "2449", "6239",
+      ...TSMC_RELATED_OSAT_CODES,
       // PCB / 載板 / 材料
       "3037", "3189", "8046", "2383", "6213", "6274", "8358",
       // 特用化材 / 耗材
@@ -1588,7 +1643,7 @@ const THEME_MEMBERS = [
     codes: AWS_SUPPLY_CHAIN_CODES
   },
   { key: "cpo", title: "CPO / 矽光子 / 光通訊 / 高速傳輸", codes: uniqueList(["3711", "6451", "3450", "3265", "6257", "6223", "3363", "3163", "3008", "3081", "2455", "6442", "4991", "2345", "3380", "4979", "3491", "6285", "3665", "3533", ...SILICON_PHOTONICS_CODES, ...CPO_MODULE_WATCH_CODES]) },
-  { key: "pcb", title: "ABF / PCB / CCL / 銅箔基板 / 電子組裝材料 / 伺服器板", codes: uniqueList(["3037", "3189", "8046", "4958", "2368", "3044", "2313", "2367", "3374", "8021", "6664", "8027", "2383", "6213", "6274", "8358", "3305", ...PCB_EXPANDED_RESEARCH_CODES]) },
+  { key: "pcb", title: "ABF / PCB / CCL / 上游原料 / 電子組裝材料 / 伺服器板", codes: uniqueList(["3037", "3189", "8046", "4958", "2368", "3044", "2313", "2367", "3374", "8021", "6664", "8027", "2383", "6213", "6274", "8358", "3305", ...PCB_MATERIALS_CODES, ...PCB_EXPANDED_RESEARCH_CODES]) },
   {
     key: "advancedPackaging",
     title: "先進封裝CoWoS/CoPoS",
@@ -1963,10 +2018,10 @@ const AI_SUPPLY_CHAIN_STOCKS = {
 };
 
 const AI_SUPPLY_CHAIN_THEME_CODES = {
-  tsmc: uniqueList(["2330", "3711", "6770", "5347", "3131", "3583", "6187", "6510", "6196", "5536", "2404", "5538", "2467", "5443", "6640", "4763", "1723", "4739", "1773", "4721", "1560", "4766", "8028", "3595", "2449", "3264", "6223", "6789", "6257", "6239", ...TSMC_EQUIPMENT_ROTATION_CODES, ...AI_FACTORY_TSMC_SPILLOVER_CODES]),
+  tsmc: uniqueList(["2330", "3711", "6770", "5347", "3131", "3583", "6187", "6510", "6196", "5536", "2404", "5538", "2467", "5443", "6640", "4763", "1723", "4739", "1773", "4721", "1560", "4766", "8028", "3595", "2449", "3264", "6223", "6789", "6257", "6239", ...TSMC_RELATED_OSAT_CODES, ...TSMC_EQUIPMENT_ROTATION_CODES, ...AI_FACTORY_TSMC_SPILLOVER_CODES]),
   aws: AWS_SUPPLY_CHAIN_CODES,
   cpo: uniqueList(["2330", "3711", "6223", "6510", "3081", "3450", "4979", "3363", "3234", "4908", "4977", "6442", "3163", "7402", "2345", "3380", "6285", "3596", "5388", "3704", "2347", "3008", "3406", "3019", "3362", "6209", "3665", ...NEXT_WAVE_LAYER2_CPO_CODES]),
-  pcb: uniqueList(["3037", "3189", "8046", "8150", "2327", "2313", "2368", "2383", "3044", "4958", "6269", "6274", "6213", "8358", "3305", "3715", "5469", "5439", "2402", "6153", "2385", "6191", "1815", "1802", "8039", "4766", ...NEXT_WAVE_LAYER1_PCB_CODES, ...UNDERDEVELOPED_HIGH_SPEED_BACKPLANE_CODES]),
+  pcb: uniqueList(["3037", "3189", "8046", "8150", "2327", "2313", "2368", "2383", "3044", "4958", "6269", "6274", "6213", "8358", "3305", "3715", "5469", "5439", "2402", "6153", "2385", "6191", "1815", "1802", "8039", "4766", ...PCB_MATERIALS_CODES, ...NEXT_WAVE_LAYER1_PCB_CODES, ...UNDERDEVELOPED_HIGH_SPEED_BACKPLANE_CODES]),
   advancedPackaging: ADVANCED_PACKAGING_CODES,
   network: uniqueList(["2345", "6285", "3596", "5388", "3380", "3704", "4906", "6216", "2347", "2412", "3491", "4977", "6214", "2317", "2324", "4938", "2353", "6442", "3081", ...NEXT_WAVE_LAYER2_CPO_CODES]),
   memory: uniqueList(["2408", "2344", "6770", "2337", "8299", "2451", "3260", "8271", "4967", "8088", "5289", "8277", "3006", "5351", "6485", "6239", "8150", "8131", "6257", "2449", "3264", ...NEXT_WAVE_LAYER3_STORAGE_CODES, ...UNDERDEVELOPED_ENTERPRISE_STORAGE_CODES]),
@@ -2009,6 +2064,12 @@ function applyAiSupplyChainExpansion() {
 
 const LABEL_CODESETS = {
   awsSupplyChain: AWS_SUPPLY_CHAIN_CODES,
+  tsmcRelatedOsat: TSMC_RELATED_OSAT_CODES,
+  pcbMaterials: PCB_MATERIALS_CODES,
+  pcbGlassFiber: ["1802", "1815", "1303", "5340", "5475"],
+  pcbCopperFoil: ["8358", "1303", "4989"],
+  pcbHighSpeedResin: ["4764", "4722", "1717", "1303", "1711", "3430"],
+  pcbCcl: ["2383", "6274", "6213", "1303"],
   cowos: uniqueList(["6187", "3131", "6640", "8027", "2360", "3583", "2464", "3711", "2449", "6239", "3037", "8046", "1560", "6139", "5536", "2330", ...ADVANCED_PACKAGING_COWOS_CODES]),
   cowosEquipment: uniqueList(["6187", "3131", "6640", "8027", "2360", "3583", "2464", "2467"]),
   cowosOsatTest: ["3711", "2449", "6239"],
@@ -2114,6 +2175,12 @@ const LABEL_CODESETS = {
 
 const RESEARCH_LABEL_RULES = [
   { key: "awsSupplyChain", label: "AWS 供應鏈", codes: LABEL_CODESETS.awsSupplyChain, aliases: ["aws", "amazon web services", "aws 概念股", "aws供應鏈", "aws 營收占比"] },
+  { key: "tsmcRelatedOsat", label: "封測（台積電相關）", codes: LABEL_CODESETS.tsmcRelatedOsat, aliases: ["封測台積電相關", "台積電封測", "tsmc osat", "ic封裝測試", "晶圓測試"] },
+  { key: "pcbMaterials", label: "PCB／ABF／CCL原料", codes: LABEL_CODESETS.pcbMaterials, aliases: ["pcb原料", "abf原料", "ccl原料", "pcb上游", "ai板材", "高速板材"] },
+  { key: "pcbGlassFiber", label: "PCB玻纖布", codes: LABEL_CODESETS.pcbGlassFiber, aliases: ["玻纖布", "玻纖紗", "low dk", "low cte", "電子級玻纖"] },
+  { key: "pcbCopperFoil", label: "PCB高階銅箔", codes: LABEL_CODESETS.pcbCopperFoil, aliases: ["銅箔", "vlp", "hvlp", "hvlp4", "電解銅箔"] },
+  { key: "pcbHighSpeedResin", label: "高速CCL樹脂", codes: LABEL_CODESETS.pcbHighSpeedResin, aliases: ["mppo", "hydrocarbon", "低介電樹脂", "電子樹脂", "ccl樹脂"] },
+  { key: "pcbCcl", label: "高階CCL", codes: LABEL_CODESETS.pcbCcl, aliases: ["高階ccl", "m7", "m8", "m9", "低損耗材料"] },
   { key: "cowos", label: "CoWoS", codes: LABEL_CODESETS.cowos, aliases: ["cowos", "co-wos", "先進封裝", "advanced packaging"] },
   { key: "cowosEquipment", label: "CoWoS-設備", codes: LABEL_CODESETS.cowosEquipment, aliases: ["cowos 設備", "cowos equipment"] },
   { key: "cowosOsatTest", label: "CoWoS-封測測試", codes: LABEL_CODESETS.cowosOsatTest, aliases: ["cowos 封測", "cowos 測試"] },
@@ -2514,7 +2581,7 @@ const THEME_SUBCATEGORIES = {
     "法說後設備觀察": TSMC_EQUIPMENT_ROTATION_CODES,
     "廠務核心":   ["2404", "5536", "6196", "6139", "6691", "6125"],
     "CoWoS設備":  ["6640", "3131", "6187", "3583", "2464", "2467", "7734", "3535", "3167", "6789", "2360"],
-    "封測OSAT":   ["3711", "2449", "6239"],
+    "封測（台積電相關）": TSMC_RELATED_OSAT_CODES,
     "設備/測試":  ["3030", "5443", "6223", "6683", "6515", "6510", "3680", "8027", "6664", "3450"],
     "化合物/GaAs": ["3105", "8086", "3081", "3491"],
     "材料/耗材":  ["1560", "1785", "5434", "4772", "4749", "1711"],
@@ -43775,6 +43842,98 @@ function equipmentRevenueSourceUrl(stock) {
     : "https://openapi.twse.com.tw/v1/opendata/t187ap05_L";
 }
 
+function renderPcbMaterialsPanel() {
+  const container = $("pcbMaterialsPanel");
+  if (!container) return;
+  if (state.filter !== "pcb") {
+    container.innerHTML = "";
+    return;
+  }
+
+  const snapshot = PCB_MATERIALS_SNAPSHOT;
+  const rowMap = new Map(snapshot.rows.map((row) => [row.code, row]));
+  const priorityCards = snapshot.priorityGroups.map((group) => {
+    const ranked = group.codes
+      .map((code) => rowMap.get(code))
+      .filter(Boolean)
+      .map((row) => `<span>${row.priorityRank}. ${escapeHtml(row.name)} ${escapeHtml(row.code)}</span>`)
+      .join("");
+    return `
+      <div class="equipment-source-card pcb-priority-card" data-priority-group="${escapeHtml(group.key)}">
+        <strong>${escapeHtml(group.label)}</strong>
+        <div class="pcb-priority-list">${ranked}</div>
+      </div>
+    `;
+  }).join("");
+
+  const cards = snapshot.rows.map((row) => {
+    const stock = STOCK_MAP.get(row.code) || STOCK_UNIVERSE[row.code] || { code: row.code, name: row.name, suffix: "TW" };
+    const suffix = stock.suffix === "TWO" ? "TWO" : "TW";
+    const priorityLabel = row.priorityRank ? `追蹤 #${row.priorityRank}` : "延伸觀察";
+    return `
+      <article class="equipment-stock-card pcb-material-card" data-pcb-material-code="${escapeHtml(row.code)}" data-product-source="official-entry" data-positioning-source="user-research">
+        <div class="equipment-stock-head">
+          <div>
+            <span class="equipment-code">${escapeHtml(row.code)}.${escapeHtml(suffix)}</span>
+            <h3>${escapeHtml(row.name)}</h3>
+          </div>
+          <span class="equipment-stance">${escapeHtml(row.stage)}</span>
+        </div>
+        <div class="pcb-material-summary">
+          <p><span>主要產品</span><strong>${escapeHtml(row.products)}</strong></p>
+          <p><span>AI 供應鏈位置</span><strong>${escapeHtml(row.aiPosition)}</strong></p>
+          <p><span>你的定位*</span><strong>${escapeHtml(row.userPosition)}</strong></p>
+        </div>
+        <div class="pcb-card-actions">
+          <span class="pcb-priority-chip">${escapeHtml(priorityLabel)}</span>
+          <button class="equipment-report-btn" type="button" data-pcb-material-stock-code="${escapeHtml(row.code)}">開啟個股研究</button>
+        </div>
+        <details class="equipment-card-detail">
+          <summary>來源與複核邊界</summary>
+          <p class="equipment-thesis">產品分類以「${escapeHtml(row.sourceLabel)}」作核對入口；AI 純度、缺料／漲價、M7／M8／M9 對應與「你的定位」屬研究假設，需用公司法說、年報、月營收與第二來源持續複核。</p>
+          <p class="equipment-risk"><strong>風險：</strong>規格認證與量產時程、客戶／產品組合、原料價格循環、擴產供給、需求遞延與估值壓縮；缺資料不視為低風險。</p>
+          <div class="link-row equipment-link-row" aria-label="${escapeHtml(row.name)}核對連結">
+            <a class="link-chip" href="${escapeHtml(row.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(row.sourceLabel)}</a>
+            <a class="link-chip" href="${escapeHtml(equipmentOfficialCompanyUrl(stock))}" target="_blank" rel="noopener noreferrer">${suffix === "TWO" ? "TPEx" : "TWSE"} 公司資料</a>
+            <a class="link-chip" href="https://mops.twse.com.tw/mops/web/index" target="_blank" rel="noopener noreferrer">MOPS 公開資訊</a>
+          </div>
+        </details>
+      </article>
+    `;
+  }).join("");
+
+  container.innerHTML = `
+    <section class="panel equipment-rotation-panel pcb-materials-panel" data-pcb-materials-panel>
+      <div class="equipment-hero">
+        <div>
+          <div class="equipment-eyebrow">PCB 主題 · 研究快照 ${escapeHtml(snapshot.asOf)}</div>
+          <h2>${escapeHtml(snapshot.title)}</h2>
+          <p>把 19 檔公司放回同一條材料鏈，先看缺料與漲價主軸，再用 CCL、ABF 載板、PCB 與鑽針驗證需求。南亞只列一次，但標示其跨玻纖布、樹脂、銅箔與 CCL 的垂直整合位置。</p>
+        </div>
+        <span class="equipment-status">19 檔 · 5 段供應鏈</span>
+      </div>
+
+      <div class="equipment-flow" aria-label="PCB／ABF／CCL材料供應鏈">
+        <span>玻纖紗／布</span><b>→</b><span>銅箔</span><b>＋</b><span>高速樹脂／添加劑</span><b>→</b><span>CCL</span><b>→</b><span>ABF 載板／PCB／耗材</span>
+      </div>
+
+      <div class="pcb-copper-ladder" aria-label="高階銅箔規格研究階梯">
+        <strong>銅箔規格研究階梯</strong>
+        ${snapshot.copperFoilLadder.map((item, index) => `${index ? "<b>→</b>" : ""}<span>${escapeHtml(item)}</span>`).join("")}
+        <small>規格越高不等於個股獲利必然越高，仍須核對認證、良率、產能與產品組合。</small>
+      </div>
+
+      <div class="equipment-official-grid pcb-priority-grid">${priorityCards}</div>
+
+      <div class="equipment-disclaimer">
+        <strong>來源分層：</strong>${escapeHtml(snapshot.productSource)}。<strong>追蹤優先序：</strong>${escapeHtml(snapshot.rankingSource)}。排序只用於安排研究時間，不構成買賣建議；「台玻 ≈ 富喬 &gt; 南亞 &gt; 建榮、德宏」保留為玻纖布子題的使用者研究排序。
+      </div>
+
+      <div class="equipment-stock-grid pcb-material-grid">${cards}</div>
+    </section>
+  `;
+}
+
 function renderAwsSupplyChainPanel() {
   const container = $("awsSupplyChainPanel");
   if (!container) return;
@@ -43970,6 +44129,7 @@ function renderOverviewStaged() {
   renderSection("記憶體報價", renderMemoryMarketPanel, "memoryMarketPanel");
   renderSection("金融股研究框架", renderFinancialPanel, "financialPanel");
   renderSection("好老闆研究框架", renderGoodBossPanel, "goodBossPanel");
+  renderSection("PCB／ABF／CCL 原料", renderPcbMaterialsPanel, "pcbMaterialsPanel");
   renderSection("AWS 供應鏈", renderAwsSupplyChainPanel, "awsSupplyChainPanel");
   renderSection("法說後設備股觀察", renderEquipmentRotationPanel, "equipmentRotationPanel");
   renderSection("主題分類稽核", renderClassificationAuditPanel, "classificationAuditPanel");
@@ -44681,6 +44841,20 @@ function bindEvents() {
     state.filter = "aws";
     state.search = "";
     persistStateSilently("AWS 供應鏈研究卡選股");
+    render();
+    switchTab("report");
+    compactMobileSidebarAfterNavigation({ scrollToMain: true });
+  });
+
+  document.body.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-pcb-material-stock-code]");
+    if (!button) return;
+    const code = button.dataset.pcbMaterialStockCode;
+    if (!STOCK_MAP.has(code)) return;
+    state.selectedCode = code;
+    state.filter = "pcb";
+    state.search = "";
+    persistStateSilently("PCB 原料供應鏈研究卡選股");
     render();
     switchTab("report");
     compactMobileSidebarAfterNavigation({ scrollToMain: true });

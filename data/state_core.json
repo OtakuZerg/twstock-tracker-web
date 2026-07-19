@@ -1,5 +1,5 @@
 {
-  "version": "17.9",
+  "version": "18.0",
   "savedAt": "2026-06-03T16:25:24.247Z",
   "lastUpdated": "2026-05-12T16:00:29.175Z",
   "klineUpdatedAt": "2026-05-12T15:42:50.670Z",
@@ -43842,7 +43842,7 @@
   "performance": {},
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-07-18T15:00:35.083Z",
+    "builtAt": "2026-07-19T03:11:49.118Z",
     "sourcePath": "data/state_core.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"

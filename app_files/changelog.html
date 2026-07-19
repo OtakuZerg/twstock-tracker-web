@@ -1,5 +1,21 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v18.0</strong>
+              <span>2026-07-19</span>
+              <span class="cl-badge major">PCB Materials Chain</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>PCB 原料鏈</strong>：新增 19 檔，依玻纖紗／布、銅箔、高速樹脂／添加劑、CCL、ABF 載板／PCB／耗材分段。</li>
+              <li><strong>三組研究優先序</strong>：缺料／漲價主軸 5 檔、整合型 2 檔、需求驗證 6 檔；使用者定位不進交易雷達分數。</li>
+              <li><strong>台積電相關封測</strong>：新增 13 檔封裝／測試子分類並補齊超豐、頎邦、華東、華泰股池；分類不等同已確認營收占比。</li>
+              <li><strong>來源分層</strong>：產品分類連回公司官網、年報或 TWSE／TPEx；AI 純度、規格量產與缺料敘事明示待法說／第二來源複核。</li>
+              <li><strong>銅箔階梯</strong>：加入 RTF／VLP → HVLP1 → HVLP2／3 → HVLP4 的研究導覽及認證、良率、產能風險提示。</li>
+              <li><strong>雙端同步</strong>：Extension 與 Web App 共用同一面板、搜尋標籤與個股研究入口；Web 維持 same-origin snapshot 邊界。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v17.9</strong>
               <span>2026-07-18</span>
               <span class="cl-badge major">After-close Sync &amp; Source Health</span>
@@ -10,7 +26,7 @@
               <li><strong>背景節流</strong>：大盤、期貨、法人、處置、除權息、月營收、ETF、總經、Tide、記憶體與股利依 TTL 判斷，最多兩路並行並使用 jitter backoff。</li>
               <li><strong>來源可靠度中心</strong>：記錄來源最後成功／失敗、HTTP、bytes、耗時與連續失敗；分類 rate limit、timeout、HTTP、network、schema、no-data 與 Web runtime boundary。</li>
               <li><strong>來源級 circuit breaker</strong>：連續三次可重試失敗才暫停單一來源，保留解除入口，不影響其他官方或備援來源。</li>
-              <li><strong>四入口導覽</strong>：主要導覽收斂為收盤研究、主題、個股、資料健康；其餘九個低頻分頁放進預設收合的研究工具。</li>
+              <li><strong>完整研究入口保留</strong>：只收斂重複更新按鈕；大盤、主題、量化、個股研究、個股營收、技術籌碼、標的找尋、處置、除權息、新聞、總經、Podcast 與資料健康仍全部直接顯示。</li>
             </ul>
           </div>
 

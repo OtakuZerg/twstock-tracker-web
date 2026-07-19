@@ -5,12 +5,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; font-src 'self' data:; media-src 'self' blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
-  <title>台股追蹤 v17.9</title>
+  <title>台股追蹤 v18.0</title>
   <meta name="theme-color" content="#f4efe8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="台股追蹤" />
-  <meta name="application-version" content="v17.9" />
+  <meta name="application-version" content="v18.0" />
   <meta name="application-release-date" content="2026-07-17" />
   <meta property="og:image" content="https://otakuzerg.github.io/twstock-tracker-web/assets/icons/app-cover.png" />
   <link rel="manifest" href="site.webmanifest" />
@@ -3420,6 +3420,12 @@
         radial-gradient(circle at 100% 0, rgba(181, 84, 42, 0.09), transparent 34%),
         rgba(255, 255, 255, 0.78);
     }
+    .pcb-materials-panel {
+      border-color: rgba(81, 94, 140, 0.28);
+      background:
+        radial-gradient(circle at 100% 0, rgba(81, 94, 140, 0.10), transparent 36%),
+        rgba(255, 255, 255, 0.78);
+    }
     .equipment-hero {
       display: flex;
       align-items: flex-start;
@@ -3538,6 +3544,87 @@
       contain-intrinsic-size: auto 430px;
     }
     .aws-stock-card { contain-intrinsic-size: auto 330px; }
+    .pcb-material-card { contain-intrinsic-size: auto 410px; }
+    .pcb-priority-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pcb-priority-card { align-content: start; }
+    .pcb-priority-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pcb-priority-list span,
+    .pcb-priority-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 1px solid rgba(81, 94, 140, 0.20);
+      border-radius: 999px;
+      background: rgba(81, 94, 140, 0.08);
+      color: #515e8c;
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+    .pcb-copper-ladder {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      overflow-x: auto;
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(181, 84, 42, 0.18);
+      border-radius: 12px;
+      background: rgba(181, 84, 42, 0.05);
+      -webkit-overflow-scrolling: touch;
+    }
+    .pcb-copper-ladder strong,
+    .pcb-copper-ladder span,
+    .pcb-copper-ladder b { flex: 0 0 auto; }
+    .pcb-copper-ladder strong { font-size: 0.76rem; }
+    .pcb-copper-ladder span {
+      padding: 4px 7px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.78);
+      font-size: 0.72rem;
+      font-weight: 900;
+    }
+    .pcb-copper-ladder b { color: var(--accent-2); }
+    .pcb-copper-ladder small {
+      min-width: 240px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.45;
+    }
+    .pcb-material-summary {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .pcb-material-summary p {
+      display: grid;
+      gap: 3px;
+      margin: 0;
+      padding: 8px 9px;
+      border-radius: 10px;
+      background: rgba(81, 94, 140, 0.055);
+    }
+    .pcb-material-summary span {
+      color: var(--muted);
+      font-size: 0.66rem;
+      font-weight: 850;
+    }
+    .pcb-material-summary strong {
+      font-size: 0.79rem;
+      line-height: 1.45;
+    }
+    .pcb-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .pcb-card-actions .equipment-report-btn { width: auto; margin: 0; }
     .equipment-stock-head {
       display: flex;
       align-items: flex-start;
@@ -4415,7 +4502,9 @@
     @media (max-width: 1200px) {
       .equipment-stock-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .equipment-official-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pcb-priority-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .equipment-source-card { grid-column: 1 / -1; }
+      .pcb-priority-card { grid-column: auto; }
     }
 
     /* Responsive: narrow screens → compact sidebar on top */
@@ -4481,6 +4570,8 @@
       .equipment-official-grid { grid-template-columns: 1fr; }
       .equipment-source-card { grid-column: auto; }
       .equipment-flow { margin-inline: -2px; }
+      .pcb-copper-ladder { margin-inline: -2px; }
+      .pcb-priority-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 650px) {
@@ -4494,6 +4585,8 @@
       .price-fundamental-head { display: grid; }
       .price-fundamental-values { grid-template-columns: repeat(3, minmax(0, 1fr)); }
       .equipment-card-detail summary { min-height: 44px; }
+      .pcb-card-actions { align-items: stretch; flex-direction: column; }
+      .pcb-card-actions .equipment-report-btn { width: 100%; }
     }
 
     /* ── 量化篩選表 ── */
@@ -4874,47 +4967,6 @@
       background: var(--accent-2);
       border-radius: 4px 4px 0 0;
     }
-    .research-tools-nav {
-      position: relative;
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-    .research-tools-nav > summary {
-      list-style: none;
-      min-height: 36px;
-      padding: 8px 13px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      color: var(--muted);
-      background: rgba(255,255,255,.58);
-      font-size: .84rem;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .research-tools-nav > summary::-webkit-details-marker { display:none; }
-    .research-tools-menu {
-      position: fixed;
-      right: 18px;
-      top: 148px;
-      z-index: 90;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(140px, 1fr));
-      gap: 4px;
-      width: min(360px, calc(100vw - 28px));
-      padding: 8px;
-      border: 1px solid var(--line-strong);
-      border-radius: 12px;
-      background: rgba(248,244,237,.99);
-      box-shadow: 0 14px 38px rgba(35,26,17,.18);
-    }
-    .research-tools-menu .tab-btn { width:100%; text-align:left; }
-    @media (max-width: 900px) {
-      .research-tools-menu { top: 82px; right: 10px; }
-    }
-    @media (max-width: 520px) {
-      .research-tools-menu { grid-template-columns:1fr; max-height:70vh; overflow:auto; }
-    }
     /* 鍵盤切換提示（按住 Cmd/Ctrl 顯示數字） */
     .main-tab-nav.show-shortcuts .tab-btn::before {
       content: attr(data-shortcut);
@@ -5218,8 +5270,8 @@
         <!-- Brand -->
         <div class="sidebar-brand">
           <span class="sidebar-brand-title">台股追蹤</span>
-          <span class="sidebar-brand-ver">v17.9</span>
-          <span class="sidebar-brand-date" data-release-date="2026-07-18">2026-07-18</span>
+          <span class="sidebar-brand-ver">v18.0</span>
+          <span class="sidebar-brand-date" data-release-date="2026-07-19">2026-07-19</span>
           <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" type="button" aria-expanded="false" aria-controls="filterRow sidebarPoolManager holdingsManager">主題 / 股池</button>
         </div>
 
@@ -5322,26 +5374,21 @@
     </div>
     <div id="topFuturesStrip" class="top-futures-strip"></div>
 
-    <!-- v17.9：四個主要工作入口；低頻研究工具預設收合 -->
-    <nav class="main-tab-nav" id="mainTabNav" aria-label="主功能分頁">
-      <button class="tab-btn active" data-tab-target="market" data-shortcut="1">收盤研究</button>
-      <button class="tab-btn" data-tab-target="overview" data-shortcut="2">主題</button>
-      <button class="tab-btn" data-tab-target="report" data-shortcut="3">個股</button>
-      <button class="tab-btn" data-tab-target="help" data-shortcut="4">資料健康</button>
-      <details class="research-tools-nav">
-        <summary>研究工具</summary>
-        <div class="research-tools-menu">
-          <button class="tab-btn" data-tab-target="screener">量化篩選</button>
-          <button class="tab-btn" data-tab-target="revenue">個股營收</button>
-          <button class="tab-btn" data-tab-target="technical">技術分析 &amp; 籌碼</button>
-          <button class="tab-btn" data-tab-target="discovery">標的找尋</button>
-          <button class="tab-btn" data-tab-target="disposition">處置股</button>
-          <button class="tab-btn" data-tab-target="ex-dividend">除權息</button>
-          <button class="tab-btn" data-tab-target="catalyst">催化劑 &amp; 新聞</button>
-          <button class="tab-btn" data-tab-target="macro">總體經濟與風險</button>
-          <button class="tab-btn" data-tab-target="podcast">Podcast</button>
-        </div>
-      </details>
+    <!-- v17.9 修正：只收斂更新按鈕，不隱藏任何研究功能分頁 -->
+    <nav class="main-tab-nav" id="mainTabNav" aria-label="主功能分頁" title="按住 Cmd/Ctrl 顯示快捷鍵；Cmd/Ctrl+1 至 9 / 0 切換分頁">
+      <button class="tab-btn active" data-tab-target="market" data-shortcut="1">大盤總覽</button>
+      <button class="tab-btn" data-tab-target="overview" data-shortcut="2">主題總覽</button>
+      <button class="tab-btn" data-tab-target="screener" data-shortcut="3">量化篩選</button>
+      <button class="tab-btn" data-tab-target="report" data-shortcut="4">個股研究</button>
+      <button class="tab-btn" data-tab-target="revenue">個股營收</button>
+      <button class="tab-btn" data-tab-target="technical" data-shortcut="5">技術分析 &amp; 籌碼</button>
+      <button class="tab-btn" data-tab-target="discovery">標的找尋</button>
+      <button class="tab-btn" data-tab-target="disposition" data-shortcut="6">處置股</button>
+      <button class="tab-btn" data-tab-target="ex-dividend">除權息</button>
+      <button class="tab-btn" data-tab-target="catalyst" data-shortcut="7">催化劑 &amp; 新聞</button>
+      <button class="tab-btn" data-tab-target="macro" data-shortcut="8">總體經濟與風險</button>
+      <button class="tab-btn" data-tab-target="podcast" data-shortcut="9">Podcast</button>
+      <button class="tab-btn" data-tab-target="help" data-shortcut="0">資料健康 &amp; 版本</button>
     </nav>
 
     <section id="tab-market" class="tab-panel active">
@@ -5371,6 +5418,7 @@
 
     <section id="tab-overview" class="tab-panel">
       <div class="note-box" style="margin-bottom:12px;">主題總覽只顯示左側選取的單一族群（大盤 / 今日族群 / 全市場資訊已移到「大盤總覽」）。切換左側主題分頁即可換族群。</div>
+      <div id="pcbMaterialsPanel"></div>
       <div id="awsSupplyChainPanel"></div>
       <div id="equipmentRotationPanel"></div>
       <div id="memoryMarketPanel"></div>
