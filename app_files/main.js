@@ -53,7 +53,8 @@ const ANALYST_WIN_RATE_CALIBRATION_OPTS = {
   targetAtrMul: 3
 };
 const TECHNICAL_DERIVED_CACHE_LIMIT = 180;
-const SCHEDULED_TASK_RETRY_LIMIT = 2;
+// v18.1: request broker handles one bounded transport retry; do not retry an entire multi-source task again.
+const SCHEDULED_TASK_RETRY_LIMIT = 0;
 const SCHEDULED_TASK_RETRY_BASE_MS = 800;
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const TAIPEI_TIME_ZONE = "Asia/Taipei";
@@ -6097,14 +6098,60 @@ function sourceHealthFailureError(key, retryAt) {
   return error;
 }
 
-async function fetchText(url, { method = "GET", body = null, timeoutMs = null, encoding = "", contentType = "", sourceKey = "", bypassCircuit = false } = {}) {
+function currentFetchTaskKey() {
+  if (typeof _idleAutoUpdateRunning !== "undefined" && _idleAutoUpdateRunning) {
+    return `after-close:${state.autoUpdateLog?.currentKey || "core"}`;
+  }
+  return "interactive";
+}
+
+function cancelFetchTaskGroup(taskKey = currentFetchTaskKey()) {
+  if (typeof chrome === "undefined" || !chrome.runtime?.sendMessage) return Promise.resolve(0);
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: "cancel-fetches", taskKey }, (response) => {
+      void chrome.runtime?.lastError;
+      resolve(Number(response?.cancelled) || 0);
+    });
+  });
+}
+
+async function fetchText(url, {
+  method = "GET",
+  body = null,
+  timeoutMs = null,
+  encoding = "",
+  contentType = "",
+  sourceKey = "",
+  bypassCircuit = false,
+  expectedType = "",
+  maxResponseBytes = null,
+  retryLimit = undefined,
+  maxRetryDelayMs = null,
+  concurrency = null,
+  taskKey = ""
+} = {}) {
   const health = sourceHealthGate(url, { sourceKey, bypassCircuit });
   if (!health.allowed) throw sourceHealthFailureError(health.key, health.retryAt);
   const startedAt = Date.now();
   health.reliability?.recordAttempt(health.registry, health.key, { url });
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
     return new Promise((resolve, reject) => {
-      const msg = { type: "fetch-text", url, method, body, timeoutMs, encoding, contentType };
+      const msg = {
+        type: "fetch-text",
+        url,
+        method,
+        body,
+        timeoutMs,
+        encoding,
+        contentType,
+        sourceKey: health.key,
+        expectedType,
+        maxResponseBytes,
+        retryLimit,
+        maxRetryDelayMs,
+        concurrency,
+        taskKey: taskKey || currentFetchTaskKey()
+      };
       chrome.runtime.sendMessage(msg, (response) => {
         const runtimeError = chrome.runtime.lastError;
         if (runtimeError) {
@@ -6115,6 +6162,15 @@ async function fetchText(url, { method = "GET", body = null, timeoutMs = null, e
         }
         if (!response || !response.ok) {
           const error = new Error(response && response.error ? response.error : "fetch failed");
+          error.code = response?.errorCode || "NETWORK_ERROR";
+          error.category = response?.errorCategory || "network";
+          error.retryable = response?.retryable === true;
+          error.status = Number(response?.status) || null;
+          error.attempts = Number(response?.attempts) || 1;
+          error.attemptHistory = Array.isArray(response?.attemptHistory) ? response.attemptHistory : [];
+          error.retryAfterMs = Number.isFinite(Number(response?.retryAfterMs)) ? Number(response.retryAfterMs) : null;
+          error.nextRetryAt = response?.nextRetryAt || null;
+          error.finalUrl = response?.finalUrl || url;
           health.reliability?.recordFailure(health.registry, health.key, error, {
             status: response?.status,
             latencyMs: response?.durationMs || Date.now() - startedAt
@@ -6299,24 +6355,26 @@ async function loadPublishedMarketSnapshot() {
   });
 }
 
-async function fetchJson(url) {
+async function fetchJson(url, options = {}) {
+  const parsed = new URL(String(url || ""), window.location.href);
+  if (parsed.origin !== window.location.origin) {
+    const text = await fetchText(parsed.href, {
+      ...options,
+      expectedType: "json"
+    });
+    return JSON.parse(text);
+  }
   const health = sourceHealthGate(url);
   if (!health.allowed) throw sourceHealthFailureError(health.key, health.retryAt);
   const startedAt = Date.now();
   health.reliability?.recordAttempt(health.registry, health.key, { url });
-  if (isPublishedWebRuntime()) {
-    const parsed = new URL(String(url || ""), window.location.href);
-    if (parsed.origin !== window.location.origin) {
-      window.__TWSTOCK_RECORD_WEB_BLOCKED_FETCH__?.(parsed.href, "GET", "fetch-json");
-      const error = new Error(`公開網站不直接讀取跨站資料：${parsed.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`);
-      health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
-      throw error;
-    }
-  }
+  let timer = null;
   try {
-    const response = await fetch(url, { cache: "no-store" });
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    timer = controller ? setTimeout(() => controller.abort(), Number(options.timeoutMs) || 12000) : null;
+    const response = await fetch(parsed.href, { cache: "no-store", signal: controller?.signal });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
+    const payload = await readLimitedJsonResponse(response, Number(options.maxResponseBytes) || 8 * 1024 * 1024);
     health.reliability?.recordSuccess(health.registry, health.key, {
       status: response.status,
       bytes: Number(response.headers.get("content-length")) || 0,
@@ -6326,6 +6384,8 @@ async function fetchJson(url) {
   } catch (error) {
     health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
     throw error;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 
@@ -6812,6 +6872,37 @@ async function officialDailyQuoteFallbackMap(stocks) {
   return result;
 }
 
+async function cnyesQuoteFallback(stock) {
+  const adapter = globalThis.TwStockSourceFallbacks;
+  if (!adapter) throw new Error("鉅亨網備援 parser 尚未載入");
+  const sourceUrl = adapter.cnyesStockUrl(stock);
+  const text = await fetchText(sourceUrl, {
+    timeoutMs: 10000,
+    sourceKey: "cnyes.com",
+    expectedType: "html",
+    maxResponseBytes: 1536 * 1024,
+    retryLimit: 0,
+    concurrency: 2
+  });
+  return adapter.parseCnyesStockPage(text, stock, {
+    sourceUrl,
+    fetchedAt: new Date().toISOString()
+  });
+}
+
+async function cnyesQuoteFallbackMap(stocks) {
+  const quotes = new Map();
+  const errors = new Map();
+  if (!Array.isArray(stocks) || !stocks.length) return { quotes, errors };
+  const results = await runConcurrent(stocks, cnyesQuoteFallback, 2);
+  results.forEach((result, index) => {
+    const stock = stocks[index];
+    if (result.ok) quotes.set(stock.code, result.value);
+    else errors.set(stock.code, result.error);
+  });
+  return { quotes, errors };
+}
+
 async function fetchQuote(stock) {
   try {
     const text = await fetchText(twseMisUrl(stock));
@@ -6830,6 +6921,11 @@ async function fetchQuote(stock) {
       return await officialDailyQuoteFallback(stock);
     } catch (officialDailyError) {
       lastError = officialDailyError || lastError;
+    }
+    try {
+      return await cnyesQuoteFallback(stock);
+    } catch (cnyesError) {
+      lastError = cnyesError || lastError;
     }
     throw lastError;
   }
@@ -20653,10 +20749,11 @@ async function quickUpdateQuotes() {
     }
     if (officialRetry.length) {
       const officialFallbacks = await officialDailyQuoteFallbackMap(officialRetry);
+      const cnyesRetry = [];
       for (const stock of officialRetry) {
         const quote = officialFallbacks.get(stock.code);
         if (!quote) {
-          failures.push(stock.code);
+          cnyesRetry.push(stock);
           continue;
         }
         state.quotes[stock.code] = quote;
@@ -20664,6 +20761,22 @@ async function quickUpdateQuotes() {
         storeSnapshot(quote);
         injectQuoteAsKline(stock, quote);
         success++;
+      }
+      if (cnyesRetry.length) {
+        const cnyesFallbacks = await cnyesQuoteFallbackMap(cnyesRetry);
+        for (const stock of cnyesRetry) {
+          const quote = cnyesFallbacks.quotes.get(stock.code);
+          if (!quote) {
+            state.errors[stock.code] = cnyesFallbacks.errors.get(stock.code)?.message || "鉅亨網備援失敗";
+            failures.push(stock.code);
+            continue;
+          }
+          state.quotes[stock.code] = quote;
+          delete state.errors[stock.code];
+          storeSnapshot(quote);
+          injectQuoteAsKline(stock, quote);
+          success++;
+        }
       }
     }
   }
@@ -20749,6 +20862,7 @@ async function updateAllStocks() {
     if (officialRetry.length) {
       setStatus(`官方收盤表備援：${officialRetry.length} 檔...`);
       const officialFallbacks = await officialDailyQuoteFallbackMap(officialRetry.map((entry) => entry.stock));
+      const cnyesRetry = [];
       for (const entry of officialRetry) {
         const stock = entry.stock;
         const quote = officialFallbacks.get(stock.code);
@@ -20759,8 +20873,26 @@ async function updateAllStocks() {
           injectQuoteAsKline(stock, quote);
           success++;
         } else {
-          state.errors[stock.code] = entry.error?.message || String(entry.error || "官方收盤表備援失敗");
-          failures.push(`${stock.code}`);
+          cnyesRetry.push(entry);
+        }
+      }
+      if (cnyesRetry.length) {
+        setStatus(`鉅亨網最後備援：${cnyesRetry.length} 檔...`);
+        const cnyesFallbacks = await cnyesQuoteFallbackMap(cnyesRetry.map((entry) => entry.stock));
+        for (const entry of cnyesRetry) {
+          const stock = entry.stock;
+          const quote = cnyesFallbacks.quotes.get(stock.code);
+          if (quote) {
+            state.quotes[stock.code] = quote;
+            delete state.errors[stock.code];
+            storeSnapshot(quote);
+            injectQuoteAsKline(stock, quote);
+            success++;
+          } else {
+            const cnyesError = cnyesFallbacks.errors.get(stock.code);
+            state.errors[stock.code] = cnyesError?.message || entry.error?.message || String(entry.error || "全部報價備援失敗");
+            failures.push(`${stock.code}`);
+          }
         }
       }
     }
@@ -22110,6 +22242,9 @@ function requestStopAutoUpdate(reason = "使用者停止") {
   }
   if (_idleAutoUpdateRunning) {
     _idleAutoUpdateCancelled = true;
+    cancelFetchTaskGroup().then((cancelled) => {
+      if (cancelled > 0) setStatus(`${reason}，已取消 ${cancelled} 個進行中的來源請求。`, "warn");
+    });
     setAutoUpdateLogPatch({
       status: "stopping",
       stopRequestedAt: new Date().toISOString(),
@@ -24369,23 +24504,23 @@ function themeRegimeFeatureForStock(stock) {
   };
 }
 
-function themeRegimeRows() {
-  const framework = window.TwStockThemeRegime;
-  if (!framework?.buildThemeRegimeRows) return [];
+function themeRegimeDefinitions() {
   const themeKeys = THEME_ORDER.filter((key) => (
     key !== "all"
     && key !== HOLDINGS_THEME_KEY
     && THEME_LABELS[key]
     && !String(key).startsWith(CUSTOM_GROUP_ID_PREFIX)
   ));
-  const themes = themeKeys.map((key) => {
-    const stocks = themeRegimeStocksForKey(key);
-    return {
-      key,
-      label: THEME_LABELS[key] || key,
-      features: stocks.map(themeRegimeFeatureForStock)
-    };
-  }).filter((theme) => theme.features.length);
+  return themeKeys.map((key) => ({
+    key,
+    label: THEME_LABELS[key] || key,
+    stocks: themeRegimeStocksForKey(key)
+  })).filter((theme) => theme.stocks.length);
+}
+
+function assembleThemeRegimeRows(themes) {
+  const framework = window.TwStockThemeRegime;
+  if (!framework?.buildThemeRegimeRows) return [];
   return framework.buildThemeRegimeRows(themes).map((row) => {
     const holdings = themeHoldingExposureForKey(row.key);
     return {
@@ -24394,6 +24529,19 @@ function themeRegimeRows() {
       holdingCount: holdings.length
     };
   });
+}
+
+function themeRegimeRows() {
+  const featureByCode = new Map();
+  const themes = themeRegimeDefinitions().map((theme) => ({
+    key: theme.key,
+    label: theme.label,
+    features: theme.stocks.map((stock) => {
+      if (!featureByCode.has(stock.code)) featureByCode.set(stock.code, themeRegimeFeatureForStock(stock));
+      return featureByCode.get(stock.code);
+    })
+  }));
+  return assembleThemeRegimeRows(themes);
 }
 
 let _themeRegimeRowsShortCache = { ts: 0, rows: [] };
@@ -24405,6 +24553,43 @@ function cachedThemeRegimeRows(maxAgeMs = 1800) {
   const rows = themeRegimeRows();
   _themeRegimeRowsShortCache = { ts: now, rows };
   return rows;
+}
+
+function peekCachedThemeRegimeRows(maxAgeMs = 60000) {
+  return _themeRegimeRowsShortCache.rows.length && Date.now() - _themeRegimeRowsShortCache.ts < maxAgeMs
+    ? _themeRegimeRowsShortCache.rows
+    : null;
+}
+
+function createThemeRegimeChunkJob(chunkSize = 2) {
+  const definitions = themeRegimeDefinitions();
+  const stockByCode = new Map();
+  definitions.forEach((theme) => theme.stocks.forEach((stock) => stockByCode.set(stock.code, stock)));
+  const stocks = [...stockByCode.values()];
+  const featureByCode = new Map();
+  let cursor = 0;
+  return {
+    get done() { return cursor >= stocks.length; },
+    get total() { return stocks.length; },
+    get completed() { return cursor; },
+    processNext() {
+      const end = Math.min(stocks.length, cursor + Math.max(1, chunkSize));
+      while (cursor < end) {
+        const stock = stocks[cursor++];
+        featureByCode.set(stock.code, themeRegimeFeatureForStock(stock));
+      }
+    },
+    finalize() {
+      const themes = definitions.map((theme) => ({
+        key: theme.key,
+        label: theme.label,
+        features: theme.stocks.map((stock) => featureByCode.get(stock.code)).filter(Boolean)
+      }));
+      const rows = assembleThemeRegimeRows(themes);
+      _themeRegimeRowsShortCache = { ts: Date.now(), rows };
+      return rows;
+    }
+  };
 }
 
 function themeRegimeStocksForKey(key) {
@@ -27773,6 +27958,11 @@ function wantgooStockUrl(stock) {
   return `https://www.wantgoo.com/stock/${stock.code}`;
 }
 
+function cnyesStockUrl(stock) {
+  return globalThis.TwStockSourceFallbacks?.cnyesStockUrl(stock)
+    || `https://www.cnyes.com/twstock/${stock.code}/`;
+}
+
 function visibleChartRows(rows) {
   const all = rows || [];
   if (!all.length) return [];
@@ -29377,6 +29567,7 @@ function renderReport() {
           <a class="link-chip" href="${escapeHtml(`https://goodinfo.tw/tw/StockFinDetail.asp?RPT_CAT=IS&STOCK_ID=${stock.code}`)}" target="_blank" rel="noopener">財報（Goodinfo）</a>
           <a class="link-chip" href="${escapeHtml(`https://goodinfo.tw/tw/StockDividend.asp?STOCK_ID=${stock.code}`)}" target="_blank" rel="noopener">歷年股利</a>
           <a class="link-chip" href="${escapeHtml(yahooStockUrl(stock))}" target="_blank" rel="noopener">Yahoo 股價</a>
+          <a class="link-chip" href="${escapeHtml(cnyesStockUrl(stock))}" target="_blank" rel="noopener">鉅亨個股</a>
           <a class="link-chip" href="${escapeHtml(wantgooStockUrl(stock))}" target="_blank" rel="noopener">WantGoo</a>
           <a class="link-chip" href="${escapeHtml(goodinfoUrl(stock))}" target="_blank" rel="noopener">Goodinfo</a>
           <button class="link-chip" type="button" data-tab-target="discovery" title="前往標的找尋看左側 / 右側排序">標的找尋</button>
@@ -35474,10 +35665,12 @@ function renderCatalystNews(options = {}) {
       </div>
       <div class="report-card">
         <h3>📈 外部線圖</h3>
-        <p style="color:var(--muted);font-size:0.84rem;margin:0 0 10px;">Yahoo / WantGoo / Goodinfo</p>
+        <p style="color:var(--muted);font-size:0.84rem;margin:0 0 10px;">Yahoo / 鉅亨 / WantGoo / Goodinfo（第三方資料僅供交叉比對）</p>
         ${renderExternalSourceLinks([
           { label: "Yahoo Finance", url: yahooStockUrl(stock) },
+          { label: "鉅亨個股", url: cnyesStockUrl(stock) },
           { label: "WantGoo", url: wantgooStockUrl(stock) },
+          { label: "Goodinfo", url: goodinfoUrl(stock) },
           { label: "TradingView", url: tradingViewUrl(stock) }
         ], { label: "", context: "catalyst-charts", style: "" })}
       </div>
@@ -41351,8 +41544,8 @@ function renderTaiexSeasonalityDetails() {
   `;
 }
 
-function renderMarketCrashRiskPanel() {
-  const risk = buildMarketCrashRiskScore();
+function renderMarketCrashRiskPanel(riskInput = null) {
+  const risk = riskInput || buildMarketCrashRiskScore();
   const trend = recordCrashRiskHistory(risk);
   const freshness = marketCrashRiskFreshness(risk);
   const decision = marketCrashRiskDecisionState(risk, freshness);
@@ -42504,25 +42697,31 @@ function selectedMarketThemeLabel() {
   return THEME_LABELS[state.filter] || state.filter;
 }
 
-function marketCommandStockState() {
+function createMarketCommandStockJob() {
   const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0] || null;
-  if (!stock) return null;
+  if (!stock) return { state: null, steps: [] };
   const quote = quoteFor(stock.code);
-  let technical = null;
-  try { technical = calculateTechnical(stock.code); } catch (_) {}
-  let heat = null;
-  try { heat = buildStockHeatSignal(stock.code, technical); } catch (_) {}
-  let chip = null;
-  try { chip = stockChipSignal(stock.code); } catch (_) {}
-  let revenue = null;
-  try { revenue = holdingRevenueSignal(stock.code); } catch (_) {}
-  const pct = toNumber(quote?.pct);
-  return { stock, quote, technical, heat, chip, revenue, pct };
+  const result = { stock, quote, technical: null, heat: null, chip: null, revenue: null, pct: toNumber(quote?.pct) };
+  return {
+    state: result,
+    steps: [
+      ["目前個股技術摘要", () => { try { result.technical = calculateTechnical(stock.code); } catch (_) {} }],
+      ["目前個股熱度摘要", () => { try { result.heat = buildStockHeatSignal(stock.code, result.technical); } catch (_) {} }],
+      ["目前個股籌碼摘要", () => { try { result.chip = stockChipSignal(stock.code); } catch (_) {} }],
+      ["目前個股營收摘要", () => { try { result.revenue = holdingRevenueSignal(stock.code); } catch (_) {} }]
+    ]
+  };
 }
 
-function renderMarketCommandThemeRows(rows) {
+function marketCommandStockState() {
+  const job = createMarketCommandStockJob();
+  job.steps.forEach(([, step]) => step());
+  return job.state;
+}
+
+function renderMarketCommandThemeRows(rows, emptyText = "族群趨勢資料待補；請在收盤後同步報價與日線，其餘月營收、籌碼會依 TTL 背景補齊。") {
   const list = Array.isArray(rows) ? rows.slice(0, 4) : [];
-  if (!list.length) return `<div class="empty">族群趨勢資料待補；請在收盤後同步報價與日線，其餘月營收、籌碼會依 TTL 背景補齊。</div>`;
+  if (!list.length) return `<div class="empty">${escapeHtml(emptyText)}</div>`;
   return list.map((row, index) => `
     <div class="rank-row" data-theme-action-filter="${escapeHtml(row.key)}" style="cursor:pointer;">
       <span>
@@ -42534,14 +42733,17 @@ function renderMarketCommandThemeRows(rows) {
   `).join("");
 }
 
-function renderMarketCommandCenter() {
-  const risk = buildMarketCrashRiskScore();
+function renderMarketCommandCenter(riskInput = null, options = {}) {
+  const risk = riskInput || buildMarketCrashRiskScore();
   const freshness = marketCrashRiskFreshness(risk);
   const decision = marketCrashRiskDecisionState(risk, freshness);
-  const themeRows = cachedThemeRegimeRows().slice(0, 4);
+  const suppliedThemeRows = Array.isArray(options.themeRows) ? options.themeRows : null;
+  const allThemeRows = suppliedThemeRows || cachedThemeRegimeRows();
+  const themeRows = allThemeRows.slice(0, 4);
+  const themePending = options.themePending === true;
   const selectedTheme = selectedMarketThemeLabel();
-  const selectedThemeRow = themeRows.find((row) => row.key === state.filter) || cachedThemeRegimeRows().find((row) => row.key === state.filter) || null;
-  const stockState = marketCommandStockState();
+  const selectedThemeRow = themeRows.find((row) => row.key === state.filter) || allThemeRows.find((row) => row.key === state.filter) || null;
+  const stockState = Object.prototype.hasOwnProperty.call(options, "stockState") ? options.stockState : marketCommandStockState();
   const stock = stockState?.stock || null;
   const heat = stockState?.heat || null;
   const chip = stockState?.chip || null;
@@ -42550,7 +42752,9 @@ function renderMarketCommandCenter() {
     ? `${formatNumber(stockState.quote.price)} ${stockState.pct !== null ? formatPct(stockState.pct) : ""}`.trim()
     : "報價待更新";
   const themeTone = selectedThemeRow?.regime?.tone || "flat";
-  const themeAction = selectedThemeRow?.action || "先從主線 Top 4 選族群，再回主題總覽看單一族群。";
+  const themeAction = selectedThemeRow?.action || (themePending
+    ? "正在分批計算族群 Regime；可先看大盤風險與目前個股，畫面不會因此整頁凍結。"
+    : "先從主線 Top 4 選族群，再回主題總覽看單一族群。");
   return `
     <div class="panel-lite" data-market-command-center style="margin-bottom:14px;">
       <div class="section-head" style="margin-bottom:10px;">
@@ -42561,6 +42765,7 @@ function renderMarketCommandCenter() {
         <div class="chip-row chip-row-compact" style="justify-content:flex-end;">
           <span class="chip ${escapeHtml(decision.tone)}">雷達 ${escapeHtml(decision.label)}</span>
           <span class="chip ${escapeHtml(freshness.tone)}">${escapeHtml(freshness.label)}</span>
+          ${themePending ? `<span class="chip flat">族群分批計算中</span>` : ""}
           <span class="chip flat">現行方法 v${escapeHtml(APP_VERSION)}</span>
         </div>
       </div>
@@ -42576,12 +42781,12 @@ function renderMarketCommandCenter() {
         </article>
         <article class="rank-card">
           <h3>2. 今日主線族群</h3>
-          <div class="rank-list">${renderMarketCommandThemeRows(themeRows)}</div>
+          <div class="rank-list">${renderMarketCommandThemeRows(themeRows, themePending ? "正在分批計算族群 Regime；其他面板可先操作。" : undefined)}</div>
         </article>
         <article class="rank-card">
           <h3>3. 目前族群</h3>
           <div class="kv-row"><span>族群</span><strong>${escapeHtml(selectedTheme)}</strong></div>
-          <div class="kv-row"><span>Regime</span><strong class="${escapeHtml(themeTone)}">${selectedThemeRow ? `${escapeHtml(selectedThemeRow.regime.label)} · ${formatNumber(selectedThemeRow.score, 0)}` : "待選族群"}</strong></div>
+          <div class="kv-row"><span>Regime</span><strong class="${escapeHtml(themeTone)}">${selectedThemeRow ? `${escapeHtml(selectedThemeRow.regime.label)} · ${formatNumber(selectedThemeRow.score, 0)}` : themePending ? "分批計算中" : "待選族群"}</strong></div>
           <p style="margin:8px 0 0;color:var(--muted);font-size:0.78rem;line-height:1.5;">${escapeHtml(themeAction)}</p>
           <div class="link-row" style="margin-top:8px;">
             <button class="link-chip inline-action-chip" type="button" data-tab-target="overview">看單一族群</button>
@@ -42641,9 +42846,15 @@ function setMarketSecondaryPanelsVisible(visible) {
   });
 }
 
+let _marketDashboardRenderToken = 0;
+
 function renderMarketDashboardTab() {
   const container = $("marketDashboardContent");
   if (!container) return;
+  const renderToken = ++_marketDashboardRenderToken;
+  const wholeStartedAt = performanceDiagnosticsNow();
+  _marketSecondaryToken += 1;
+  setMarketSecondaryPanelsVisible(false);
   maybeRefreshMarketCrashRiskInputs();
   maybeRefreshTideSectorCache();
   const cache = normalizeMarketDashboardCache(state.marketDashboardCache);
@@ -42652,6 +42863,7 @@ function renderMarketDashboardTab() {
   const lastUpdate = cache.fetchedAt ? formatDateTime(cache.fetchedAt) : "尚未更新";
   const snapshotGenerated = delivery?.generatedAt ? formatDateTime(delivery.generatedAt) : "尚未產生";
   const scheduleText = delivery?.scheduleMinutes ? `約每 ${delivery.scheduleMinutes} 分鐘排程` : "隨版本附帶的備援快照";
+  container.dataset.marketStageComplete = "false";
   container.innerHTML = `
     <div class="panel">
       <div class="section-head">
@@ -42675,18 +42887,110 @@ function renderMarketDashboardTab() {
         </div>
         <div class="chip-row chip-row-compact" style="flex-shrink:0;">${combinedMarketStatusHtml()}</div>
       </div>
-      ${renderMarketCommandCenter()}
-      ${renderMarketCrashRiskPanel()}
+      <div id="marketCommandStage"><div class="empty" data-market-stage-placeholder>正在整理盤前作戰摘要…</div></div>
+      <div id="marketRiskStage"><div class="empty" data-market-stage-placeholder>正在計算市場風險雷達…</div></div>
+      <div id="marketTaiwanStage"><div class="empty" data-market-stage-placeholder>正在載入台股大盤卡…</div></div>
+      <div id="marketGlobalStage"><div class="empty" data-market-stage-placeholder>正在載入夜盤與全球市場卡…</div></div>
+      <div id="marketDetailStage">${_marketDetailPanelsLoaded ? `<div class="empty" data-market-stage-placeholder>正在載入完整大盤面板…</div>` : renderMarketDetailPanelsGate()}</div>
+    </div>
+  `;
+
+  let sharedRisk = null;
+  const stockJob = createMarketCommandStockJob();
+  const sharedStockState = stockJob.state;
+  const cachedThemeRows = peekCachedThemeRegimeRows();
+  const themeJob = cachedThemeRows ? null : createThemeRegimeChunkJob(2);
+  const stillCurrent = () => renderToken === _marketDashboardRenderToken
+    && state.activeTab === "market"
+    && $("marketDashboardContent") === container;
+  const mountHtml = (id, html) => {
+    const node = $(id);
+    if (node && stillCurrent()) node.innerHTML = html;
+  };
+  const stages = [
+    ["大盤風險資料計算", () => { sharedRisk = buildMarketCrashRiskScore(); }, { fallbackId: "marketRiskStage" }],
+    ["大盤作戰中樞", () => {
+      mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
+        themeRows: cachedThemeRows || [],
+        themePending: Boolean(themeJob),
+        stockState: sharedStockState
+      }));
+    }, { fallbackId: "marketCommandStage" }],
+    ["大盤風險雷達", () => mountHtml("marketRiskStage", renderMarketCrashRiskPanel(sharedRisk)), { fallbackId: "marketRiskStage" }],
+    ["台股大盤卡", () => mountHtml("marketTaiwanStage", `
       <div class="report-grid" style="margin-bottom:14px;">
         ${renderMarketIndexCard(cache.taiwan, { hero: true, title: "台股大盤｜加權指數", showTurnover: true, chartCaption: "盤中線圖" })}
       </div>
+    `), { fallbackId: "marketTaiwanStage" }],
+    ["夜盤與全球市場卡", () => mountHtml("marketGlobalStage", `
       <div class="report-grid" style="margin-bottom:14px;">
         ${renderMarketIndexCard(cache.taifexNight, { title: cache.taifexNight?.label || "台指期夜盤｜TXF（盤後交易）", titleUrl: TAIFEX_NIGHT_SOURCE_LINKS[0].url, sourceLinks: TAIFEX_NIGHT_SOURCE_LINKS, inlineLinks: TAIFEX_NIGHT_SECONDARY_LINKS, inlineLinkLabel: "第二來源", contextKey: "taifex-night", chartCaption: "夜盤 OHLC proxy" })}
         ${cache.global.map((item) => renderMarketIndexCard(item, { title: item.label, chartCaption: "近一日線圖" })).join("")}
       </div>
-      ${renderMarketDetailPanelsGate()}
-    </div>
-  `;
+    `), { fallbackId: "marketGlobalStage" }],
+    ["大盤詳細面板入口", () => {
+      if (_marketDetailPanelsLoaded) mountHtml("marketDetailStage", renderMarketDetailPanelsGate());
+    }, { fallbackId: "marketDetailStage" }]
+  ];
+  stockJob.steps.forEach(([name, step]) => stages.push([name, step, {}]));
+  if (stockJob.steps.length) {
+    stages.push(["目前個股摘要掛載", () => mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
+      themeRows: cachedThemeRows || [],
+      themePending: Boolean(themeJob),
+      stockState: sharedStockState
+    })), { fallbackId: "marketCommandStage" }]);
+  }
+  if (themeJob) {
+    const chunkCount = Math.ceil(themeJob.total / 2);
+    for (let index = 0; index < chunkCount; index += 1) {
+      stages.push(["族群 Regime 分批計算", () => themeJob.processNext(), { record: false }]);
+    }
+    stages.push(["族群 Regime 組裝", () => {
+      const themeRows = themeJob.finalize();
+      mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
+        themeRows,
+        themePending: false,
+        stockState: sharedStockState
+      }));
+    }, { fallbackId: "marketCommandStage" }]);
+  }
+  let stageIndex = 0;
+  const scheduleFrame = (callback) => {
+    if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(callback);
+    } else {
+      setTimeout(callback, 0);
+    }
+  };
+  const runNextStage = () => {
+    if (!stillCurrent()) return;
+    if (stageIndex >= stages.length) {
+      container.dataset.marketStageComplete = "true";
+      container.dataset.marketStageRenderMs = String(Math.round(performanceDiagnosticsDuration(wholeStartedAt)));
+      recordPerformanceRenderBlock("大盤分段完整渲染", wholeStartedAt, { tab: "market" });
+      renderMarketSecondaryPanels();
+      return;
+    }
+    const [name, stage, stageOptions = {}] = stages[stageIndex++];
+    scheduleFrame(() => {
+      if (!stillCurrent()) return;
+      const stageStartedAt = performanceDiagnosticsNow();
+      let ok = false;
+      try {
+        stage();
+        ok = true;
+      } catch (error) {
+        console.error(`market staged render failed: ${name}`, error);
+        if (stageOptions.fallbackId) {
+          mountHtml(stageOptions.fallbackId, `<div class="empty">${escapeHtml(name)}載入失敗：${escapeHtml(error?.message || String(error))}</div>`);
+        }
+      } finally {
+        if (stageOptions.record !== false) recordPerformanceRenderBlock(name, stageStartedAt, { ok, tab: "market" });
+      }
+      runNextStage();
+    });
+  };
+  runNextStage();
 }
 
 function pctTextToNumber(value) {
@@ -44190,9 +44494,7 @@ function renderActiveTab(tab = state.activeTab || "market") {
     if (state.activeTab === "risk") state.activeTab = "macro";
     if (active === "market") {
       renderSection("大盤總覽", renderMarketDashboardTab, "marketDashboardContent");
-      // v17.0：今日操盤手快訊 / 持股作戰室 / 今日族群 / 產業趨勢雷達 集中在大盤總覽；
-      // 核心大盤先畫，這些較重的面板延後一個 frame 再渲染，確保「打開先給大盤」快。
-      renderMarketSecondaryPanels();
+      // 大盤主內容採逐 frame 分段渲染；完成後才由 renderMarketDashboardTab 接續次要面板。
     } else if (active === "overview") {
       renderOverviewStaged();
     } else if (active === "screener") {

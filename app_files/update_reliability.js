@@ -54,11 +54,19 @@
 
   function classifyFailure(error) {
     const message = String(error?.message || error || "未知錯誤");
-    const lower = message.toLowerCase();
+    const code = String(error?.code || "").toUpperCase();
+    const explicitCategory = String(error?.category || "").toLowerCase();
+    const lower = `${code} ${explicitCategory} ${message}`.toLowerCase();
     const statusMatch = message.match(/(?:http\s*)?(\d{3})/i);
-    const status = statusMatch ? Number(statusMatch[1]) : null;
+    const explicitStatus = Number(error?.status);
+    const status = Number.isFinite(explicitStatus) && explicitStatus > 0
+      ? explicitStatus
+      : (statusMatch ? Number(statusMatch[1]) : null);
     if (lower.includes("circuit") || lower.includes("暫停重試")) {
       return { category: "circuit-open", label: "來源暫停重試", retryable: true, cooldownMs: DEFAULT_COOLDOWN_MS, status };
+    }
+    if (explicitCategory === "cancelled" || code === "REQUEST_CANCELLED" || lower.includes("已取消")) {
+      return { category: "cancelled", label: "使用者取消", retryable: false, cooldownMs: 0, status };
     }
     if (status === 429 || lower.includes("rate limit") || lower.includes("too many requests")) {
       return { category: "rate-limit", label: "來源限流", retryable: true, cooldownMs: RATE_LIMIT_COOLDOWN_MS, status };
@@ -69,6 +77,15 @@
     if (lower.includes("公開網站不直接") || lower.includes("same-origin") || lower.includes("cors")) {
       return { category: "runtime-boundary", label: "Web／Extension 邊界", retryable: false, cooldownMs: 0, status };
     }
+    if (["waf-challenge", "waf-blocked"].includes(explicitCategory) || lower.includes("waf") || lower.includes("access denied") || lower.includes("forbidden")) {
+      return { category: explicitCategory || "waf-blocked", label: "來源阻擋／驗證頁", retryable: false, cooldownMs: RATE_LIMIT_COOLDOWN_MS, status };
+    }
+    if (explicitCategory === "response-too-large" || code === "RESPONSE_TOO_LARGE") {
+      return { category: "response-too-large", label: "來源回應過大", retryable: false, cooldownMs: 0, status };
+    }
+    if (explicitCategory === "redirect" || (status !== null && status >= 300 && status < 400)) {
+      return { category: "redirect", label: `來源重新導向${status ? `（HTTP ${status}）` : ""}`, retryable: false, cooldownMs: 0, status };
+    }
     if (lower.includes("schema") || lower.includes("格式不相容") || lower.includes("parse") || lower.includes("解析")) {
       return { category: "schema", label: "來源格式改版／解析失敗", retryable: false, cooldownMs: RATE_LIMIT_COOLDOWN_MS, status };
     }
@@ -77,6 +94,12 @@
     }
     if (status) {
       return { category: "http", label: `HTTP ${status}`, retryable: status >= 500 || status === 408, cooldownMs: status >= 500 ? DEFAULT_COOLDOWN_MS : 0, status };
+    }
+    if (explicitCategory === "dns" || lower.includes("name_not_resolved") || lower.includes("enotfound")) {
+      return { category: "dns", label: "DNS 解析失敗", retryable: true, cooldownMs: DEFAULT_COOLDOWN_MS, status };
+    }
+    if (explicitCategory === "tls" || lower.includes("certificate") || lower.includes("ssl")) {
+      return { category: "tls", label: "TLS／憑證失敗", retryable: true, cooldownMs: DEFAULT_COOLDOWN_MS, status };
     }
     if (lower.includes("failed to fetch") || lower.includes("network") || lower.includes("連線失敗") || lower.includes("runtime.lastError")) {
       return { category: "network", label: "網路／背景服務失敗", retryable: true, cooldownMs: DEFAULT_COOLDOWN_MS, status };
@@ -165,6 +188,19 @@
     const classified = classifyFailure(error);
     const entry = normalizeEntry(registry[key], key);
     entry.lastAttempt = entry.lastAttempt || isoNow(nowMs);
+    if (classified.category === "cancelled" || classified.category === "runtime-boundary") {
+      entry.lastCategory = classified.category;
+      entry.lastCategoryLabel = classified.label;
+      entry.lastError = String(error?.message || error || classified.label).slice(0, 280);
+      registry[key] = appendHistory(entry, {
+        at: isoNow(nowMs),
+        status: classified.category === "cancelled" ? "cancelled" : "blocked",
+        category: classified.category,
+        error: entry.lastError,
+        httpStatus: Number(meta.status || classified.status) || null
+      });
+      return registry[key];
+    }
     entry.lastFailure = isoNow(nowMs);
     entry.lastStatus = Number(meta.status || classified.status) || null;
     entry.lastLatencyMs = Math.max(0, Number(meta.latencyMs) || 0);
@@ -202,7 +238,7 @@
   }
 
   root.TwStockUpdateReliability = Object.freeze({
-    version: "source-health-v1",
+    version: "source-health-v2",
     CIRCUIT_FAILURE_THRESHOLD,
     sourceKeyForUrl,
     sourceLabel,

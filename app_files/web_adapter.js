@@ -46,6 +46,7 @@
   // 最終防線：公開 PWA 的任何程式路徑都只能 fetch 同來源資源。
   // 這個 adapter 在真正的 Chrome extension 環境會於檔案開頭直接 return，因此不影響 extension host permissions。
   const nativeFetch = window.fetch.bind(window);
+  const webRequestBroker = window.TwStockRequestBroker?.createRequestBroker({ fetchImpl: nativeFetch }) || null;
   window.fetch = function webSnapshotOnlyFetch(input, init = undefined) {
     const requestUrl = input instanceof Request ? input.url : String(input || "");
     const parsed = new URL(requestUrl, window.location.href);
@@ -183,12 +184,20 @@
       recordBlockedCrossOriginFetch(requestUrl, method);
       return {
         ok: false,
-        error: `公開網站不直接讀取跨站資料：${parsedRequestUrl.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`
+        error: `公開網站不直接讀取跨站資料：${parsedRequestUrl.hostname}；請使用 GitHub Actions 延遲快照或開啟原始來源連結。`,
+        errorCode: "WEB_RUNTIME_BOUNDARY",
+        errorCategory: "runtime-boundary",
+        retryable: false,
+        status: null,
+        bytes: 0,
+        durationMs: 0,
+        attempts: 0,
+        finalUrl: requestUrl
       };
     }
-    const controller = new AbortController();
-    const timeoutMs = Math.max(5000, Math.min(25000, Number(message.timeoutMs) || 25000));
-    const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+    if (!webRequestBroker) {
+      return { ok: false, error: "網站 Request Broker 未載入", errorCode: "BROKER_UNAVAILABLE", errorCategory: "runtime", retryable: false };
+    }
     const headers = {
       Accept: "text/html,application/rss+xml,application/xml,text/xml,application/json,text/plain,*/*",
       "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8"
@@ -199,26 +208,57 @@
       headers["Content-Type"] = allowedTypes.has(requestedType) ? requestedType : "application/x-www-form-urlencoded";
     }
     try {
-      const response = await fetch(requestUrl, {
+      const result = await webRequestBroker.requestText({
+        url: requestUrl,
         method,
-        cache: "no-store",
-        credentials: "omit",
-        signal: controller.signal,
         headers,
-        body: message.body || undefined
+        body: message.body || undefined,
+        contentType: message.contentType || "",
+        encoding: message.encoding || "",
+        timeoutMs: message.timeoutMs,
+        maxResponseBytes: message.maxResponseBytes || MAX_RESPONSE_BYTES,
+        expectedType: message.expectedType,
+        sourceKey: message.sourceKey,
+        taskKey: message.taskKey,
+        retryLimit: message.retryLimit,
+        maxRetryDelayMs: message.maxRetryDelayMs,
+        concurrency: message.concurrency
       });
-      if (!response.ok) return { ok: false, error: `HTTP ${response.status}: ${new URL(requestUrl).host}` };
-      normalizedFetchUrl(response.url || requestUrl);
-      const text = await readLimitedResponseText(response, message.encoding);
-      return { ok: true, text, finalUrl: response.url };
+      normalizedFetchUrl(result.finalUrl || requestUrl);
+      return {
+        ok: true,
+        text: result.text,
+        status: result.status,
+        bytes: result.bytes,
+        durationMs: result.durationMs,
+        attempts: result.attempts,
+        attemptHistory: result.attemptHistory,
+        contentType: result.contentType,
+        expectedType: result.expectedType,
+        finalUrl: result.finalUrl,
+        redirected: result.redirected,
+        sourceKey: result.sourceKey,
+        taskKey: result.taskKey,
+        fetchedAt: result.fetchedAt
+      };
     } catch (error) {
-      const host = (() => {
-        try { return new URL(requestUrl).host; } catch (_) { return String(message.url || ""); }
-      })();
-      const timeoutText = error && error.name === "AbortError" ? "逾時" : "連線失敗或 CORS 限制";
-      return { ok: false, error: `網站模式 ${timeoutText}：${host} (${error && error.message ? error.message : String(error)})` };
-    } finally {
-      window.clearTimeout(timer);
+      return {
+        ok: false,
+        error: error?.message || String(error),
+        errorCode: error?.code || "NETWORK_ERROR",
+        errorCategory: error?.category || "network",
+        retryable: error?.retryable === true,
+        status: Number(error?.status) || null,
+        bytes: Number(error?.responseBytes) || 0,
+        durationMs: Number(error?.durationMs) || 0,
+        attempts: Number(error?.attempts) || 1,
+        attemptHistory: Array.isArray(error?.attemptHistory) ? error.attemptHistory : [],
+        retryAfterMs: Number.isFinite(Number(error?.retryAfterMs)) ? Number(error.retryAfterMs) : null,
+        nextRetryAt: error?.nextRetryAt || null,
+        contentType: error?.contentType || "",
+        responsePreview: error?.responsePreview || "",
+        finalUrl: error?.finalUrl || requestUrl
+      };
     }
   }
 
@@ -250,6 +290,11 @@
       }
       if (message.type === "fetch-text" && message.url) {
         fetchTextMessage(message).then((response) => done(response)).catch((error) => done({ ok: false, error: error.message || String(error) }));
+        return true;
+      }
+      if (message.type === "cancel-fetches") {
+        const taskKey = String(message.taskKey || "default");
+        done({ ok: true, taskKey, cancelled: webRequestBroker?.cancelGroup(taskKey) || 0 });
         return true;
       }
       if (message.type === "download-file" && message.url) {
@@ -426,7 +471,21 @@
   if ("serviceWorker" in navigator && window.isSecureContext) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("service-worker.js", { scope: "./" })
+        .then(() => navigator.serviceWorker.ready)
+        .then((registration) => {
+          const warmOptional = () => registration.active?.postMessage({ type: "WARM_OPTIONAL_CACHE" });
+          if (typeof window.requestIdleCallback === "function") {
+            window.requestIdleCallback(warmOptional, { timeout: 5000 });
+          } else {
+            window.setTimeout(warmOptional, 1500);
+          }
+        })
         .catch((error) => console.warn("PWA service worker registration failed", error));
     }, { once: true });
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type !== "TWSTOCK_OPTIONAL_CACHE_RESULT") return;
+      window.__TWSTOCK_PWA_CACHE_STATUS__ = event.data;
+      if (event.data.failed) console.warn("PWA optional cache completed with failures", event.data);
+    });
   }
 })();
