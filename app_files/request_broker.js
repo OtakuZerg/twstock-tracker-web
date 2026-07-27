@@ -368,10 +368,12 @@
       const controller = new AbortController();
       const onGroupAbort = () => controller.abort(abortError());
       context.groupSignal.addEventListener("abort", onGroupAbort, { once: true });
-      const timeout = setTimeout(() => controller.abort(timeoutError(context.timeoutMs)), context.timeoutMs);
       let releaseSlot = null;
+      let timeout = null;
       try {
         releaseSlot = await acquire(context.sourceKey, context.concurrency, context.groupSignal);
+        // 排隊等待不應消耗來源請求本身的 timeout；只有取得 slot 後才開始計時。
+        timeout = setTimeout(() => controller.abort(timeoutError(context.timeoutMs)), context.timeoutMs);
         const headers = { ...(options.headers || {}) };
         if (options.body && !headers["Content-Type"]) headers["Content-Type"] = options.contentType || "application/x-www-form-urlencoded";
         const response = await fetchImpl(options.url, {
@@ -432,7 +434,7 @@
         }
         throw error;
       } finally {
-        clearTimeout(timeout);
+        if (timeout) clearTimeout(timeout);
         context.groupSignal.removeEventListener("abort", onGroupAbort);
         releaseSlot?.();
       }

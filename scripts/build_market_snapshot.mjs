@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -660,6 +661,10 @@ function writeJsonAtomic(filePath, payload) {
   fs.renameSync(tempPath, filePath);
 }
 
+function sha256Json(value) {
+  return crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
+}
+
 async function buildSnapshot(args) {
   const generatedAt = new Date().toISOString();
   const fetchLog = [];
@@ -700,6 +705,26 @@ async function buildSnapshot(args) {
     fetchLog
   };
   writeJsonAtomic(args.output, payload);
+  const relativeSnapshot = path.relative(REPO_ROOT, args.output).replaceAll(path.sep, "/");
+  writeJsonAtomic(path.join(path.dirname(args.output), "snapshot-manifest.json"), {
+    schemaVersion: 1,
+    generatedAt,
+    asOf: marketDashboardCache.fetchedAt || null,
+    mode: marketDashboardCache.delivery.mode,
+    stale: !fresh,
+    fallback: Boolean(marketDashboardCache.delivery.freshSources.length === 0 || errors.length),
+    parts: [{
+      id: "market",
+      path: relativeSnapshot,
+      sha256: sha256Json(payload),
+      generatedAt,
+      asOf: marketDashboardCache.fetchedAt || null,
+      stale: !fresh,
+      fallback: Boolean(errors.length || !fresh)
+    }],
+    errors: uniqueStrings(errors).slice(-8),
+    note: "generatedAt 是快照產生時間；asOf 是資料時間，兩者不可混用。"
+  });
   return {
     ok: true,
     output: args.output,

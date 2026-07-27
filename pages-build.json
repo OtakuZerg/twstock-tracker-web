@@ -4,10 +4,36 @@
   "releaseDate": "2026-07-19",
   "mode": "github-pages-pwa",
   "profile": "public-pages-hardened-v3",
-  "builtAt": "2026-07-23T14:42:38.636Z",
+  "builtAt": "2026-07-27T23:54:33.212Z",
   "sourceDataAsOf": {
     "state": "2026-05-12T16:00:29.175Z",
     "research": "2026-06-24T14:02:15+08:00",
     "podcast": "2026-05-02T23:08:05+08:00"
-  }
+  },
+  "snapshotParts": [
+    {
+      "id": "market",
+      "path": "data/live_market.json",
+      "sha256": "039b3799d63f892c08c16a24bf914def9b43a4be6fda81f1ad7f4f56d861f827",
+      "asOf": null
+    },
+    {
+      "id": "state-core",
+      "path": "data/state_core.json",
+      "sha256": "a5ef817e1036a25ff8f5db3da76d575931c38cf41671ad5811d895ae3ce8b9b0",
+      "asOf": "2026-05-12T16:00:29.175Z"
+    },
+    {
+      "id": "research",
+      "path": "data/research_data.json",
+      "sha256": "4dca97da22d332863de7bbe5abbe4e9a8520a73169f08205d7c851fc2d5daea2",
+      "asOf": "2026-06-24T14:02:15+08:00"
+    },
+    {
+      "id": "podcast",
+      "path": "data/podcast_digest.json",
+      "sha256": "07725890688febba66459040e2b946d9d5d333763d1d14e7c386dea21645f041",
+      "asOf": "2026-05-02T23:08:05+08:00"
+    }
+  ]
 }

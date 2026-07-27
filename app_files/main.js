@@ -6136,6 +6136,18 @@ async function fetchText(url, {
   health.reliability?.recordAttempt(health.registry, health.key, { url });
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
     return new Promise((resolve, reject) => {
+      const watchdogMs = Math.max(2000, Number(timeoutMs) || 12000) + 2500;
+      let settled = false;
+      const watchdog = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        const error = new Error(`Extension 背景請求逾時：${new URL(url, location.href).hostname}`);
+        error.code = "EXTENSION_MESSAGE_TIMEOUT";
+        error.category = "network";
+        error.retryable = true;
+        health.reliability?.recordFailure(health.registry, health.key, error, { latencyMs: Date.now() - startedAt });
+        reject(error);
+      }, watchdogMs);
       const msg = {
         type: "fetch-text",
         url,
@@ -6153,6 +6165,9 @@ async function fetchText(url, {
         taskKey: taskKey || currentFetchTaskKey()
       };
       chrome.runtime.sendMessage(msg, (response) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(watchdog);
         const runtimeError = chrome.runtime.lastError;
         if (runtimeError) {
           const error = new Error(runtimeError.message);
@@ -6337,6 +6352,26 @@ async function loadPublishedMarketSnapshot() {
   if (snapshotUrl.origin !== window.location.origin) throw new Error("行情快照必須來自目前網站");
   snapshotUrl.searchParams.set("app", APP_VERSION);
   snapshotUrl.searchParams.set("ts", String(Date.now()));
+  let snapshotManifest = null;
+  try {
+    const manifestUrl = new URL(bundledAssetUrl("data/snapshot-manifest.json"), window.location.href);
+    if (manifestUrl.origin !== window.location.origin) throw new Error("行情 manifest 必須來自目前網站");
+    manifestUrl.searchParams.set("app", APP_VERSION);
+    manifestUrl.searchParams.set("ts", String(Date.now()));
+    const manifestResponse = await fetch(manifestUrl.href, {
+      method: "GET",
+      cache: "no-store",
+      credentials: "same-origin",
+      redirect: "error",
+      headers: { Accept: "application/json" }
+    });
+    if (manifestResponse.ok) {
+      const parsedManifest = await readLimitedJsonResponse(manifestResponse, 256 * 1024);
+      if (parsedManifest?.schemaVersion === 1 && Array.isArray(parsedManifest.parts)) snapshotManifest = parsedManifest;
+    }
+  } catch (_) {
+    // 舊版 Pages artifact 尚未附 manifest 時，沿用 live_market.json 相容路徑。
+  }
   const response = await fetch(snapshotUrl.href, {
     method: "GET",
     cache: "no-store",
@@ -6351,7 +6386,8 @@ async function loadPublishedMarketSnapshot() {
   }
   return normalizeMarketDashboardCache({
     ...payload.marketDashboardCache,
-    delivery: payload.marketDashboardCache.delivery || payload.delivery
+    delivery: payload.marketDashboardCache.delivery || payload.delivery,
+    snapshotManifest
   });
 }
 
@@ -14679,7 +14715,10 @@ function normalizeMarketDashboardCache(value) {
     taifexNight,
     global,
     errors: uniqueList(errors).slice(-8),
-    delivery: normalizeMarketDashboardDelivery(incoming.delivery)
+    delivery: normalizeMarketDashboardDelivery(incoming.delivery),
+    snapshotManifest: incoming.snapshotManifest && typeof incoming.snapshotManifest === "object"
+      ? incoming.snapshotManifest
+      : null
   };
 }
 

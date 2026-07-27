@@ -17,7 +17,7 @@
     "www.tsit.com.tw", "websys.fsit.com.tw", "am.jpmorgan.com", "www.yuantaetfs.com", "yuantaetfs.com",
     "www.fhtrust.com.tw", "www.fsitc.com.tw", "www.megafunds.com.tw", "www.etfinfo.tw", "www.moneydj.com",
     "www.trendforce.com", "www.wantgoo.com", "www.investing.com", "www.cmoney.tw", "www.pocket.tw",
-    "news.cnyes.com", "api.cnyes.com", "cdn.cboe.com", "home.treasury.gov", "www.federalreserve.gov",
+    "news.cnyes.com", "api.cnyes.com", "www.cnyes.com", "www.goodinfo.tw", "goodinfo.tw", "cdn.cboe.com", "home.treasury.gov", "www.federalreserve.gov",
     "www.cmegroup.com", "www.cbc.gov.tw", "tide-tw.app"
   ]);
 

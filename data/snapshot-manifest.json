@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-27T23:54:33.212Z",
+  "asOf": null,
+  "mode": "bundled-fallback",
+  "stale": true,
+  "fallback": true,
+  "parts": [
+    {
+      "id": "market",
+      "path": "data/live_market.json",
+      "sha256": null,
+      "generatedAt": "2026-07-27T23:54:33.212Z",
+      "asOf": null,
+      "stale": true,
+      "fallback": true
+    }
+  ],
+  "errors": [],
+  "note": "generatedAt 是快照產生時間；asOf 是資料時間，兩者不可混用。"
+}
