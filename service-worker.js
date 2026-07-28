@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_PREFIX = "twstock-pages";
-const CACHE_VERSION = "v18.1-pwa-3";
+const CACHE_VERSION = "v18.1-pwa-5";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const REQUIRED_SHELL_PATHS = [
   "main.html?mode=web",

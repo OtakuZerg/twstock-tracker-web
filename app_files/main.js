@@ -8473,7 +8473,7 @@ async function updateExDividendCalendar(silent = false) {
   try {
     const result = await fetchExDividendCalendarData();
     await saveState();
-    if (state.activeTab === "ex-dividend") renderExDividendTab();
+    if (!silent && state.activeTab === "ex-dividend") renderExDividendTab();
     if (!silent) {
       const suffix = result.errors.length ? `；部分來源失敗：${result.errors.join("；")}` : "";
       setStatus(`除權息日曆已更新：近兩個月 ${formatNumber(result.count, 0)} 筆${suffix}`, result.errors.length ? "warn" : "good");
@@ -8523,7 +8523,7 @@ async function updateDividendData(silent = false) {
   try {
     const result = await fetchDividendData();
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) {
       const suffix = result.errors.length ? `；部分來源失敗：${result.errors.join("；")}` : "";
       setStatus(`股利更新完成：${formatNumber(result.count, 0)} 筆追蹤股資料${suffix}`, result.count ? "good" : "warn");
@@ -17683,7 +17683,7 @@ async function updateActiveEtfByCode(code, options = {}) {
     const snapshot = snapshots[0];
     const wroteFile = await writeActiveEtfDataFile();
     await saveState();
-    renderActiveEtfs();
+    if (!options.silent) renderActiveEtfs();
     if (!options.silent) {
       setStatus(
         `已更新 ${etf.code}：${formatNumber(snapshot.holdings.length, 0)} 筆持股，取得 ${formatNumber(snapshots.length, 0)} 筆快照，來源 ${snapshots.map((row) => row.sourceLabel).join(" / ")}${wroteFile ? "；已寫入 data JSON" : "；尚未設定可寫入的 data 資料夾"}`,
@@ -17699,7 +17699,7 @@ async function updateActiveEtfByCode(code, options = {}) {
       lastFailureMessage: `${etf.code}: ${error && error.message ? error.message : String(error)}`
     };
     await saveState();
-    renderActiveEtfs();
+    if (!options.silent) renderActiveEtfs();
     if (!options.silent) setStatus(`更新 ${etf.code} 失敗：${state.activeEtf.lastFailureMessage}`, "error");
     throw error;
   } finally {
@@ -17753,7 +17753,7 @@ async function updateAllActiveEtfs(options = {}) {
     // 更新 ETF 持股後順帶更新淨值 / 折溢價
     updateEtfNav(true).catch(() => {});
     await saveState();
-    render();
+    if (!options.silent) render();
     if (!options.silent) {
       const kind = failed.length ? (success.length ? "warn" : "error") : "good";
       setStatus(
@@ -17783,7 +17783,7 @@ async function updatePodcastFeeds(silent = false) {
       shows
     });
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) setStatus("Podcast RSS 已更新。", "good");
     return state.podcast;
   })()
@@ -18268,7 +18268,7 @@ async function updateMarketInstitutionalRankings(silent = false) {
     .then((cache) => {
       state.marketInstitutionalRankings = cache;
       persistStateSilently("三大法人全市場排行");
-      if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+      if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
       if (!silent) {
         setStatus(`三大法人排行已更新：${cache.asOf || "最新交易日"}，${formatNumber(cache.rows.length, 0)} 檔。`, cache.errors.length ? "warn" : "good");
       }
@@ -19591,7 +19591,7 @@ async function updateInstitutional(stock, silent = false) {
     }
     updateMarketCapForStock(stock);
     persistStateSilently("籌碼");
-    renderInstitutionalTab();
+    if (!silent) renderInstitutionalTab();
 
     const parts = [];
     if (inst) parts.push(`三大法人外資 ${formatNumber(inst.foreignNet, 0)} 張 (${inst.source})`);
@@ -20297,12 +20297,16 @@ async function updateFuturesData(silent = false) {
         if (!r) return;
         state.putCallRatio = r;
         persistStateSilently("P/C 比率");
-        renderFuturesStrip();
-        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        if (!silent) {
+          renderFuturesStrip();
+          if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        }
       }).catch((error) => console.warn("fetchPutCallRatio failed", error));
-      renderFuturesStrip();
-      if (state.activeTab === "technical") renderInstitutionalTab();
-      if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+      if (!silent) {
+        renderFuturesStrip();
+        if (state.activeTab === "technical") renderInstitutionalTab();
+        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+      }
       if (!silent) {
         const sentiment = futuresSentimentSummary(summary);
         setStatus(`期貨已更新：${sentiment.conclusion}`, "good");
@@ -20455,7 +20459,7 @@ async function prewarmInstitutionalHistory30(options = {}) {
       await wait(20);
     }
     persistStateSilently("法人30日預熱");
-    if (shouldRender && state.activeTab === "technical") renderInstitutionalTab();
+    if (!silent && shouldRender && state.activeTab === "technical") renderInstitutionalTab();
     const cacheText = chipCacheSummary(chipCache);
     if (!silent) {
       const failText = failures.length ? `；缺資料 ${failures.slice(0, 8).join("、")}${failures.length > 8 ? "…" : ""}` : "";
@@ -20528,7 +20532,7 @@ async function updateOneStock(stock, silent = false, includeValuation = true) {
     state.selectedCode = stock.code;
     state.lastUpdated = new Date().toISOString();
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) {
       const valuationText = valuationRefreshSummaryText(valuationSummary);
       const valuationWarning = valuationSummary.failures.length ? "；官方估值稍後再試" : "";
@@ -20539,7 +20543,7 @@ async function updateOneStock(stock, silent = false, includeValuation = true) {
   } catch (error) {
     state.errors[stock.code] = error && error.message ? error.message : String(error);
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) setStatus(`${stock.name} 更新失敗：${state.errors[stock.code]}`, "error");
     throw error;
   } finally {
@@ -20649,6 +20653,7 @@ function runScheduledBackgroundTasks(tasks, group = "background") {
     queue.push({ task, record });
   }
   persistSchedulerStatus();
+  const hasQueuedTasks = queue.length > 0;
   async function drain() {
     let next;
     while ((next = queue.shift())) await runTaskWithRetry(next.task, next.record);
@@ -20657,7 +20662,7 @@ function runScheduledBackgroundTasks(tasks, group = "background") {
     .then(() => {
       persistSchedulerStatus();
       persistStateSilently(`${group} 背景同步`);
-      if (state.activeTab === "help") renderSourceReliabilityPanel();
+      if (hasQueuedTasks) render({ scope: "active" });
       return { started, skipped, failed, checkedAt };
     });
   done.catch((error) => console.warn(`${group} background scheduler failed`, error));
@@ -21033,7 +21038,7 @@ async function updateOneKline(stock, silent = false) {
     delete state.errors[`kline_${stock.code}`];
     await flushPendingKlineIdbWrites();
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) {
       setStatus(`${stock.name} 日線更新完成：${result.rows.length} 根，來源 ${result.source}`, "good");
     }
@@ -21041,7 +21046,7 @@ async function updateOneKline(stock, silent = false) {
   } catch (error) {
     state.errors[`kline_${stock.code}`] = error && error.message ? error.message : String(error);
     await saveState();
-    render();
+    if (!silent) render();
     if (!silent) setStatus(`${stock.name} 日線更新失敗：${state.errors[`kline_${stock.code}`]}`, "error");
     throw error;
   } finally {
@@ -26209,7 +26214,7 @@ async function updateMemoryMarketSnapshot({ silent = false } = {}) {
         errors: []
       });
       persistStateSilently("記憶體報價");
-      if (isMemoryOverviewActive()) renderMemoryMarketPanel();
+      if (!silent && isMemoryOverviewActive()) renderMemoryMarketPanel();
       if (!silent) setStatus(`記憶體報價已更新：${snapshot.asOf || formatDateTime(snapshot.fetchedAt)}`, "good");
       return snapshot;
     } catch (error) {
@@ -26228,7 +26233,7 @@ async function updateMemoryMarketSnapshot({ silent = false } = {}) {
         errors: [message]
       });
       persistStateSilently("記憶體報價 fallback");
-      if (isMemoryOverviewActive()) renderMemoryMarketPanel();
+      if (!silent && isMemoryOverviewActive()) renderMemoryMarketPanel();
       if (!silent) setStatus(`記憶體報價更新失敗，已顯示 fallback：${message}`, "warn");
       return fallback;
     } finally {
@@ -27353,7 +27358,7 @@ async function updateBondEtfSignal(silent = false) {
       errors
     };
     persistStateSilently("美債 ETF 燈號");
-    if (state.activeTab === "overview") renderBondEtfScenarioPanel();
+    if (!silent && state.activeTab === "overview") renderBondEtfScenarioPanel();
     if (!silent) setStatus(`美債 ETF 燈號已更新：${signal.light}，${signal.action}。`, errors.length ? "warn" : "good");
     return state.bondSignalCache;
   })().finally(() => {
@@ -36236,7 +36241,7 @@ async function updateDispositionData(silent = false) {
       sourceSummary: `TWSE / TPEx 官方處置資訊；TWSE 回看最近 ${DISPOSITION_LOOKBACK_DAYS} 天，${rows.length} 筆原始列`
     };
     persistStateSilently("處置股");
-    if (state.activeTab === "disposition") renderDispositionTab();
+    if (!silent && state.activeTab === "disposition") renderDispositionTab();
     if (!silent) {
       const equityCount = state.disposition.rows.filter(isDispositionEquityLike).length;
       setStatus(`處置股已更新：個股/ETF ${equityCount} 檔，原始列 ${state.disposition.rows.length} 筆。`, errors.length ? "warn" : "good");
@@ -36308,7 +36313,7 @@ async function updateDispositionRiskData(silent = false) {
       sourceSummary: `TWSE / TPEx 官方注意交易資訊；注意累計 ${cumulativeRows.length} 筆、今日注意 ${attentionRows.length} 筆原始列`
     };
     persistStateSilently("注意交易與處置風險");
-    if (state.activeTab === "disposition") renderDispositionTab();
+    if (!silent && state.activeTab === "disposition") renderDispositionTab();
     if (!silent) {
       setStatus(`注意交易已更新：累計異常 ${state.dispositionRisk.cumulativeRows.length} 檔，今日注意 ${state.dispositionRisk.attentionRows.length} 檔。`, errors.length ? "warn" : "good");
     }
@@ -36331,7 +36336,7 @@ async function updateDispositionAllData(silent = false) {
     const riskCount = (state.dispositionRisk?.cumulativeRows || []).length;
     setStatus(`處置 / 注意已更新：處置清單 ${currentCount} 檔，次日再注意風險 ${riskCount} 檔${failures.length ? `；部分失敗：${failures.join("；")}` : ""}`, failures.length ? "warn" : "good");
   }
-  if (state.activeTab === "disposition") renderDispositionTab();
+  if (!silent && state.activeTab === "disposition") renderDispositionTab();
   return { disposition: state.disposition, dispositionRisk: state.dispositionRisk, failures };
 }
 
@@ -39277,8 +39282,8 @@ async function updateMacroSnapshot(silent = false) {
       errors
     };
     persistStateSilently("總經快照");
-    if (state.activeTab === "macro") renderMacroTab();
-    if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+    if (!silent && state.activeTab === "macro") renderMacroTab();
+    if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
     if (!silent) setStatus(`總經快照已更新：${items.length} 項直接數值${marketMargin ? "，含上市融資券水位" : ""}。`, errors.length ? "warn" : "good");
     return items;
   })().finally(() => {
@@ -39665,7 +39670,7 @@ async function updateTideSectorCache(silent = false) {
     try {
       state.tideSectorCache = await fetchTideSectorSnapshot();
       persistStateSilently("Tide 板塊資金");
-      if (state.activeTab === "market") renderMarketDashboardTab();
+      if (!silent && state.activeTab === "market") renderMarketDashboardTab();
       if (!silent) {
         setStatus(`Tide 板塊資金已更新：${state.tideSectorCache.asOf || "日期待補"}，板塊 ${formatNumber(state.tideSectorCache.sectorCount, 0)}。`, state.tideSectorCache.errors.length ? "warn" : "good");
       }
@@ -39676,7 +39681,7 @@ async function updateTideSectorCache(silent = false) {
         ...current,
         errors: [...current.errors.slice(-4), error && error.message ? error.message : String(error)]
       });
-      if (state.activeTab === "market") renderMarketDashboardTab();
+      if (!silent && state.activeTab === "market") renderMarketDashboardTab();
       if (!silent) setStatus(`Tide 板塊資金更新失敗：${error?.message || String(error)}`, "error");
       throw error;
     }
@@ -39706,7 +39711,7 @@ async function updateMarketDashboard(silent = false) {
         state.marketDashboardCache = await loadPublishedMarketSnapshot();
         _publishedMarketSnapshotLoadedThisSession = true;
         persistStateSilently("GitHub 大盤延遲快照");
-        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
         const cache = state.marketDashboardCache;
         const sourceCount = [cache.taiwan, cache.taifexNight, ...(cache.global || [])].filter(Boolean).length;
         if (!silent) {
@@ -39724,7 +39729,7 @@ async function updateMarketDashboard(silent = false) {
           errors: [...current.errors, `GitHub 延遲快照讀取失敗：${detail}`]
         });
         persistStateSilently("GitHub 大盤延遲快照錯誤");
-        if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
         if (!silent) setStatus(`GitHub 延遲快照讀取失敗：${detail}`, "error");
         throw error;
       }
@@ -39758,7 +39763,7 @@ async function updateMarketDashboard(silent = false) {
       errors
     });
     persistStateSilently("大盤總覽");
-    if (state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+    if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
     const taiwanOk = state.marketDashboardCache.taiwan?.value !== null && state.marketDashboardCache.taiwan?.value !== undefined;
     if (!silent) setStatus(`大盤總覽已更新：台股 ${taiwanOk ? "OK" : "缺"}，美股 ${global.length}/4，夜盤 ${taifexNight ? "OK" : "缺"}`, errors.length ? "warn" : "good");
     return state.marketDashboardCache;
@@ -44566,6 +44571,14 @@ function renderOverviewStaged() {
 }
 
 let _marketSecondaryToken = 0;
+
+function renderMarketPortfolioPanelContent() {
+  const container = $("portfolioPanel");
+  if (!container) return;
+  const showDetails = _overviewHoldingsDetailsLoaded === true;
+  container.innerHTML = renderPortfolioPanel({ details: showDetails }) + (showDetails ? renderPositionSizer() : "");
+}
+
 function renderMarketSecondaryPanels() {
   const token = ++_marketSecondaryToken;
   if (!_marketDetailPanelsLoaded) {
@@ -44576,12 +44589,7 @@ function renderMarketSecondaryPanels() {
   const run = () => {
     if (token !== _marketSecondaryToken || state.activeTab !== "market") return;
     renderSection("今日快訊", renderTodayTradingSignals, "todaySignalsPanel");
-    renderSection("持股作戰室", () => {
-      const c = $("portfolioPanel");
-      if (!c) return;
-      const showDetails = _overviewHoldingsDetailsLoaded === true;
-      c.innerHTML = renderPortfolioPanel({ details: showDetails }) + (showDetails ? renderPositionSizer() : "");
-    }, "portfolioPanel");
+    renderSection("持股作戰室", renderMarketPortfolioPanelContent, "portfolioPanel");
     renderSection("今日族群概況", renderThemeSummaryCards, "themeSummaryGrid");
     renderSection("產業趨勢雷達", renderThemeRegimePanel, "themeRegimePanel");
   };
@@ -45302,7 +45310,7 @@ function bindEvents() {
       switchTab("market");
       return;
     }
-    renderActiveTab("market");
+    renderSection("持股作戰室", renderMarketPortfolioPanelContent, "portfolioPanel");
   });
 
   document.body.addEventListener("click", (event) => {
