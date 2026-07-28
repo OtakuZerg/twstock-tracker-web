@@ -16304,7 +16304,7 @@ function loadBundledStateDomain(path, label = path) {
 }
 
 function ensureBundledStateDomainForTab(tab) {
-  if (!["quant", "research", "technical", "discovery", "dividend"].includes(normalizeTabTarget(tab))) return;
+  if (!["overview", "screener", "report", "technical", "discovery", "ex-dividend"].includes(normalizeTabTarget(tab))) return;
   loadBundledStateDomain(STATE_TECHNICAL_SEED_PATH, "technical shard")
     .catch((error) => console.warn("technical shard hydration skipped", error));
 }
