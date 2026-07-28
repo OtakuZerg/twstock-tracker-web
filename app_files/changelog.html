@@ -11,6 +11,7 @@
               <li><strong>Web 快照 provenance</strong>：manifest 分開記錄 generatedAt、asOf、stale、fallback、錯誤與分片 hash。</li>
               <li><strong>局部恢復</strong>：PWA 非關鍵資產容錯快取，資料健康中心可只重試失敗的背景任務。</li>
               <li><strong>來源 adapter gates</strong>：TWSE、TPEx、MOPS、Yahoo、TAIFEX、TDCC、總經與 Tide 共用 policy，固定檢查空資料與欄位飄移。</li>
+              <li><strong>v18.1 熱修</strong>：technical shard 成功載入後加入完成鎖，避免 full render 重複 hydrate、persist 與重畫造成畫面持續閃爍。</li>
             </ul>
           </div>
 

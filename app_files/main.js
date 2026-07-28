@@ -16279,8 +16279,10 @@ async function readBundledStateFile(path = STATE_SEED_PATH) {
 
 let _bundledStateHydrationScheduled = false;
 const _bundledStateDomainLoads = new Map();
+const _bundledStateDomainsLoaded = new Set();
 
 function loadBundledStateDomain(path, label = path) {
+  if (_bundledStateDomainsLoaded.has(path)) return Promise.resolve(null);
   if (_bundledStateDomainLoads.has(path)) return _bundledStateDomainLoads.get(path);
   const pending = readBundledStateFile(path)
     .then((payload) => {
@@ -16293,6 +16295,7 @@ function loadBundledStateDomain(path, label = path) {
         persistStateSilently(`載入 ${label}`);
         if (typeof document !== "undefined" && document.body) render({ scope: "active" });
       }
+      _bundledStateDomainsLoaded.add(path);
       return payload;
     })
     .finally(() => _bundledStateDomainLoads.delete(path));
