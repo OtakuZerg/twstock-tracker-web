@@ -1,12 +1,13 @@
 "use strict";
 
 const CACHE_PREFIX = "twstock-pages";
-const CACHE_VERSION = "v18.0-pwa-3";
+const CACHE_VERSION = "v18.1-pwa-1";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const REQUIRED_SHELL_PATHS = [
   "main.html?mode=web",
   "app_files/request_broker.js",
   "app_files/source_fallbacks.js",
+  "app_files/source_adapters.js",
   "app_files/web_adapter.js",
   "app_files/analysis_frameworks.js",
   "app_files/theme_regime.js",
@@ -15,7 +16,9 @@ const REQUIRED_SHELL_PATHS = [
   "app_files/update_reliability.js",
   "app_files/perf_worker.js",
   "app_files/main.js",
-  "data/state_core.json"
+  "data/state_seed_manifest.json",
+  "data/state_bootstrap.json",
+  "data/state_equity_core.json"
 ];
 const OPTIONAL_CACHE_PATHS = [
   "./",
@@ -29,6 +32,8 @@ const OPTIONAL_CACHE_PATHS = [
   "assets/icons/apple-touch-icon.png",
   "app_files/changelog.html",
   "data/state.json",
+  "data/state_core.json",
+  "data/state_technical.json",
   "data/research_data.json",
   "data/active_twETF_weekly_snapshots.json",
   "data/podcast_digest.json",

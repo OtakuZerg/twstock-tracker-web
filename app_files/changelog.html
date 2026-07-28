@@ -1,5 +1,21 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v18.1</strong>
+              <span>2026-07-28</span>
+              <span class="cl-badge major">Connection Reliability</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>中央請求治理</strong>：Extension 與 Web 共用 timeout、single-flight、來源併發、bounded retry、Retry-After、取消、response cap 與 request trace。</li>
+              <li><strong>錯誤可診斷</strong>：分類 WAF、HTTP 200 challenge、schema drift、0-row、DNS／TLS／timeout，並保留 last success 與 next retry。</li>
+              <li><strong>個股備援</strong>：官方／Yahoo 皆失敗時才使用鉅亨個股頁；WantGoo／Goodinfo 作人工核對，驗證頁不冒充成功資料。</li>
+              <li><strong>Web 快照 provenance</strong>：manifest 分開記錄 generatedAt、asOf、stale、fallback、錯誤與分片 hash。</li>
+              <li><strong>局部恢復</strong>：PWA 非關鍵資產容錯快取，資料健康中心可只重試失敗的背景任務。</li>
+              <li><strong>來源 adapter gates</strong>：TWSE、TPEx、MOPS、Yahoo、TAIFEX、TDCC、總經與 Tide 共用 policy，固定檢查空資料與欄位飄移。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v18.0</strong>
               <span>2026-07-19</span>
               <span class="cl-badge major">PCB Materials Chain</span>

@@ -1,10 +1,13 @@
 "use strict";
 
-const APP_VERSION = "18.0";
+const APP_VERSION = "18.1";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
 const STATE_CORE_SEED_PATH = "data/state_core.json";
+const STATE_BOOTSTRAP_SEED_PATH = "data/state_bootstrap.json";
+const STATE_EQUITY_CORE_SEED_PATH = "data/state_equity_core.json";
+const STATE_TECHNICAL_SEED_PATH = "data/state_technical.json";
 const RESEARCH_DATA_SEED_PATH = "data/research_data.json";
 const RESEARCH_DATA_SYNC_FILE_NAME = "research_data.json";
 const RESEARCH_DATA_CACHE_KEY = "durable:research-data:v1";
@@ -16231,14 +16234,14 @@ function mergeActiveEtfCache(current, incoming, preferIncoming = false) {
   };
 }
 
-function hydrateStateDataCache(incoming, label = "state seed") {
+function hydrateStateDataCache(incoming, label = "state seed", options = {}) {
   const incomingCount = stateDataFootprint(incoming);
   if (!incomingCount) return { applied: false, reason: "empty", incomingCount, currentCount: stateDataFootprint(state) };
 
   const currentCount = stateDataFootprint(state);
   const incomingTime = statePayloadTime(incoming);
   const currentTime = statePayloadTime(state);
-  const preferIncoming = currentCount === 0 || (incomingTime && incomingTime > currentTime + 60 * 1000);
+  const preferIncoming = options.force === true || currentCount === 0 || (incomingTime && incomingTime > currentTime + 60 * 1000);
 
   if (!preferIncoming && currentCount >= incomingCount) {
     return { applied: false, reason: "current-newer-or-richer", incomingCount, currentCount };
@@ -16275,6 +16278,33 @@ async function readBundledStateFile(path = STATE_SEED_PATH) {
 }
 
 let _bundledStateHydrationScheduled = false;
+const _bundledStateDomainLoads = new Map();
+
+function loadBundledStateDomain(path, label = path) {
+  if (_bundledStateDomainLoads.has(path)) return _bundledStateDomainLoads.get(path);
+  const pending = readBundledStateFile(path)
+    .then((payload) => {
+      if (!payload) throw new Error(`${label} 無可用資料`);
+      const hydrated = hydrateStateDataCache(payload, label, { force: true });
+      if (hydrated.applied) {
+        _cacheLoadInfo.seedApplied = true;
+        _cacheLoadInfo.seedLabel = label;
+        _cacheLoadInfo.seedMessage = `已載入 ${label}`;
+        persistStateSilently(`載入 ${label}`);
+        if (typeof document !== "undefined" && document.body) render({ scope: "active" });
+      }
+      return payload;
+    })
+    .finally(() => _bundledStateDomainLoads.delete(path));
+  _bundledStateDomainLoads.set(path, pending);
+  return pending;
+}
+
+function ensureBundledStateDomainForTab(tab) {
+  if (!["quant", "research", "technical", "discovery", "dividend"].includes(normalizeTabTarget(tab))) return;
+  loadBundledStateDomain(STATE_TECHNICAL_SEED_PATH, "technical shard")
+    .catch((error) => console.warn("technical shard hydration skipped", error));
+}
 
 function applyBundledStateHydration(bundledState, label = STATE_SEED_PATH) {
   if (!bundledState) return false;
@@ -16960,6 +16990,23 @@ async function loadState() {
   }
 
   if (primaryLoaded && stateDataFootprint(state) >= STARTUP_DEFER_BUNDLED_STATE_MIN_FOOTPRINT) return;
+
+  if (!primaryLoaded) {
+    const [bootstrapState, equityCoreState] = await Promise.all([
+      readBundledStateFile(STATE_BOOTSTRAP_SEED_PATH),
+      readBundledStateFile(STATE_EQUITY_CORE_SEED_PATH)
+    ]);
+    if (bootstrapState && equityCoreState) {
+      Object.assign(state, slimStatePayloadForMemory({ ...bootstrapState, ...equityCoreState }, "bundled-state-shards"));
+      _cacheLoadInfo = {
+        source: "bundled state shards",
+        seedApplied: true,
+        seedLabel: `${STATE_BOOTSTRAP_SEED_PATH} + ${STATE_EQUITY_CORE_SEED_PATH}`,
+        seedMessage: "使用分片核心快取；技術資料依分頁載入"
+      };
+      return;
+    }
+  }
 
   const coreState = await readBundledStateFile(STATE_CORE_SEED_PATH);
   if (coreState) {
@@ -20722,6 +20769,14 @@ function smartUpdateTaskDefinitions() {
 
 function triggerQuickUpdateBackgroundSyncs() {
   return runScheduledBackgroundTasks(smartUpdateTaskDefinitions(), "afterCloseBackgroundSync");
+}
+
+async function retrySmartUpdateTask(label) {
+  const task = smartUpdateTaskDefinitions().find((item) => item.label === label);
+  if (!task) throw new Error(`找不到背景任務：${label}`);
+  await task.run();
+  persistStateSilently(`重試 ${label}`);
+  return task;
 }
 
 async function quickUpdateQuotes() {
@@ -42027,6 +42082,12 @@ function renderSourceReliabilityPanel() {
   const started = Array.isArray(scheduler.started) ? scheduler.started : [];
   const skipped = Array.isArray(scheduler.skipped) ? scheduler.skipped : [];
   const failed = Array.isArray(scheduler.failed) ? scheduler.failed : [];
+  const failedTaskRows = failed.map((row) => `
+    <li>
+      <span><strong>${escapeHtml(row.label || "未知任務")}</strong>${row.error ? `｜${escapeHtml(String(row.error).slice(0, 120))}` : ""}</span>
+      <button class="link-chip inline-action-chip" type="button" data-background-task-retry="${escapeHtml(row.label || "")}">只重試此任務</button>
+    </li>
+  `).join("");
   const running = started.filter((row) => ["queued", "running", "retrying"].includes(row.status)).length;
   const blocked = rows.filter((row) => Date.parse(row.nextRetryAt || "") > Date.now()).length;
   const unhealthy = rows.filter((row) => row.consecutiveFailures > 0).length;
@@ -42061,6 +42122,7 @@ function renderSourceReliabilityPanel() {
         </div>
       </div>
       <p class="note-box" style="margin:0;">開頁不自動跨站抓取。收盤後同步先完成報價與日線，其他來源依 TTL 以最多 2 路背景執行；Podcast、新聞、SBL 與深度法人回補仍為使用時才抓。</p>
+      ${failedTaskRows ? `<ul class="plain-list" data-failed-background-tasks style="margin-top:12px;">${failedTaskRows}</ul>` : ""}
       <details style="margin-top:12px;" ${unhealthy || blocked ? "open" : ""}>
         <summary>來源明細 ${rows.length ? `（${formatNumber(rows.length, 0)} 個）` : "（尚無請求紀錄）"}</summary>
         <div class="table-wrap" style="margin-top:10px;">
@@ -43998,6 +44060,7 @@ function switchTab(target, options = {}) {
   });
   if (persist) persistStateSilently("目前分頁");
   if (shouldRender) renderActiveTab(next);
+  ensureBundledStateDomainForTab(next);
 }
 
 function jumpToSelectedTechnicalSection(section = "chart") {
@@ -45140,6 +45203,24 @@ function bindEvents() {
       button.closest("details")?.removeAttribute("open");
       compactMobileSidebarAfterNavigation({ scrollToMain: true });
     });
+  });
+
+  document.body.addEventListener("click", async (event) => {
+    const retry = event.target.closest("[data-background-task-retry]");
+    if (!retry) return;
+    const label = retry.dataset.backgroundTaskRetry;
+    if (!label || retry.disabled) return;
+    retry.disabled = true;
+    setStatus(`正在重試：${label}…`, "warn");
+    try {
+      await retrySmartUpdateTask(label);
+      setStatus(`${label} 重試完成。`, "good");
+    } catch (error) {
+      setStatus(`${label} 重試失敗：${error?.message || error}`, "bad");
+    } finally {
+      retry.disabled = false;
+      renderSourceReliabilityPanel();
+    }
   });
 
   document.body.addEventListener("click", (event) => {

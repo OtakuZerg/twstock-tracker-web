@@ -1,0 +1,993 @@
+{
+  "version": "18.1",
+  "savedAt": "2026-06-03T16:25:24.247Z",
+  "lastUpdated": "2026-05-12T16:00:29.175Z",
+  "klineUpdatedAt": "2026-05-12T15:42:50.670Z",
+  "holdings": [
+    {
+      "code": "2330",
+      "suffix": "TW",
+      "name": "台積電"
+    },
+    {
+      "code": "0050",
+      "suffix": "TW",
+      "name": "元大台灣50"
+    },
+    {
+      "code": "1301",
+      "suffix": "TW",
+      "name": "台塑"
+    },
+    {
+      "code": "1303",
+      "suffix": "TW",
+      "name": "南亞"
+    },
+    {
+      "code": "2002",
+      "suffix": "TW",
+      "name": "中鋼"
+    },
+    {
+      "code": "2303",
+      "suffix": "TW",
+      "name": "聯電"
+    },
+    {
+      "code": "2308",
+      "suffix": "TW",
+      "name": "台達電"
+    },
+    {
+      "code": "2317",
+      "suffix": "TW",
+      "name": "鴻海"
+    },
+    {
+      "code": "2382",
+      "suffix": "TW",
+      "name": "廣達"
+    },
+    {
+      "code": "2412",
+      "suffix": "TW",
+      "name": "中華電"
+    },
+    {
+      "code": "2454",
+      "suffix": "TW",
+      "name": "聯發科"
+    },
+    {
+      "code": "2881",
+      "suffix": "TW",
+      "name": "富邦金"
+    },
+    {
+      "code": "2882",
+      "suffix": "TW",
+      "name": "國泰金"
+    },
+    {
+      "code": "2886",
+      "suffix": "TW",
+      "name": "兆豐金"
+    },
+    {
+      "code": "2891",
+      "suffix": "TW",
+      "name": "中信金"
+    },
+    {
+      "code": "3711",
+      "suffix": "TW",
+      "name": "日月光投控"
+    }
+  ],
+  "holdingsPresetVersion": "public-pages-hardened-v3",
+  "podcastDownloadDir": "twStock_tracker_podcast",
+  "snapshotTrendWindow": 12,
+  "chartPeriod": "daily",
+  "tradingRadarMode": "attack",
+  "screenerSort": "execute",
+  "screenerSortDir": true,
+  "selectedCode": "2330",
+  "search": "",
+  "chartView": {
+    "bars": 252,
+    "offset": 0
+  },
+  "userStocks": {},
+  "userThemeAdditions": {},
+  "userThemeRemovals": {},
+  "costBasis": {},
+  "customResearch": {},
+  "alerts": {},
+  "errors": {},
+  "activeTab": "market",
+  "filter": "holdings",
+  "revenue": {},
+  "klineStorage": {
+    "mode": "indexeddb-hot-cache-v1",
+    "inlineLimit": 8,
+    "inlineCount": 8,
+    "totalInMemory": 279,
+    "updatedAt": "2026-06-03T13:02:37.349Z",
+    "bundledSlimmedAt": "2026-06-05T11:29:01.220Z",
+    "coreSeed": true
+  },
+  "activeEtf": {
+    "snapshots": {},
+    "diagnostics": {
+      "00662": {
+        "etfCode": "00662",
+        "startedAt": "2026-05-12T15:58:51.476Z",
+        "finishedAt": "2026-05-12T15:58:52.122Z",
+        "durationMs": 646,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 101,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00662.TW",
+            "status": "success",
+            "durationMs": 97,
+            "bytes": 72639,
+            "holdingsCount": 101,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00662/holdings",
+            "status": "success",
+            "durationMs": 549,
+            "bytes": 72281,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00757": {
+        "etfCode": "00757",
+        "startedAt": "2026-05-12T15:58:51.476Z",
+        "finishedAt": "2026-05-12T15:58:52.112Z",
+        "durationMs": 636,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 10,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00757.TW",
+            "status": "success",
+            "durationMs": 66,
+            "bytes": 54287,
+            "holdingsCount": 10,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00757/holdings",
+            "status": "success",
+            "durationMs": 570,
+            "bytes": 72181,
+            "holdingsCount": 13,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00830": {
+        "etfCode": "00830",
+        "startedAt": "2026-05-12T15:58:51.476Z",
+        "finishedAt": "2026-05-12T15:58:52.081Z",
+        "durationMs": 605,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 30,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00830.TW",
+            "status": "success",
+            "durationMs": 82,
+            "bytes": 58074,
+            "holdingsCount": 30,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00830/holdings",
+            "status": "success",
+            "durationMs": 523,
+            "bytes": 72442,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00949": {
+        "etfCode": "00949",
+        "startedAt": "2026-05-12T15:58:51.477Z",
+        "finishedAt": "2026-05-12T15:58:52.131Z",
+        "durationMs": 654,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 30,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00949.TW",
+            "status": "success",
+            "durationMs": 84,
+            "bytes": 58365,
+            "holdingsCount": 30,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00949/holdings",
+            "status": "success",
+            "durationMs": 570,
+            "bytes": 72180,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00955": {
+        "etfCode": "00955",
+        "startedAt": "2026-05-12T15:58:51.477Z",
+        "finishedAt": "2026-05-12T15:58:54.251Z",
+        "durationMs": 2774,
+        "status": "success",
+        "attemptCount": 5,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 50,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00955.TW",
+            "status": "success",
+            "durationMs": 90,
+            "bytes": 62713,
+            "holdingsCount": 50,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00955/holdings",
+            "status": "error",
+            "durationMs": 422,
+            "bytes": 0,
+            "holdingsCount": 0,
+            "sourceDate": "",
+            "error": "HTTP 404: www.etfinfo.tw"
+          },
+          {
+            "label": "WantGoo 成分股",
+            "url": "https://www.wantgoo.com/stock/etf/00955/constituent",
+            "status": "error",
+            "durationMs": 106,
+            "bytes": 0,
+            "holdingsCount": 0,
+            "sourceDate": "",
+            "error": "WantGoo 成分股 未解析到持股表格"
+          },
+          {
+            "label": "Investing Holdings",
+            "url": "https://www.investing.com/etfs/00955-holdings",
+            "status": "error",
+            "durationMs": 2104,
+            "bytes": 0,
+            "holdingsCount": 0,
+            "sourceDate": "",
+            "error": "HTTP 404: www.investing.com"
+          },
+          {
+            "label": "MoneyDJ 持股狀況",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007.xdjhtm?etfid=00955.TW",
+            "status": "success",
+            "durationMs": 52,
+            "bytes": 55316,
+            "holdingsCount": 10,
+            "sourceDate": "2026-03-31",
+            "error": ""
+          }
+        ],
+        "error": "ETF資訊網: HTTP 404: www.etfinfo.tw | WantGoo 成分股: WantGoo 成分股 未解析到持股表格 | Investing Holdings: HTTP 404: www.investing.com"
+      },
+      "00980A": {
+        "etfCode": "00980A",
+        "startedAt": "2026-05-12T15:58:52.091Z",
+        "finishedAt": "2026-05-12T15:58:52.424Z",
+        "durationMs": 333,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 48,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00980A.TW",
+            "status": "success",
+            "durationMs": 18,
+            "bytes": 61481,
+            "holdingsCount": 48,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00980A/holdings",
+            "status": "success",
+            "durationMs": 315,
+            "bytes": 72828,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00981A": {
+        "etfCode": "00981A",
+        "startedAt": "2026-05-12T15:58:52.120Z",
+        "finishedAt": "2026-05-12T15:58:52.250Z",
+        "durationMs": 130,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 51,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00981A.TW",
+            "status": "success",
+            "durationMs": 19,
+            "bytes": 62026,
+            "holdingsCount": 51,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00981A/holdings",
+            "status": "success",
+            "durationMs": 111,
+            "bytes": 72814,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00982A": {
+        "etfCode": "00982A",
+        "startedAt": "2026-05-12T15:58:52.129Z",
+        "finishedAt": "2026-05-12T15:58:52.447Z",
+        "durationMs": 318,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 51,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00982A.TW",
+            "status": "success",
+            "durationMs": 37,
+            "bytes": 61937,
+            "holdingsCount": 51,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00982A/holdings",
+            "status": "success",
+            "durationMs": 281,
+            "bytes": 72792,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00983A": {
+        "etfCode": "00983A",
+        "startedAt": "2026-05-12T15:58:52.137Z",
+        "finishedAt": "2026-05-12T15:58:52.436Z",
+        "durationMs": 299,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 38,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00983A.TW",
+            "status": "success",
+            "durationMs": 40,
+            "bytes": 59659,
+            "holdingsCount": 38,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00983A/holdings",
+            "status": "success",
+            "durationMs": 259,
+            "bytes": 72354,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00984A": {
+        "etfCode": "00984A",
+        "startedAt": "2026-05-12T15:58:52.259Z",
+        "finishedAt": "2026-05-12T15:58:52.672Z",
+        "durationMs": 413,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 109,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00984A.TW",
+            "status": "success",
+            "durationMs": 116,
+            "bytes": 73200,
+            "holdingsCount": 109,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00984A/holdings",
+            "status": "success",
+            "durationMs": 297,
+            "bytes": 72794,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00985A": {
+        "etfCode": "00985A",
+        "startedAt": "2026-05-12T15:58:52.434Z",
+        "finishedAt": "2026-05-12T15:58:52.700Z",
+        "durationMs": 266,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 50,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00985A.TW",
+            "status": "success",
+            "durationMs": 22,
+            "bytes": 62178,
+            "holdingsCount": 50,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00985A/holdings",
+            "status": "success",
+            "durationMs": 244,
+            "bytes": 72835,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00986A": {
+        "etfCode": "00986A",
+        "startedAt": "2026-05-12T15:58:52.444Z",
+        "finishedAt": "2026-05-12T15:58:52.689Z",
+        "durationMs": 245,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 25,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00986A.TW",
+            "status": "success",
+            "durationMs": 19,
+            "bytes": 57752,
+            "holdingsCount": 25,
+            "sourceDate": "2026-05-08",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00986A/holdings",
+            "status": "success",
+            "durationMs": 226,
+            "bytes": 72356,
+            "holdingsCount": 13,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00987A": {
+        "etfCode": "00987A",
+        "startedAt": "2026-05-12T15:58:52.454Z",
+        "finishedAt": "2026-05-12T15:58:52.712Z",
+        "durationMs": 258,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 29,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00987A.TW",
+            "status": "success",
+            "durationMs": 17,
+            "bytes": 57734,
+            "holdingsCount": 29,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00987A/holdings",
+            "status": "success",
+            "durationMs": 241,
+            "bytes": 72744,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00988A": {
+        "etfCode": "00988A",
+        "startedAt": "2026-05-12T15:58:52.685Z",
+        "finishedAt": "2026-05-12T15:58:52.982Z",
+        "durationMs": 297,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 50,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00988A.TW",
+            "status": "success",
+            "durationMs": 26,
+            "bytes": 62060,
+            "holdingsCount": 50,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00988A/holdings",
+            "status": "success",
+            "durationMs": 271,
+            "bytes": 72570,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00989A": {
+        "etfCode": "00989A",
+        "startedAt": "2026-05-12T15:58:52.698Z",
+        "finishedAt": "2026-05-12T15:58:53.002Z",
+        "durationMs": 304,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 63,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00989A.TW",
+            "status": "success",
+            "durationMs": 37,
+            "bytes": 64651,
+            "holdingsCount": 63,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00989A/holdings",
+            "status": "success",
+            "durationMs": 267,
+            "bytes": 72497,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00990A": {
+        "etfCode": "00990A",
+        "startedAt": "2026-05-12T15:58:52.708Z",
+        "finishedAt": "2026-05-12T15:58:53.020Z",
+        "durationMs": 312,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 53,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00990A.TW",
+            "status": "success",
+            "durationMs": 16,
+            "bytes": 62297,
+            "holdingsCount": 53,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00990A/holdings",
+            "status": "success",
+            "durationMs": 296,
+            "bytes": 72588,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00991A": {
+        "etfCode": "00991A",
+        "startedAt": "2026-05-12T15:58:52.719Z",
+        "finishedAt": "2026-05-12T15:58:52.967Z",
+        "durationMs": 248,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 50,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00991A.TW",
+            "status": "success",
+            "durationMs": 17,
+            "bytes": 61959,
+            "holdingsCount": 50,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00991A/holdings",
+            "status": "success",
+            "durationMs": 231,
+            "bytes": 72813,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00992A": {
+        "etfCode": "00992A",
+        "startedAt": "2026-05-12T15:58:52.979Z",
+        "finishedAt": "2026-05-12T15:58:53.277Z",
+        "durationMs": 298,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 45,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00992A.TW",
+            "status": "success",
+            "durationMs": 19,
+            "bytes": 60794,
+            "holdingsCount": 45,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00992A/holdings",
+            "status": "success",
+            "durationMs": 279,
+            "bytes": 72766,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00993A": {
+        "etfCode": "00993A",
+        "startedAt": "2026-05-12T15:58:52.991Z",
+        "finishedAt": "2026-05-12T15:58:53.291Z",
+        "durationMs": 300,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 51,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00993A.TW",
+            "status": "success",
+            "durationMs": 20,
+            "bytes": 61977,
+            "holdingsCount": 51,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00993A/holdings",
+            "status": "success",
+            "durationMs": 280,
+            "bytes": 72754,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00994A": {
+        "etfCode": "00994A",
+        "startedAt": "2026-05-12T15:58:53.009Z",
+        "finishedAt": "2026-05-12T15:58:53.144Z",
+        "durationMs": 135,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 45,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00994A.TW",
+            "status": "success",
+            "durationMs": 20,
+            "bytes": 60800,
+            "holdingsCount": 45,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00994A/holdings",
+            "status": "success",
+            "durationMs": 115,
+            "bytes": 72791,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00995A": {
+        "etfCode": "00995A",
+        "startedAt": "2026-05-12T15:58:53.027Z",
+        "finishedAt": "2026-05-12T15:58:53.328Z",
+        "durationMs": 301,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 57,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00995A.TW",
+            "status": "success",
+            "durationMs": 16,
+            "bytes": 63157,
+            "holdingsCount": 57,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00995A/holdings",
+            "status": "success",
+            "durationMs": 285,
+            "bytes": 72820,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00996A": {
+        "etfCode": "00996A",
+        "startedAt": "2026-05-12T15:58:53.154Z",
+        "finishedAt": "2026-05-12T15:58:53.446Z",
+        "durationMs": 292,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 50,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00996A.TW",
+            "status": "success",
+            "durationMs": 39,
+            "bytes": 61644,
+            "holdingsCount": 50,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00996A/holdings",
+            "status": "success",
+            "durationMs": 253,
+            "bytes": 72807,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      },
+      "00997A": {
+        "etfCode": "00997A",
+        "startedAt": "2026-05-12T15:58:53.288Z",
+        "finishedAt": "2026-05-12T15:58:53.522Z",
+        "durationMs": 234,
+        "status": "success",
+        "attemptCount": 2,
+        "successCount": 2,
+        "snapshotsCount": 2,
+        "latestHoldingsCount": 49,
+        "sources": [
+          {
+            "label": "MoneyDJ 全部持股",
+            "url": "https://www.moneydj.com/ETF/X/Basic/Basic0007B.xdjhtm?etfid=00997A.TW",
+            "status": "success",
+            "durationMs": 51,
+            "bytes": 61995,
+            "holdingsCount": 49,
+            "sourceDate": "2026-05-11",
+            "error": ""
+          },
+          {
+            "label": "ETF資訊網",
+            "url": "https://www.etfinfo.tw/etf/00997A/holdings",
+            "status": "success",
+            "durationMs": 183,
+            "bytes": 72356,
+            "holdingsCount": 15,
+            "sourceDate": "2026-05-12",
+            "error": ""
+          }
+        ],
+        "error": ""
+      }
+    },
+    "sourcePath": "data/active_twETF_weekly_snapshots.json",
+    "loadedAt": "2026-05-12T15:58:54.265Z",
+    "importedAt": "2026-05-01T17:09:01.164Z",
+    "generatedAt": "2026-05-12T15:58:54.265Z",
+    "lastSuccessAt": "2026-05-12T15:58:54.265Z",
+    "lastFailedAt": "2026-05-02T04:36:09.088Z",
+    "lastFailureMessage": ""
+  },
+  "sbl": {
+    "byCode": {},
+    "updatedAt": null
+  },
+  "macroCache": null,
+  "newsCache": {},
+  "disposition": null,
+  "dispositionRisk": null,
+  "dividends": null,
+  "podcast": {
+    "generatedAt": null,
+    "source": "Podcast RSS",
+    "shows": []
+  },
+  "heavyCacheStorage": {
+    "mode": "hot-cache-v2",
+    "codeLimit": 48,
+    "snapshotRowsPerCode": 12,
+    "institutionalRowsPerCode": 12,
+    "foreignOwnershipRowsPerCode": 6,
+    "activeEtfSnapshotsPerCode": 2,
+    "snapshotInlineCount": 48,
+    "snapshotTotalInMemory": 279,
+    "institutionalInlineCount": 48,
+    "institutionalTotalInMemory": 197,
+    "foreignOwnershipHistoryInlineCount": 48,
+    "foreignOwnershipHistoryTotalInMemory": 201,
+    "activeEtfSnapshotInlineCount": 0,
+    "activeEtfSnapshotTotalInMemory": 232,
+    "updatedAt": "2026-06-05T11:29:01.226Z",
+    "coreSeed": true
+  },
+  "idleAutoUpdateEnabled": false,
+  "idleAutoUpdateUserOptIn": false,
+  "alertLastState": {},
+  "comparisonCodes": [],
+  "customTWSE50": null,
+  "customMID100": null,
+  "autoRefreshEnabled": false,
+  "autoUpdateLog": null,
+  "futuresSettlementReminderLast": "",
+  "performance": {},
+  "publicBuild": {
+    "profile": "public-pages-hardened-v3",
+    "builtAt": "2026-07-28T10:09:05.378Z",
+    "sourcePath": "data/state_core.json",
+    "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
+    "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"
+  }
+}
