@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_PREFIX = "twstock-pages";
-const CACHE_VERSION = "v18.1-pwa-5";
+const CACHE_VERSION = "v18.2-pwa-1";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const REQUIRED_SHELL_PATHS = [
   "main.html?mode=web",
@@ -20,24 +20,26 @@ const REQUIRED_SHELL_PATHS = [
   "data/state_bootstrap.json",
   "data/state_equity_core.json"
 ];
-const OPTIONAL_CACHE_PATHS = [
+const OPTIONAL_WARM_CACHE_PATHS = [
   "./",
   "index.html",
   "web.html",
   "site.webmanifest",
-  "assets/icons/app-cover.png",
   "assets/icons/app-icon-192.png",
-  "assets/icons/app-icon-512.png",
-  "assets/icons/app-icon-maskable-512.png",
   "assets/icons/apple-touch-icon.png",
   "app_files/changelog.html",
-  "data/state.json",
-  "data/state_core.json",
-  "data/state_technical.json",
   "data/research_data.json",
-  "data/active_twETF_weekly_snapshots.json",
   "data/podcast_digest.json",
   "data/youtube_market_lessons.json"
+];
+const ON_DEMAND_CACHE_PATHS = [
+  "assets/icons/app-cover.png",
+  "assets/icons/app-icon-512.png",
+  "assets/icons/app-icon-maskable-512.png",
+  "data/state_technical.json",
+  "data/active_twETF_weekly_snapshots.json",
+  "data/state_core.json",
+  "data/state.json"
 ];
 const OPTIONAL_CACHE_BATCH_SIZE = 3;
 
@@ -45,7 +47,11 @@ function scopedUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
-const CACHEABLE_URLS = new Set([...REQUIRED_SHELL_PATHS, ...OPTIONAL_CACHE_PATHS].map(scopedUrl));
+const CACHEABLE_URLS = new Set([
+  ...REQUIRED_SHELL_PATHS,
+  ...OPTIONAL_WARM_CACHE_PATHS,
+  ...ON_DEMAND_CACHE_PATHS
+].map(scopedUrl));
 
 function mayCache(request) {
   try {
@@ -115,8 +121,8 @@ async function staleWhileRevalidate(request) {
 async function warmOptionalCache() {
   const cache = await caches.open(CACHE_NAME);
   const results = [];
-  for (let index = 0; index < OPTIONAL_CACHE_PATHS.length; index += OPTIONAL_CACHE_BATCH_SIZE) {
-    const batch = OPTIONAL_CACHE_PATHS.slice(index, index + OPTIONAL_CACHE_BATCH_SIZE);
+  for (let index = 0; index < OPTIONAL_WARM_CACHE_PATHS.length; index += OPTIONAL_CACHE_BATCH_SIZE) {
+    const batch = OPTIONAL_WARM_CACHE_PATHS.slice(index, index + OPTIONAL_CACHE_BATCH_SIZE);
     const settled = await Promise.allSettled(batch.map(async (path) => {
       const request = new Request(scopedUrl(path), { cache: "reload", credentials: "same-origin" });
       const response = await fetch(request);
@@ -135,6 +141,7 @@ async function warmOptionalCache() {
     cacheVersion: CACHE_VERSION,
     succeeded: results.filter((row) => row.ok).length,
     failed: results.filter((row) => !row.ok).length,
+    deferredOnDemand: ON_DEMAND_CACHE_PATHS.length,
     failures: results.filter((row) => !row.ok)
   };
   const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });

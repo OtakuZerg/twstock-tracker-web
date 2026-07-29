@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "18.1";
+const APP_VERSION = "18.2";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -16304,9 +16304,22 @@ function loadBundledStateDomain(path, label = path) {
 }
 
 function ensureBundledStateDomainForTab(tab) {
-  if (!["overview", "screener", "report", "technical", "discovery", "ex-dividend"].includes(normalizeTabTarget(tab))) return;
+  const target = normalizeTabTarget(tab);
+  if (!["overview", "screener", "report", "technical", "discovery", "ex-dividend"].includes(target)) return;
+  if (_bundledStateDomainsLoaded.has(STATE_TECHNICAL_SEED_PATH)) return;
+  const panel = typeof document !== "undefined" ? $(`tab-${target}`) : null;
+  if (panel) {
+    panel.classList.add("domain-loading");
+    panel.setAttribute("aria-busy", "true");
+  }
   loadBundledStateDomain(STATE_TECHNICAL_SEED_PATH, "technical shard")
-    .catch((error) => console.warn("technical shard hydration skipped", error));
+    .catch((error) => console.warn("technical shard hydration skipped", error))
+    .finally(() => {
+      if (panel) {
+        panel.classList.remove("domain-loading");
+        panel.removeAttribute("aria-busy");
+      }
+    });
 }
 
 function applyBundledStateHydration(bundledState, label = STATE_SEED_PATH) {
@@ -22748,8 +22761,7 @@ function jumpToSearchResult(code, context = "搜尋前往") {
   if (inp) inp.value = "";
   hideSearchDropdown();
   persistStateSilently(context);
-  render();
-  switchTab("report");
+  navigateToTab("report");
   compactMobileSidebarAfterNavigation({ scrollToMain: true });
   return true;
 }
@@ -42806,40 +42818,65 @@ function selectedMarketThemeLabel() {
   return THEME_LABELS[state.filter] || state.filter;
 }
 
-function createMarketCommandStockJob() {
-  const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0] || null;
-  if (!stock) return { state: null, steps: [] };
-  const quote = quoteFor(stock.code);
-  const result = { stock, quote, technical: null, heat: null, chip: null, revenue: null, pct: toNumber(quote?.pct) };
-  return {
-    state: result,
-    steps: [
-      ["目前個股技術摘要", () => { try { result.technical = calculateTechnical(stock.code); } catch (_) {} }],
-      ["目前個股熱度摘要", () => { try { result.heat = buildStockHeatSignal(stock.code, result.technical); } catch (_) {} }],
-      ["目前個股籌碼摘要", () => { try { result.chip = stockChipSignal(stock.code); } catch (_) {} }],
-      ["目前個股營收摘要", () => { try { result.revenue = holdingRevenueSignal(stock.code); } catch (_) {} }]
-    ]
-  };
-}
-
-function marketCommandStockState() {
-  const job = createMarketCommandStockJob();
-  job.steps.forEach(([, step]) => step());
-  return job.state;
+function marketCommandThemePulseRows() {
+  return CONCEPT_ROTATION_THEME_KEYS
+    .map((key) => {
+      const stocks = conceptThemeStocks(key);
+      const quotes = stocks
+        .map((stock) => quoteFor(stock.code))
+        .filter((quote) => toNumber(quote?.pct) !== null);
+      const changes = quotes.map((quote) => toNumber(quote.pct));
+      const avgChange = changes.length ? meanNumber(changes) : null;
+      const advances = changes.filter((value) => value > 0).length;
+      const declines = changes.filter((value) => value < 0).length;
+      const breadth = changes.length ? (advances - declines) / changes.length * 100 : null;
+      const latestCapturedAt = quotes
+        .map((quote) => quote?.capturedAt || quote?.fetchedAt || quote?.sourceDate || "")
+        .filter(Boolean)
+        .sort()
+        .at(-1) || "";
+      return {
+        key,
+        label: THEME_LABELS[key] || key,
+        score: (avgChange ?? -999) * 10 + (breadth ?? 0) * 0.25,
+        avgChange,
+        breadth,
+        quotedCount: quotes.length,
+        count: stocks.length,
+        latestCapturedAt
+      };
+    })
+    .filter((row) => row.quotedCount > 0)
+    .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label))
+    .map((row) => ({
+      key: row.key,
+      label: row.label,
+      score: row.score,
+      avgChange: row.avgChange,
+      breadth: row.breadth,
+      quotedCount: row.quotedCount,
+      count: row.count,
+      latestAsOf: row.latestCapturedAt
+    }));
 }
 
 function renderMarketCommandThemeRows(rows, emptyText = "族群趨勢資料待補；請在收盤後同步報價與日線，其餘月營收、籌碼會依 TTL 背景補齊。") {
   const list = Array.isArray(rows) ? rows.slice(0, 4) : [];
   if (!list.length) return `<div class="empty">${escapeHtml(emptyText)}</div>`;
-  return list.map((row, index) => `
-    <div class="rank-row" data-theme-action-filter="${escapeHtml(row.key)}" style="cursor:pointer;">
-      <span>
-        <strong>${index + 1}. ${escapeHtml(row.label)}</strong>
-        <div style="font-size:0.7rem;color:var(--muted);margin-top:2px;">${escapeHtml(row.regime?.label || "-")} · ${escapeHtml(row.rotation || "-")} · ${escapeHtml(row.latestAsOf || "日期待補")}</div>
-      </span>
-      <strong class="${escapeHtml(row.regime?.tone || "flat")}">${formatNumber(row.score, 0)}</strong>
-    </div>
-  `).join("");
+  return list.map((row, index) => {
+    const tone = row.avgChange === null ? "flat" : row.avgChange > 0 ? "up" : row.avgChange < 0 ? "down" : "flat";
+    const coverage = row.count ? `${row.quotedCount}/${row.count} 檔` : "樣本待補";
+    const breadth = row.breadth === null ? "廣度待補" : `廣度 ${formatNumber(row.breadth, 0)}`;
+    return `
+      <button class="rank-row market-theme-row" type="button" data-theme-action-filter="${escapeHtml(row.key)}">
+        <span>
+          <strong>${index + 1}. ${escapeHtml(row.label)}</strong>
+          <small>${escapeHtml(coverage)} · ${escapeHtml(breadth)} · ${escapeHtml(row.latestAsOf ? formatDateTime(row.latestAsOf) : "日期待補")}</small>
+        </span>
+        <strong class="${escapeHtml(tone)}">${row.avgChange !== null ? formatPct(row.avgChange) : "-"}</strong>
+      </button>
+    `;
+  }).join("");
 }
 
 function renderMarketCommandCenter(riskInput = null, options = {}) {
@@ -42847,39 +42884,32 @@ function renderMarketCommandCenter(riskInput = null, options = {}) {
   const freshness = marketCrashRiskFreshness(risk);
   const decision = marketCrashRiskDecisionState(risk, freshness);
   const suppliedThemeRows = Array.isArray(options.themeRows) ? options.themeRows : null;
-  const allThemeRows = suppliedThemeRows || cachedThemeRegimeRows();
+  const allThemeRows = suppliedThemeRows || marketCommandThemePulseRows();
   const themeRows = allThemeRows.slice(0, 4);
-  const themePending = options.themePending === true;
   const selectedTheme = selectedMarketThemeLabel();
   const selectedThemeRow = themeRows.find((row) => row.key === state.filter) || allThemeRows.find((row) => row.key === state.filter) || null;
-  const stockState = Object.prototype.hasOwnProperty.call(options, "stockState") ? options.stockState : marketCommandStockState();
-  const stock = stockState?.stock || null;
-  const heat = stockState?.heat || null;
-  const chip = stockState?.chip || null;
-  const revenue = stockState?.revenue || null;
-  const quoteText = stockState?.quote?.price !== null && stockState?.quote?.price !== undefined
-    ? `${formatNumber(stockState.quote.price)} ${stockState.pct !== null ? formatPct(stockState.pct) : ""}`.trim()
-    : "報價待更新";
-  const themeTone = selectedThemeRow?.regime?.tone || "flat";
-  const themeAction = selectedThemeRow?.action || (themePending
-    ? "正在分批計算族群 Regime；可先看大盤風險與目前個股，畫面不會因此整頁凍結。"
-    : "先從主線 Top 4 選族群，再回主題總覽看單一族群。");
+  const themeTone = selectedThemeRow?.avgChange === null || selectedThemeRow?.avgChange === undefined
+    ? "flat"
+    : selectedThemeRow.avgChange > 0 ? "up" : selectedThemeRow.avgChange < 0 ? "down" : "flat";
+  const themeAction = selectedThemeRow
+    ? `報價覆蓋 ${selectedThemeRow.quotedCount}/${selectedThemeRow.count} 檔；先看族群廣度，再到主題總覽核對技術、營收與籌碼。`
+    : "先從今日主線 Top 4 選族群，再回主題總覽做完整研究。";
   return `
-    <div class="panel-lite" data-market-command-center style="margin-bottom:14px;">
-      <div class="section-head" style="margin-bottom:10px;">
+    <div class="panel-lite market-command-center" data-market-command-center style="margin-bottom:14px;">
+      <div class="section-head market-command-head" style="margin-bottom:10px;">
         <div>
-          <h3 style="margin:0;font-size:1.05rem;">盤前作戰中樞</h3>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:0.82rem;line-height:1.55;">固定動線：先判斷大盤風險 → 選今日主線族群 → 回單一族群 → 檢查個股線型 / 籌碼 / R:R。這裡只顯示決策摘要，詳表按下方按鈕載入。</p>
+          <span class="market-command-eyebrow">TODAY · MARKET PULSE</span>
+          <h3 style="margin:3px 0 0;font-size:1.08rem;">今日市場導航</h3>
+          <p style="margin:6px 0 0;color:var(--muted);font-size:0.82rem;line-height:1.55;">先看市場風險，再選今日主線與目前族群。單股技術、籌碼、營收與 R:R 只在個股研究頁按需計算。</p>
         </div>
         <div class="chip-row chip-row-compact" style="justify-content:flex-end;">
           <span class="chip ${escapeHtml(decision.tone)}">雷達 ${escapeHtml(decision.label)}</span>
           <span class="chip ${escapeHtml(freshness.tone)}">${escapeHtml(freshness.label)}</span>
-          ${themePending ? `<span class="chip flat">族群分批計算中</span>` : ""}
           <span class="chip flat">現行方法 v${escapeHtml(APP_VERSION)}</span>
         </div>
       </div>
-      <div class="report-grid">
-        <article class="rank-card">
+      <div class="market-command-grid">
+        <article class="rank-card market-command-card">
           <h3>1. 大盤風險</h3>
           <div class="kv-row"><span>雷達分數</span><strong>${formatNumber(risk.score, 0)} · ${escapeHtml(risk.level.label)}</strong></div>
           <div class="kv-row"><span>資料覆蓋</span><strong>${formatNumber(risk.coverage, 0)}%</strong></div>
@@ -42888,29 +42918,18 @@ function renderMarketCommandCenter(riskInput = null, options = {}) {
             <button class="link-chip inline-action-chip" type="button" data-market-action="refresh-crash-risk">${isPublishedWebRuntime() ? "重新讀取快照" : "更新雷達"}</button>
           </div>
         </article>
-        <article class="rank-card">
+        <article class="rank-card market-command-card">
           <h3>2. 今日主線族群</h3>
-          <div class="rank-list">${renderMarketCommandThemeRows(themeRows, themePending ? "正在分批計算族群 Regime；其他面板可先操作。" : undefined)}</div>
+          <div class="rank-list">${renderMarketCommandThemeRows(themeRows)}</div>
         </article>
-        <article class="rank-card">
+        <article class="rank-card market-command-card">
           <h3>3. 目前族群</h3>
           <div class="kv-row"><span>族群</span><strong>${escapeHtml(selectedTheme)}</strong></div>
-          <div class="kv-row"><span>Regime</span><strong class="${escapeHtml(themeTone)}">${selectedThemeRow ? `${escapeHtml(selectedThemeRow.regime.label)} · ${formatNumber(selectedThemeRow.score, 0)}` : themePending ? "分批計算中" : "待選族群"}</strong></div>
+          <div class="kv-row"><span>平均漲跌</span><strong class="${escapeHtml(themeTone)}">${selectedThemeRow?.avgChange !== null && selectedThemeRow?.avgChange !== undefined ? formatPct(selectedThemeRow.avgChange) : "待選族群"}</strong></div>
           <p style="margin:8px 0 0;color:var(--muted);font-size:0.78rem;line-height:1.5;">${escapeHtml(themeAction)}</p>
           <div class="link-row" style="margin-top:8px;">
             <button class="link-chip inline-action-chip" type="button" data-tab-target="overview">看單一族群</button>
             <button class="link-chip inline-action-chip" type="button" data-tab-target="discovery">看標的找尋</button>
-          </div>
-        </article>
-        <article class="rank-card">
-          <h3>4. 目前個股</h3>
-          <div class="kv-row"><span>標的</span><strong>${stock ? `${escapeHtml(stock.code)} ${escapeHtml(stock.name || "")}` : "待選股"}</strong></div>
-          <div class="kv-row"><span>報價</span><strong class="${changeClass(stockState?.pct)}">${escapeHtml(quoteText)}</strong></div>
-          <div class="kv-row"><span>熱度</span><strong>${heat?.level?.label ? escapeHtml(heat.level.label) : "待日線"}</strong></div>
-          <div class="kv-row"><span>籌碼 / 營收</span><strong style="font-size:0.78rem;">${escapeHtml(chip?.text || "籌碼待補")} / ${escapeHtml(revenue?.label || "營收待補")}</strong></div>
-          <div class="link-row" style="margin-top:8px;">
-            <button class="link-chip inline-action-chip" type="button" data-tab-target="report">個股研究</button>
-            <button class="link-chip inline-action-chip" type="button" data-tab-target="technical">線型籌碼</button>
           </div>
         </article>
       </div>
@@ -42935,7 +42954,7 @@ function renderMarketDetailPanelsGate() {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
         <div>
           <h3 style="margin:0;font-size:1rem;">詳細大盤面板按需載入</h3>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:0.82rem;line-height:1.55;">資料健康、Tide、更新流程、結算提醒、概念輪動與法人排行會增加 DOM 與計算量。日常先看上方作戰中樞與雷達；需要追來源或盤面細節時再載入。</p>
+          <p style="margin:6px 0 0;color:var(--muted);font-size:0.82rem;line-height:1.55;">資料健康、Tide、更新流程、結算提醒、概念輪動與法人排行會增加 DOM 與計算量。日常先看上方市場導航與雷達；需要追來源或盤面細節時再載入。</p>
         </div>
         <button class="ghost-btn" type="button" data-market-detail-panels>載入完整大盤面板</button>
       </div>
@@ -43005,10 +43024,7 @@ function renderMarketDashboardTab() {
   `;
 
   let sharedRisk = null;
-  const stockJob = createMarketCommandStockJob();
-  const sharedStockState = stockJob.state;
-  const cachedThemeRows = peekCachedThemeRegimeRows();
-  const themeJob = cachedThemeRows ? null : createThemeRegimeChunkJob(2);
+  const pulseRows = marketCommandThemePulseRows();
   const stillCurrent = () => renderToken === _marketDashboardRenderToken
     && state.activeTab === "market"
     && $("marketDashboardContent") === container;
@@ -43018,11 +43034,9 @@ function renderMarketDashboardTab() {
   };
   const stages = [
     ["大盤風險資料計算", () => { sharedRisk = buildMarketCrashRiskScore(); }, { fallbackId: "marketRiskStage" }],
-    ["大盤作戰中樞", () => {
+    ["今日市場導航", () => {
       mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
-        themeRows: cachedThemeRows || [],
-        themePending: Boolean(themeJob),
-        stockState: sharedStockState
+        themeRows: pulseRows
       }));
     }, { fallbackId: "marketCommandStage" }],
     ["大盤風險雷達", () => mountHtml("marketRiskStage", renderMarketCrashRiskPanel(sharedRisk)), { fallbackId: "marketRiskStage" }],
@@ -43041,28 +43055,6 @@ function renderMarketDashboardTab() {
       if (_marketDetailPanelsLoaded) mountHtml("marketDetailStage", renderMarketDetailPanelsGate());
     }, { fallbackId: "marketDetailStage" }]
   ];
-  stockJob.steps.forEach(([name, step]) => stages.push([name, step, {}]));
-  if (stockJob.steps.length) {
-    stages.push(["目前個股摘要掛載", () => mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
-      themeRows: cachedThemeRows || [],
-      themePending: Boolean(themeJob),
-      stockState: sharedStockState
-    })), { fallbackId: "marketCommandStage" }]);
-  }
-  if (themeJob) {
-    const chunkCount = Math.ceil(themeJob.total / 2);
-    for (let index = 0; index < chunkCount; index += 1) {
-      stages.push(["族群 Regime 分批計算", () => themeJob.processNext(), { record: false }]);
-    }
-    stages.push(["族群 Regime 組裝", () => {
-      const themeRows = themeJob.finalize();
-      mountHtml("marketCommandStage", renderMarketCommandCenter(sharedRisk, {
-        themeRows,
-        themePending: false,
-        stockState: sharedStockState
-      }));
-    }, { fallbackId: "marketCommandStage" }]);
-  }
   let stageIndex = 0;
   const scheduleFrame = (callback) => {
     if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
@@ -44061,7 +44053,10 @@ function switchTab(target, options = {}) {
   state.activeTab = next;
   ensureEtfTrackingFilterForTab();
   document.querySelectorAll(".tab-btn").forEach((button) => {
-    button.classList.toggle("active", button.dataset.tabTarget === next);
+    const active = button.dataset.tabTarget === next;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
   });
   document.querySelectorAll(".tab-panel").forEach((panel) => {
     panel.classList.toggle("active", panel.id === `tab-${next}`);
@@ -44069,6 +44064,17 @@ function switchTab(target, options = {}) {
   if (persist) persistStateSilently("目前分頁");
   if (shouldRender) renderActiveTab(next);
   ensureBundledStateDomainForTab(next);
+  if (isCompactMobileLayout()) {
+    window.requestAnimationFrame(() => {
+      document.querySelector(`.main-tab-nav .tab-btn[data-tab-target="${next}"]`)
+        ?.scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" });
+    });
+  }
+}
+
+function navigateToTab(target) {
+  switchTab(target, { render: false });
+  render();
 }
 
 function jumpToSelectedTechnicalSection(section = "chart") {
@@ -45187,7 +45193,7 @@ function compactMobileSidebarAfterNavigation(options = {}) {
   setMobileSidebarTools(false);
   if (!options.scrollToMain) return;
   window.requestAnimationFrame(() => {
-    document.querySelector(".main-content")?.scrollIntoView({ block: "start", behavior: "smooth" });
+    document.querySelector(".main-content")?.scrollIntoView({ block: "start", behavior: "auto" });
   });
 }
 
@@ -45260,8 +45266,7 @@ function bindEvents() {
     state.filter = "tsmc";
     state.search = "";
     persistStateSilently("設備股研究卡選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
     compactMobileSidebarAfterNavigation({ scrollToMain: true });
   });
 
@@ -45274,8 +45279,7 @@ function bindEvents() {
     state.filter = "aws";
     state.search = "";
     persistStateSilently("AWS 供應鏈研究卡選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
     compactMobileSidebarAfterNavigation({ scrollToMain: true });
   });
 
@@ -45288,8 +45292,7 @@ function bindEvents() {
     state.filter = "pcb";
     state.search = "";
     persistStateSilently("PCB 原料供應鏈研究卡選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
     compactMobileSidebarAfterNavigation({ scrollToMain: true });
   });
 
@@ -45361,8 +45364,7 @@ function bindEvents() {
     if (previewJump) {
       state.selectedCode = previewJump.dataset.previewJump;
       persistStateSilently("主題預覽前往");
-      render();
-      switchTab("report");
+      navigateToTab("report");
       return;
     }
     const button = event.target.closest("[data-filter]");
@@ -45417,8 +45419,7 @@ function bindEvents() {
     ensureRenderableFilter({ persist: true, announce: true });
     ensureSelectedStockVisible({ persist: true, context: "概念輪動篩選" });
     persistStateSilently("概念輪動篩選");
-    render();
-    switchTab("overview");
+    navigateToTab("overview");
   });
 
   $("cardsGrid").addEventListener("click", (event) => {
@@ -45432,8 +45433,7 @@ function bindEvents() {
     if (!card) return;
     state.selectedCode = card.dataset.stockCode;
     persistStateSilently("選取個股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   $("technicalSummary").addEventListener("click", (event) => {
@@ -45442,8 +45442,7 @@ function bindEvents() {
     if (!card) return;
     state.selectedCode = card.dataset.stockCode;
     persistStateSilently("技術卡片選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   $("snapshotContent").addEventListener("click", (event) => {
@@ -45462,8 +45461,7 @@ function bindEvents() {
     if (!card) return;
     state.selectedCode = card.dataset.stockCode;
     persistStateSilently("快照卡片選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   $("technicalChart").addEventListener("click", (event) => {
@@ -45590,8 +45588,7 @@ function bindEvents() {
       if (code && STOCK_MAP.has(code)) {
         state.selectedCode = code;
         persistStateSilently("ETF 持股前往");
-        render();
-        switchTab("report");
+        navigateToTab("report");
       } else {
         setStatus(`${code || "該持股"} 尚未在目前股池，請先加入股池再開啟個股研究。`, "warn");
       }
@@ -46160,8 +46157,7 @@ function bindEvents() {
     if (!card || !card.closest("#screenerTable")) return;
     state.selectedCode = card.dataset.actionStockCode;
     persistStateSilently("今日行動清單選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   document.addEventListener("click", (e) => {
@@ -46169,8 +46165,7 @@ function bindEvents() {
     if (!card) return;
     state.selectedCode = card.dataset.stockCode;
     persistStateSilently("勝率研究候選選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   // 量化篩選：點列切換個股
@@ -46179,8 +46174,7 @@ function bindEvents() {
     if (!row) return;
     state.selectedCode = row.dataset.stockCode;
     persistStateSilently("篩選器選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
   $("exportBtn").addEventListener("click", exportSnapshots);
   $("updatePodcastBtn")?.addEventListener("click", () => {
@@ -46301,8 +46295,7 @@ function bindEvents() {
     if (!code || !STOCK_MAP.has(code)) return;
     state.selectedCode = code;
     persistStateSilently("標的找尋選股");
-    render();
-    switchTab("report");
+    navigateToTab("report");
   });
 
   // AMT 試算按鈕（v5.4）
@@ -46624,8 +46617,7 @@ async function init() {
     if (code && STOCK_MAP.has(code)) {
       state.selectedCode = code;
       persistStateSilently("持倉前往");
-      switchTab("report");
-      render();
+      navigateToTab("report");
     }
   });
 }

@@ -5,12 +5,12 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; font-src 'self' data:; media-src 'self' blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
-  <title>台股追蹤 v18.1</title>
+  <title>台股追蹤 v18.2</title>
   <meta name="theme-color" content="#f4efe8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="台股追蹤" />
-  <meta name="application-version" content="v18.1" />
+  <meta name="application-version" content="v18.2" />
   <meta name="application-release-date" content="2026-07-28" />
   <meta property="og:image" content="https://otakuzerg.github.io/twstock-tracker-web/assets/icons/app-cover.png" />
   <link rel="manifest" href="site.webmanifest" />
@@ -5258,6 +5258,171 @@
       color: #9f1c2a;
       border: 1px solid rgba(183,32,46,0.18);
     }
+
+    /* ── v18.2：首頁市場導航與 mobile app shell ── */
+    .market-command-center {
+      overflow: hidden;
+      border-color: rgba(11, 109, 119, 0.18);
+      background:
+        radial-gradient(circle at 100% 0%, rgba(11, 109, 119, 0.10), transparent 34%),
+        rgba(255, 255, 255, 0.74);
+    }
+    .market-command-eyebrow {
+      display: block;
+      color: var(--accent);
+      font-size: 0.67rem;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+    }
+    .market-command-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .market-command-card {
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.82);
+    }
+    .market-theme-row {
+      width: 100%;
+      appearance: none;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .market-theme-row:last-child { border-bottom: 0; }
+    .market-theme-row:hover,
+    .market-theme-row:focus-visible {
+      background: var(--accent-soft);
+      outline: 0;
+    }
+    .market-theme-row small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+    .tab-panel.domain-loading::before {
+      content: "載入此研究頁需要的快取…";
+      display: block;
+      margin: 0 0 10px;
+      padding: 8px 11px;
+      border: 1px solid rgba(11, 109, 119, 0.18);
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.76rem;
+      font-weight: 850;
+    }
+    @media (max-width: 1080px) {
+      .market-command-grid { grid-template-columns: 1fr 1fr; }
+      .market-command-card:nth-child(2) { grid-row: span 2; }
+    }
+    @media (max-width: 900px) {
+      html { scroll-padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+      body { overscroll-behavior-y: none; }
+      .main-content {
+        padding-bottom: calc(92px + env(safe-area-inset-bottom));
+      }
+      .top-update-bar {
+        top: 0;
+        padding: 7px max(10px, env(safe-area-inset-right)) 7px max(10px, env(safe-area-inset-left));
+        background: #f4efe8;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .top-update-bar #statusLine { display: none; }
+      .top-update-more:not([open]) .top-update-menu { display: none; }
+      .top-futures-strip {
+        padding: 7px max(10px, env(safe-area-inset-right)) 7px max(10px, env(safe-area-inset-left));
+        overflow: hidden;
+      }
+      .futures-strip-inner {
+        flex-direction: row;
+        align-items: stretch;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .futures-strip-inner::-webkit-scrollbar { display: none; }
+      .futures-strip-title {
+        min-width: 144px;
+        justify-content: center;
+        scroll-snap-align: start;
+      }
+      .futures-mini-grid {
+        display: flex;
+        flex: 0 0 auto;
+        min-width: max-content;
+      }
+      .futures-mini-card {
+        min-width: 158px;
+        scroll-snap-align: start;
+      }
+      .main-tab-nav {
+        position: fixed;
+        inset: auto 0 0 0;
+        top: auto !important;
+        z-index: 120;
+        gap: 2px;
+        margin: 0;
+        padding: 6px max(8px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+        background: #fffdf9;
+        border-top: 1px solid var(--line-strong);
+        border-bottom: 0;
+        box-shadow: 0 -8px 24px rgba(35, 26, 17, 0.12);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        scroll-snap-type: x mandatory;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
+        -webkit-overflow-scrolling: touch;
+      }
+      .main-tab-nav .tab-btn {
+        flex: 0 0 82px;
+        min-width: 82px;
+        min-height: 52px;
+        padding: 7px 6px;
+        border-radius: 11px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        line-height: 1.2;
+        white-space: normal;
+        scroll-snap-align: center;
+        transform: none;
+        transition: background 0.12s ease, color 0.12s ease;
+      }
+      .main-tab-nav .tab-btn:hover:not(.active) { transform: none; }
+      .main-tab-nav .tab-btn.active {
+        color: #fff;
+        transform: none;
+        box-shadow: none;
+      }
+      .main-tab-nav .tab-btn.active::after { display: none; }
+      .tab-panel.active { animation: none; }
+      .market-command-head { display: grid; gap: 10px; }
+      .market-command-head .chip-row { justify-content: flex-start !important; }
+      .market-command-grid { grid-template-columns: 1fr; }
+      .market-command-card:nth-child(2) { grid-row: auto; }
+      .market-command-card { content-visibility: visible; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -5270,7 +5435,7 @@
         <!-- Brand -->
         <div class="sidebar-brand">
           <span class="sidebar-brand-title">台股追蹤</span>
-          <span class="sidebar-brand-ver">v18.1</span>
+          <span class="sidebar-brand-ver">v18.2</span>
           <span class="sidebar-brand-date" data-release-date="2026-07-28">2026-07-28</span>
           <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" type="button" aria-expanded="false" aria-controls="filterRow sidebarPoolManager holdingsManager">主題 / 股池</button>
         </div>

@@ -1,5 +1,21 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v18.2</strong>
+              <span>2026-07-28</span>
+              <span class="cl-badge major">Mobile-first Performance</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>首頁減重</strong>：移除市場導航第 4 格「目前個股」與首頁單股 technical／heat／chip／revenue 工作；大盤頁只處理市場風險與族群。</li>
+              <li><strong>快速主線</strong>：第一屏改用已載入報價的族群漲跌／廣度摘要；完整 Regime 計算保留在按需載入的產業趨勢雷達。</li>
+              <li><strong>手機 App shell</strong>：13 個研究分頁改成 safe-area 底部橫滑導覽，期貨卡橫滑，移除手機 sticky blur 與分頁進場動畫。</li>
+              <li><strong>資料分層</strong>：PWA 只背景暖快取小型資產；technical、主動 ETF、legacy state 與大型安裝圖像保留離線快取能力，但改為使用時才下載，final optional warm 約 0.39 MiB。</li>
+              <li><strong>慢網路保護</strong>：啟用 Save-Data 或 2G 類連線時略過非必要背景暖快取，避免與目前操作搶頻寬。</li>
+              <li><strong>渲染收斂</strong>：卡片選股／跳頁改走單次 full render；technical shard 載入期間顯示頁內狀態且保留完成鎖。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v18.1</strong>
               <span>2026-07-28</span>
               <span class="cl-badge major">Connection Reliability</span>

@@ -473,11 +473,21 @@
       navigator.serviceWorker.register("service-worker.js", { scope: "./" })
         .then(() => navigator.serviceWorker.ready)
         .then((registration) => {
+          const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          const constrainedNetwork = connection?.saveData === true || /(^|-)2g$/.test(String(connection?.effectiveType || ""));
+          if (constrainedNetwork) {
+            window.__TWSTOCK_PWA_CACHE_STATUS__ = {
+              type: "TWSTOCK_OPTIONAL_CACHE_RESULT",
+              skipped: true,
+              reason: connection?.saveData ? "save-data" : "slow-network"
+            };
+            return;
+          }
           const warmOptional = () => registration.active?.postMessage({ type: "WARM_OPTIONAL_CACHE" });
           if (typeof window.requestIdleCallback === "function") {
-            window.requestIdleCallback(warmOptional, { timeout: 5000 });
+            window.requestIdleCallback(warmOptional, { timeout: 12000 });
           } else {
-            window.setTimeout(warmOptional, 1500);
+            window.setTimeout(warmOptional, 4000);
           }
         })
         .catch((error) => console.warn("PWA service worker registration failed", error));
