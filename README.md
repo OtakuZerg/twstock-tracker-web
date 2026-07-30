@@ -13,6 +13,7 @@
 - 修正中央 Request Broker 將未指定的 `null` 傳輸選項轉成 `0`，進而把一般回應誤限縮為 `1024 bytes` 的問題；Yahoo、TWSE 與 TAIFEX 不再因正常大小的回應同時失敗。
 - 恢復既定安全預設：回應上限 8 MiB、timeout 12 秒、最大重試等待 15 秒，以及各來源預設並行數；呼叫端明確指定較低上限時仍會照常攔截。
 - 新增 deterministic regression，涵蓋大於 1 KiB 的正常 JSON、`null` transport options 與暫時性 503 重試；實際快照驗證可取得 Yahoo 四大美股指數、TWSE MIS／MI_INDEX 與 TAIFEX 夜盤且無來源錯誤。
+- 公開 Web App 的「重新讀取快照」會立即重畫大盤與期貨摘要；重畫期間保留原面板高度與捲動位置，避免手機畫面停在舊資料或突然跳動。
 
 ---
 

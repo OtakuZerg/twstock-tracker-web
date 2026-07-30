@@ -4,7 +4,7 @@
   "releaseDate": "2026-07-30",
   "mode": "github-pages-pwa",
   "profile": "public-pages-hardened-v3",
-  "builtAt": "2026-07-30T15:09:50.543Z",
+  "builtAt": "2026-07-30T15:34:20.930Z",
   "sourceDataAsOf": {
     "state": "2026-05-12T16:00:29.175Z",
     "research": "2026-06-24T14:02:15+08:00",
@@ -14,19 +14,19 @@
     {
       "id": "market",
       "path": "data/live_market.json",
-      "sha256": "fd816e320cda707be787991e802b27560511f7cddad68a788dd0acf25f519d4e",
+      "sha256": "afbf27ba17c5ad444840634a99506a09597af1e6d0e9d634fb9105832d9bc291",
       "asOf": null
     },
     {
       "id": "state-core",
       "path": "data/state_core.json",
-      "sha256": "a5829e51859a5ffbac45b67cd55bb775fbd319b56a5eb1d932fa83f941011195",
+      "sha256": "09f6b27fcbd1d76a6c0b62a4c52e05f08b107be7ed92ce1815a91c77b7581ded",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
       "id": "state-bootstrap",
       "path": "data/state_bootstrap.json",
-      "sha256": "0c37667493649646c1106399012ae994a469940ddad6e4ea8f4be698e5477549",
+      "sha256": "3a558ba6a7616edc3c7345883ba267a48b571ec3302b96daa5b6d5f38a346135",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {

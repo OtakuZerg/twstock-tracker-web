@@ -9,6 +9,7 @@
               <li><strong>安全預設恢復</strong>：回應上限 8 MiB、timeout 12 秒、最大重試等待 15 秒與來源並行數重新生效；明確低上限仍會攔截。</li>
               <li><strong>跨來源驗證</strong>：實際快照可取得 Yahoo 四大美股指數、TWSE MIS／MI_INDEX 與 TAIFEX 夜盤，且 errors 為空。</li>
               <li><strong>回歸保護</strong>：新增大於 1 KiB JSON、null transport options 與 503 retry 的 deterministic smoke case。</li>
+              <li><strong>Web 手機穩定更新</strong>：「重新讀取快照」會立即重畫大盤與期貨摘要，並在分段渲染期間保留面板高度與捲動位置，避免停在舊資料或畫面跳動。</li>
             </ul>
           </div>
 

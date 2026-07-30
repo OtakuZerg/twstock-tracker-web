@@ -20805,6 +20805,8 @@ async function quickUpdateQuotes() {
     setBusy(true, "公開網站正在重新讀取 GitHub 延遲行情快照...");
     try {
       const cache = await updateMarketDashboard(true);
+      renderFuturesStrip();
+      if (state.activeTab === "market") renderMarketDashboardTab({ preserveViewport: true });
       const sourceCount = [cache?.taiwan, cache?.taifexNight, ...(cache?.global || [])].filter(Boolean).length;
       setStatus(
         `網站快照已重新讀取：${sourceCount}/6 項可用；其他資料使用公開成品內快取，跨站即時更新請用 extension 或來源連結。`,
@@ -42976,9 +42978,25 @@ function setMarketSecondaryPanelsVisible(visible) {
 
 let _marketDashboardRenderToken = 0;
 
-function renderMarketDashboardTab() {
+function renderMarketDashboardTab(options = {}) {
   const container = $("marketDashboardContent");
   if (!container) return;
+  const preserveViewport = options.preserveViewport === true
+    && typeof window !== "undefined"
+    && typeof window.scrollTo === "function";
+  const preservedScrollY = preserveViewport ? window.scrollY : null;
+  const previousHeight = preserveViewport ? Math.ceil(container.getBoundingClientRect().height) : 0;
+  container.style.minHeight = "";
+  container.style.overflowAnchor = "";
+  if (preserveViewport && previousHeight > 0) {
+    container.style.minHeight = `${previousHeight}px`;
+    container.style.overflowAnchor = "none";
+  }
+  const restoreViewport = () => {
+    if (preserveViewport && Number.isFinite(preservedScrollY)) {
+      window.scrollTo({ top: preservedScrollY, left: 0, behavior: "instant" });
+    }
+  };
   const renderToken = ++_marketDashboardRenderToken;
   const wholeStartedAt = performanceDiagnosticsNow();
   _marketSecondaryToken += 1;
@@ -43022,6 +43040,7 @@ function renderMarketDashboardTab() {
       <div id="marketDetailStage">${_marketDetailPanelsLoaded ? `<div class="empty" data-market-stage-placeholder>正在載入完整大盤面板…</div>` : renderMarketDetailPanelsGate()}</div>
     </div>
   `;
+  restoreViewport();
 
   let sharedRisk = null;
   const pulseRows = marketCommandThemePulseRows();
@@ -43030,7 +43049,10 @@ function renderMarketDashboardTab() {
     && $("marketDashboardContent") === container;
   const mountHtml = (id, html) => {
     const node = $(id);
-    if (node && stillCurrent()) node.innerHTML = html;
+    if (node && stillCurrent()) {
+      node.innerHTML = html;
+      restoreViewport();
+    }
   };
   const stages = [
     ["大盤風險資料計算", () => { sharedRisk = buildMarketCrashRiskScore(); }, { fallbackId: "marketRiskStage" }],
@@ -43070,6 +43092,15 @@ function renderMarketDashboardTab() {
       container.dataset.marketStageRenderMs = String(Math.round(performanceDiagnosticsDuration(wholeStartedAt)));
       recordPerformanceRenderBlock("大盤分段完整渲染", wholeStartedAt, { tab: "market" });
       renderMarketSecondaryPanels();
+      if (preserveViewport) {
+        scheduleFrame(() => {
+          if (!stillCurrent()) return;
+          restoreViewport();
+          container.style.minHeight = "";
+          container.style.overflowAnchor = "";
+          scheduleFrame(restoreViewport);
+        });
+      }
       return;
     }
     const [name, stage, stageOptions = {}] = stages[stageIndex++];
