@@ -1,10 +1,18 @@
 # 台股追蹤 Taiwan Equity Tracker
 
-**版本：v18.2** ｜ **日期：2026-07-28** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
+**版本：v18.2.1** ｜ **日期：2026-07-30** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
 
 > ⚠️ **資料正確性說明**：本 extension 的報價、估值、月營收、股利、法人與市場資料以 MOPS / TWSE / TPEx 等官方來源為優先；季報三率目前需匯入 MOPS 季損益表或已整理 CSV。Tide 板塊資金、情緒快照與其他外部網站只作第三方 proxy / 交叉核對入口，所有資料都要檢查來源日期、fallback 與缺漏狀態。
 >
 > ⚠️ **稅務與規模提示**：海外 ETF 配息來源組成（5 類）為一般化分類，**每期實際比例需以投信「收益分配通知書」核對**；ETF 規模 (AUM) / 日均成交量為 2026-05 概估，需以投信月報實際數值更新。最低稅負制 / 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。
+
+---
+
+## v18.2.1 資料請求上限熱修（2026-07-30）
+
+- 修正中央 Request Broker 將未指定的 `null` 傳輸選項轉成 `0`，進而把一般回應誤限縮為 `1024 bytes` 的問題；Yahoo、TWSE 與 TAIFEX 不再因正常大小的回應同時失敗。
+- 恢復既定安全預設：回應上限 8 MiB、timeout 12 秒、最大重試等待 15 秒，以及各來源預設並行數；呼叫端明確指定較低上限時仍會照常攔截。
+- 新增 deterministic regression，涵蓋大於 1 KiB 的正常 JSON、`null` transport options 與暫時性 503 重試；實際快照驗證可取得 Yahoo 四大美股指數、TWSE MIS／MI_INDEX 與 TAIFEX 夜盤且無來源錯誤。
 
 ---
 
@@ -1345,6 +1353,7 @@ python3 scripts/update_youtube_market_lessons.py --audio szA2MSO_qTo=/path/to/EP
 
 | 版本 | 日期 | 重點 |
 |------|------|------|
+| **v18.2.1** | **2026-07-30** | **修正 null transport options 誤套 1024-byte 上限，恢復 8 MiB／12 秒／重試與來源並行預設** |
 | **v18.2** | **2026-07-28** | **三段式今日市場導航、移除首頁目前個股、手機底部研究導覽、PWA 大型資料按需快取與單次跳頁渲染** |
 | **v18.1** | **2026-07-28** | **中央連線治理、第三方備援、快照 provenance、局部重試與來源 adapter gates** |
 | **v18.0** | **2026-07-19** | **PCB／ABF／CCL 原料 19 檔、封測（台積電相關）13 檔、研究優先序與官方來源分層** |

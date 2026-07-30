@@ -1,7 +1,7 @@
 "use strict";
 
 (function attachRequestBroker(root) {
-  const VERSION = "request-broker-v1";
+  const VERSION = "request-broker-v1.1";
   const DEFAULT_TIMEOUT_MS = 12000;
   const DEFAULT_MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
   const DEFAULT_RETRY_LIMIT = 1;
@@ -29,6 +29,7 @@
   ];
 
   function finiteNumber(value, fallback = null) {
+    if (value === null || value === undefined || value === "") return fallback;
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
   }

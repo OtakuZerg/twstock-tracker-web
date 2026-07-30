@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "18.2";
+const APP_VERSION = "18.2.1";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";

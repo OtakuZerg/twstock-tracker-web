@@ -1,5 +1,19 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v18.2.1</strong>
+              <span>2026-07-30</span>
+              <span class="cl-badge major">Request Limit Hotfix</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>根因修正</strong>：未指定的 <code>null</code> 傳輸選項不再被轉成 0，避免所有正常回應誤套 1024-byte 最低上限。</li>
+              <li><strong>安全預設恢復</strong>：回應上限 8 MiB、timeout 12 秒、最大重試等待 15 秒與來源並行數重新生效；明確低上限仍會攔截。</li>
+              <li><strong>跨來源驗證</strong>：實際快照可取得 Yahoo 四大美股指數、TWSE MIS／MI_INDEX 與 TAIFEX 夜盤，且 errors 為空。</li>
+              <li><strong>回歸保護</strong>：新增大於 1 KiB JSON、null transport options 與 503 retry 的 deterministic smoke case。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v18.2</strong>
               <span>2026-07-28</span>
               <span class="cl-badge major">Mobile-first Performance</span>
