@@ -1,6 +1,6 @@
 # 台股追蹤 Taiwan Equity Tracker
 
-**版本：v18.2.1** ｜ **日期：2026-07-30** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
+**版本：v19.0** ｜ **日期：2026-08-13** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
 
 > ⚠️ **資料正確性說明**：本 extension 的報價、估值、月營收、股利、法人與市場資料以 MOPS / TWSE / TPEx 等官方來源為優先；季報三率目前需匯入 MOPS 季損益表或已整理 CSV。Tide 板塊資金、情緒快照與其他外部網站只作第三方 proxy / 交叉核對入口，所有資料都要檢查來源日期、fallback 與缺漏狀態。
 >
@@ -83,7 +83,7 @@
 ### GitHub Pages / iPhone、iPad Web App
 
 - 正式網站入口：[https://otakuzerg.github.io/twstock-tracker-web/](https://otakuzerg.github.io/twstock-tracker-web/)
-- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 43 個成品、README 雙輸出與自動化檔案。
+- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 49 個成品、README 雙輸出與自動化檔案。
 - private 原始碼倉庫的 GitHub Actions 先建立並用 Chrome 驗證 artifact；通過後使用只對公開成品倉庫有效的 deploy key 自動發布。公開倉庫再用 GitHub Pages workflow 部署 PWA。
 - 原始碼 `main` 更新並通過檢查後，網站會隨公開 artifact 自動更新；iPhone / iPad 主畫面 Web App 會由 Service Worker 接收新版。這不會自動更新家中電腦的 unpacked extension，該版本仍需同步專案資料夾並在 `chrome://extensions` 按「重新載入」。
 - 網頁版使用瀏覽器的 IndexedDB / localStorage 儲存持股與設定；Chrome extension 與網站資料彼此獨立，不會自動同步。
@@ -100,7 +100,7 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 
 #### 部署、隱私與功能邊界
 
-- Pages build 採明確 allowlist，公開倉庫只接收 41 個必要成品 / 自動化檔案；`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。實際 Pages 上傳再排除 `.github/` 與 `scripts/`，只提供瀏覽器執行所需檔案。
+- Pages build 採明確 allowlist，公開倉庫只接收 49 個必要成品 / 自動化檔案；實際 Pages 上傳會排除 `.github/` 與 `scripts/`，因此瀏覽器端只提供 47 個執行成品。`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。
 - 建置器會拒絕常見 token / private key、本機絕對路徑、owner identifier、未預期檔案與未清空的個人化 state；公開頁另有 CSP、HTTPS fetch host allowlist、請求 / 回應大小限制及 URL protocol 驗證。
 - **網站是公開的**：任何知道或猜到網址的人都能存取；`robots.txt` / `noindex` 只降低搜尋引擎收錄機率，不是登入或親友限定機制。不要輸入密碼、API key、醫療資料或其他敏感資訊。
 - 公開 PWA 的大盤行情不再由瀏覽器直接跨站抓 Yahoo / TWSE / TAIFEX，而由 GitHub Actions 約每 15 分鐘抓取固定 host/path 白名單並產生同來源 `data/live_market.json`。GitHub 排程與上游來源都可能延遲，因此畫面會同時顯示快照產生時間、行情資料時間與 fallback，不宣稱逐筆即時。
@@ -117,15 +117,25 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 
 | 分頁 | 現行用途 |
 |------|----------|
-| 收盤研究 | 台股、美股、期貨、總經風險與 Tide 快照；開頁先讀本機快取，不自動跨站更新。 |
+| 作戰首頁 | 選取個股的現價、技術多空、籌碼強弱、執行結論、入場、停損、目標、R:R 與六層資料完整度；開頁先讀本機快取。 |
 | 主題總覽 | 主題股池、AI factory 供應鏈標註、分類純度、產業趨勢、Tide 板塊資金 / 情緒摘要與補資料優先級；持股詳表改為按需載入，預設先看作戰摘要。 |
-| 量化篩選 | 先過濾流動性與市值，再整合 Setup、R:R、RS、月營收、籌碼、事件與處置風險。 |
-| 個股研究 | 產業位置、月營收、季報三率、估值、技術、籌碼與交易計畫共用同一份資料狀態。 |
-| 技術分析 & 籌碼 | 初始畫面收斂成「技術 × 籌碼決策摘要」、事件新鮮度、修復、KD / 背離、Chip Score 摘要、來源入口與成本 / 提醒；資料覆蓋卡、Chip Score 分項、個股籌碼強弱、逐日法人、融資券、TDCC、TAIFEX、SBL 詳表改由「載入詳細籌碼」按需載入。 |
+| 標的雷達 | 先過濾流動性與市值，再整合 Setup、R:R、RS、月營收、籌碼、事件與處置風險。 |
+| 個股決策 | 產業位置、月營收、季報三率、估值、技術、籌碼與交易計畫共用同一份資料狀態。 |
+| 技術籌碼 | 初始畫面收斂成「技術 × 籌碼決策摘要」、事件新鮮度、修復、KD / 背離、Chip Score 摘要、來源入口與成本 / 提醒；資料覆蓋卡、Chip Score 分項、個股籌碼強弱、逐日法人、融資券、TDCC、TAIFEX、SBL 詳表改由「載入詳細籌碼」按需載入。 |
 | 標的找尋 | 用流動性、市值、技術、籌碼、基本面與題材條件建立左側、右側及避開清單。 |
 | 處置股 | TWSE / TPEx 官方處置、注意風險與未來兩個月放出日曆。 |
 | 除權息 | TWSE / TPEx 官方除權息交易日日曆，標出未來兩個月追蹤股 / ETF 股價參考價調整日；Yahoo 台灣與鉅亨網作交叉核對。 |
 | 其他 | ETF、新聞、總體經濟、Podcast 與說明 / 版本日誌。 |
+
+## v19.0 Trader-first 全面重構第一階段（2026-08-13）
+
+- 首頁改為操盤手順序：先看單一標的的價格、技術多空、籌碼強弱、執行狀態，再看入場、停損、目標、R:R 與資料缺口。這些訊號只作研究排序與風險提示，不是獲利保證或自動下單。
+- 操盤首頁保留在第一順位，但 13 個研究分頁全部直接顯示：作戰首頁、主題總覽、標的雷達、個股決策、個股營收、技術籌碼、標的找尋、處置股、除權息、催化劑與新聞、總體經濟與風險、Podcast、資料健康。桌機頂部分頁列與手機 safe-area 底部 dock 都可橫向捲動，不再把八個功能藏進「更多研究」。
+- 新增 `app_files/core/source_catalog.js`，將報價、日線、估值、基本面、法人、資券、外資持股、TDCC、衍生品、公司事件、總經、產業研究及新聞／Podcast 分成 13 個決策領域，列出 canonical source、fallback、TTL、Extension／Web 能力與缺值規則。
+- Extension 新增台北時間 15:00 盤後同步排程，讓收盤與盤後資料一起進入研究流程。Chrome alarms 可安排指定時間，但裝置休眠時不會被喚醒，錯過的 alarm 會在喚醒後執行，因此畫面會保留排程／完成狀態，而不宣稱準時到秒；詳見 [Chrome alarms 官方文件](https://developer.chrome.com/docs/extensions/reference/api/alarms)。
+- Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions 產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web 延遲快照，而不包裝成逐筆即時；詳見 [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) 與 [scheduled workflow troubleshooting](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)。
+- 本階段採 strangler migration：新 shell 與新核心模組先接管第一屏，既有分析器與 parser 暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。
+- R6a–R6d 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 `app_files/features/trader_workspace.js`，由 61 個 deterministic cases 保護。報價、日線與估值先由 `app_files/sources/market_data_normalizers.js` 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 則由 `app_files/sources/chip_data_normalizers.js` 接管純解析（58 cases）。兩個模組都沿用既有 `source_adapters.js` 契約，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。
 
 ### 資料儲存與更新
 
@@ -1354,6 +1364,7 @@ python3 scripts/update_youtube_market_lessons.py --audio szA2MSO_qTo=/path/to/EP
 
 | 版本 | 日期 | 重點 |
 |------|------|------|
+| **v19.0** | **2026-08-13** | **Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00 Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正** |
 | **v18.2.1** | **2026-07-30** | **修正 null transport options 誤套 1024-byte 上限，恢復 8 MiB／12 秒／重試與來源並行預設** |
 | **v18.2** | **2026-07-28** | **三段式今日市場導航、移除首頁目前個股、手機底部研究導覽、PWA 大型資料按需快取與單次跳頁渲染** |
 | **v18.1** | **2026-07-28** | **中央連線治理、第三方備援、快照 provenance、局部重試與來源 adapter gates** |

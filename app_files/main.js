@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "18.2.1";
+const APP_VERSION = "19.0";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -4973,13 +4973,6 @@ function setupToneClass(score) {
   return "down";
 }
 
-function setupGrade(score) {
-  if (score >= 8) return "A";
-  if (score >= 6) return "B";
-  if (score >= 4) return "C";
-  return "D";
-}
-
 function buildTradePlan(stock, technical, price, quote, rsMulti, rev) {
   const currentPrice = toNumber(price);
   const buyRange = parseBuyRange(stock.buy);
@@ -5049,91 +5042,66 @@ function buildTradePlan(stock, technical, price, quote, rsMulti, rev) {
   }
 
   const plannedEntryRef = technicalEntry?.trigger ?? midpoint(entryLow, entryHigh);
-  let entryRef = plannedEntryRef ?? currentPrice;
-  const entryLower = Math.min(...[entryLow, entryHigh].map(toNumber).filter((value) => value !== null));
-  const entryUpper = Math.max(...[entryLow, entryHigh].map(toNumber).filter((value) => value !== null));
-  const hasEntryRange = Number.isFinite(entryLower) && Number.isFinite(entryUpper);
-  if (hasEntryRange && currentPrice !== null && currentPrice >= entryLower * 0.995 && currentPrice <= entryUpper * 1.005) {
-    entryRef = currentPrice;
-  } else if (!technicalEntry && buyRange && currentPrice !== null && currentPrice < buyRange.low) {
-    entryRef = buyRange.low;
-  }
-
-  const riskPct = stopPrice !== null && entryRef !== null && stopPrice < entryRef
-    ? (entryRef - stopPrice) / entryRef * 100
-    : null;
-  const rewardPct = targetPrice !== null && entryRef !== null && targetPrice > entryRef
-    ? (targetPrice - entryRef) / entryRef * 100
-    : null;
-  const rr = riskPct !== null && rewardPct !== null && riskPct > 0 ? rewardPct / riskPct : null;
-  const riskPerShare = stopPrice !== null && entryRef !== null && entryRef > stopPrice
-    ? entryRef - stopPrice
-    : null;
+  const riskReward = globalThis.TwStockTraderWorkspace?.calculateRiskReward({
+    entryLow,
+    entryHigh,
+    plannedEntryRef,
+    currentPrice,
+    stopPrice,
+    targetPrice,
+    technicalEntryPresent: Boolean(technicalEntry),
+    buyRangeLow: buyRange?.low,
+    buyStatusDistance: buyStatus.distance,
+    buyStatusLabel: buyStatus.label
+  }) || {
+    entryRef: null,
+    riskPct: null,
+    rewardPct: null,
+    rr: null,
+    riskPerShare: null,
+    inBuyZone: false,
+    aboveBuyFar: false,
+    belowBuy: false
+  };
+  const { entryRef, riskPct, rewardPct, rr, riskPerShare, inBuyZone, aboveBuyFar, belowBuy } = riskReward;
 
   const volumeHot = ["攻擊量", "爆大量 / 換手候選"].includes(playbook?.volumeLabel);
   const weakVolume = ["高檔出貨疑慮", "下跌大量"].includes(playbook?.volumeLabel);
-  const inBuyZone = hasEntryRange && currentPrice !== null
-    ? currentPrice >= entryLower * 0.995 && currentPrice <= entryUpper * 1.005
-    : buyStatus.distance === 0;
-  const entryDistancePct = hasEntryRange && currentPrice !== null
-    ? currentPrice > entryUpper
-      ? (currentPrice - entryUpper) / entryUpper * 100
-      : currentPrice < entryLower
-        ? (currentPrice - entryLower) / entryLower * 100
-        : 0
-    : null;
-  const aboveBuy = entryDistancePct !== null ? entryDistancePct > 0 : String(buyStatus.label || "").startsWith("高於買點");
-  const aboveBuyFar = aboveBuy && (entryDistancePct !== null ? entryDistancePct > 6 : buyStatus.distance > 6);
-  const belowBuy = entryDistancePct !== null ? entryDistancePct < 0 : String(buyStatus.label || "").startsWith("低於買點");
 
-  let setupScore = 0;
-  if (playbook?.trendLabel === "多頭趨勢") setupScore += 3;
-  else if (playbook?.positionLabel === "盤整突破候選") setupScore += 2;
-  else if (playbook?.trendLabel === "盤整趨勢") setupScore += 1;
-  if (playbook) setupScore += Math.min(playbook.checklistPasses, 3);
-  if (volumeHot) setupScore += 2;
-  else if (weakVolume) setupScore -= 1;
   const rs21 = toNumber(rsMulti?.r21);
   const rs65 = toNumber(rsMulti?.r65);
   const revYoy = toNumber(rev?.yoyPct);
-  if (rs21 !== null && rs21 > 0) setupScore += 1;
-  if (rs65 !== null && rs65 > 0) setupScore += 1;
-  if (revYoy !== null && revYoy > 20) setupScore += 1;
-  else if (revYoy !== null && revYoy < 0) setupScore -= 1;
-  if (inBuyZone) setupScore += 1;
-  else if (aboveBuyFar) setupScore -= 1;
-  if (chipSignal?.level === "danger") setupScore -= 2;
-  else if (chipSignal?.level === "warn") setupScore -= 1;
-  else if (chipSignal?.level === "good") setupScore += 1;
-  setupScore = Math.max(0, Math.min(10, setupScore));
-
-  let action = "先觀察";
-  let actionNote = "條件尚未完全共振，先等價格與量價訊號再決定。";
-  if (!technical || !technical.ready || !playbook) {
-    action = "待更新日線";
-    actionNote = "先補日線後再看趨勢、位置與量價。";
-  } else if (playbook.trendLabel === "空頭趨勢" || playbook.positionLabel === "盤整跌破候選") {
-    action = "先避開";
-    actionNote = "目前不是做多主戰場，除非你是明確做反彈策略。";
-  } else if (playbook.positionLabel === "回後買上漲 / 攻擊段" && volumeHot && !aboveBuyFar) {
-    action = "可列攻擊清單";
-    actionNote = "帶量轉強且未明顯脫離買點，適合列入當日優先追蹤。";
-  } else if (inBuyZone && playbook.trendLabel === "多頭趨勢") {
-    action = "可分批布局";
-    actionNote = "結構仍偏多，且價格就在原設定買點帶附近。";
-  } else if (playbook.positionLabel === "盤整突破候選") {
-    action = "等突破確認";
-    actionNote = "優先等前高或壓力位帶量突破，再決定是否追價。";
-  } else if (aboveBuyFar || playbook.positionLabel === "多頭高檔 / 壓力前") {
-    action = "等回檔，不追價";
-    actionNote = "已脫離舒服買點或接近壓力，先等回測。";
-  } else if (belowBuy && technicalEntry && technicalEntry.trigger !== null) {
-    action = "等突破確認";
-    actionNote = "還沒收盤站上講義價位，先等突破價與量價條件一起完成。";
-  } else if (belowBuy) {
-    action = "等重新站回買點帶";
-    actionNote = "價格比原設定買點更低，不一定是便宜，先看是否轉強。";
-  }
+  const setup = globalThis.TwStockTraderWorkspace?.scoreSetup({
+    trendLabel: playbook?.trendLabel,
+    positionLabel: playbook?.positionLabel,
+    checklistPasses: playbook?.checklistPasses,
+    hasPlaybook: Boolean(playbook),
+    volumeHot,
+    weakVolume,
+    rs21,
+    rs65,
+    revenueYoy: revYoy,
+    inBuyZone,
+    aboveBuyFar,
+    chipLevel: chipSignal?.level
+  }) || { score: 0, grade: "D" };
+  const decision = globalThis.TwStockTraderWorkspace?.decideTradeAction({
+    technicalReady: technical?.ready === true,
+    hasPlaybook: Boolean(playbook),
+    trendLabel: playbook?.trendLabel,
+    positionLabel: playbook?.positionLabel,
+    volumeHot,
+    aboveBuyFar,
+    inBuyZone,
+    belowBuy,
+    technicalEntryPresent: Boolean(technicalEntry),
+    technicalEntryTrigger: technicalEntry?.trigger
+  }) || {
+    action: "待更新日線",
+    actionNote: "Trader workspace 模組未載入，先不要建立交易計畫。"
+  };
+  const setupScore = setup.score;
+  const { action, actionNote } = decision;
 
   const entryText = entryLow !== null && entryHigh !== null
     ? (Math.abs(entryHigh - entryLow) < 0.01 ? formatNumber(entryLow) : `${formatNumber(entryLow)} – ${formatNumber(entryHigh)}`)
@@ -5154,7 +5122,7 @@ function buildTradePlan(stock, technical, price, quote, rsMulti, rev) {
     : "-";
 
   return {
-    grade: setupGrade(setupScore),
+    grade: setup.grade,
     setupScore,
     action,
     actionNote,
@@ -5768,88 +5736,27 @@ function buildTradingRadarScore(row) {
   };
 }
 
-function executionToneClass(status) {
-  if (status === "可執行") return "up";
-  if (["等回測", "等突破", "觀察"].includes(status)) return "flat";
-  return "down";
-}
-
-function executionSortScore(status) {
-  if (status === "可執行") return 6;
-  if (status === "等回測") return 5;
-  if (status === "等突破") return 4;
-  if (status === "觀察") return 3;
-  if (status === "風報比不足") return 2;
-  if (status === "資料不足") return 1;
-  return 0;
-}
-
 function buildExecutionInfo(stock, tradePlan, radar, technical, quote) {
   const mode = tradingRadarModeConfig(radar?.modeKey);
   const thresholds = mode.thresholds || TRADING_RADAR_MODES[DEFAULT_TRADING_RADAR_MODE].thresholds;
-  const rr = toNumber(tradePlan?.rr);
-  const riskPerShare = toNumber(tradePlan?.riskPerShare);
-  const hasCore = tradePlan
-    && tradePlan.entryRef !== null
-    && tradePlan.stopPrice !== null
-    && riskPerShare !== null
-    && riskPerShare > 0;
-  let status = "觀察";
-  let blocker = tradePlan?.actionNote || radar?.notes?.[0] || "";
-
-  if (!technical || !technical.ready) {
-    status = "資料不足";
-    blocker = "日線尚未更新，不能定義有效停損";
-  } else if (!hasCore) {
-    status = "資料不足";
-    blocker = "入場、停損或每股風險不足";
-  } else if (tradePlan.action === "先避開" || radar?.stage === "先避開") {
-    status = "先避開";
-    blocker = tradePlan.actionNote || "結構不在做多主場";
-  } else if (rr !== null && rr < 1) {
-    status = "風報比不足";
-    blocker = `R:R ${rr.toFixed(2)}R 偏低`;
-  } else if (tradePlan.aboveBuyFar) {
-    status = "等回測";
-    blocker = "離買點過遠，不追價";
-  } else if (tradePlan.action === "等突破確認") {
-    status = "等突破";
-    blocker = "等突破關鍵均線或壓力後再執行";
-  } else if (tradePlan.inBuyZone && (rr === null || rr >= 1.2) && (radar?.score ?? 0) >= thresholds.candidate) {
-    status = "可執行";
-    blocker = "價格在可控入場帶，停損與風報比已定義";
-  } else if (["攻擊觀察", "候選追蹤"].includes(radar?.stage) && (rr === null || rr >= 1.2)) {
-    status = "可執行";
-    blocker = tradePlan.actionNote || "雷達與交易計畫同向";
-  } else if (tradePlan.action === "等回檔，不追價") {
-    status = "等回測";
-    blocker = tradePlan.actionNote || "等回到入場帶";
-  }
-
-  const conclusion = status === "可執行"
-    ? "可列入今日候選，但仍需盤中價格與量價確認"
-    : status === "等回測"
-      ? "只等價格回到入場帶，不在延伸段追價"
-      : status === "等突破"
-        ? "等突破確認後再重新評估"
-        : status === "風報比不足"
-          ? "目標與停損距離不划算，先不硬做"
-          : status === "先避開"
-            ? "結構或風險條件不合，先保留現金"
-            : "資料或條件未齊，先放觀察清單";
-
-  return {
-    status,
-    tone: executionToneClass(status),
-    sortScore: executionSortScore(status),
+  return globalThis.TwStockTraderWorkspace?.buildExecutionDecision({
+    tradePlan,
+    radar,
+    technicalReady: technical?.ready === true,
+    candidateThreshold: thresholds.candidate,
+    price: quote?.price ?? latestValue(stock)
+  }) || {
+    status: "資料不足",
+    tone: "down",
+    sortScore: 1,
     price: quote?.price ?? latestValue(stock),
-    entry: tradePlan?.entryHint || tradePlan?.entryText || "-",
-    stopPrice: tradePlan?.stopPrice ?? null,
-    targetPrice: tradePlan?.targetPrice ?? null,
-    riskPerShare,
-    rr,
-    blocker,
-    conclusion
+    entry: "-",
+    stopPrice: null,
+    targetPrice: null,
+    riskPerShare: null,
+    rr: null,
+    blocker: "Trader workspace 模組未載入",
+    conclusion: "資料或條件未齊，先放觀察清單"
   };
 }
 
@@ -5971,6 +5878,23 @@ function officialMarketCode(stock) {
   return stock.suffix === "TWO" ? "otc" : "tse";
 }
 
+function providerRequestOptions(sourceKey, overrides = {}) {
+  const adapters = globalThis.TwStockSourceAdapters;
+  return adapters?.brokerOptions ? adapters.brokerOptions(sourceKey, overrides) : overrides;
+}
+
+function marketDataNormalizers() {
+  const normalizers = globalThis.TwStockMarketDataNormalizers;
+  if (!normalizers) throw new Error("Market data normalizers 尚未載入");
+  return normalizers;
+}
+
+function chipDataNormalizers() {
+  const normalizers = globalThis.TwStockChipDataNormalizers;
+  if (!normalizers) throw new Error("Chip data normalizers 尚未載入");
+  return normalizers;
+}
+
 function twseMisUrl(stock) {
   const exchange = officialMarketCode(stock);
   return `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${exchange}_${stock.code}.tw&json=1&delay=0&_=${Date.now()}`;
@@ -5982,64 +5906,16 @@ function twseMisBatchUrl(stocks) {
   return `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${codes}&json=1&delay=0&_=${Date.now()}`;
 }
 
-function misOrderBookFields(row) {
-  const bidPrices = numericList(row?.b, { min: 0.0001 });
-  const askPrices = numericList(row?.a, { min: 0.0001 });
-  const bidVols = numericList(row?.g, { min: 0.0001 });
-  const askVols = numericList(row?.f, { min: 0.0001 });
-  const totalBid = bidVols.reduce((sum, value) => sum + value, 0);
-  const totalAsk = askVols.reduce((sum, value) => sum + value, 0);
-  const bidAskRatio = (totalBid + totalAsk) > 0 ? totalBid / (totalBid + totalAsk) : null;
-  return {
-    bidPrices,
-    askPrices,
-    bidVols,
-    askVols,
-    bestBid: bidPrices[0] ?? null,
-    bestAsk: askPrices[0] ?? null,
-    bestBidVol: bidVols[0] ?? null,
-    bestAskVol: askVols[0] ?? null,
-    totalBid,
-    totalAsk,
-    bidAskRatio,
-    limitUpPrice: firstNumeric(row?.u),
-    limitDownPrice: firstNumeric(row?.w)
-  };
-}
-
 // 解析 MIS batch 回應；回傳 Map<code, quote | null>
 function parseTwseBatchQuotes(text, stocks) {
-  const stockMap = new Map(stocks.map((s) => [s.code, s]));
-  const results = new Map();
   try {
-    const json = JSON.parse(String(text).trim());
-    const rows = Array.isArray(json.msgArray) ? json.msgArray : [];
-    for (const row of rows) {
-      const code = String(row.c || "").trim();
-      const stock = stockMap.get(code);
-      if (!stock) continue;
-      const price = firstNumeric(row.z) ?? firstNumeric(row.a) ?? firstNumeric(row.b) ?? toNumber(row.y);
-      const previousClose = toNumber(row.y);
-      if (price === null || previousClose === null) continue;
-      const change = +(price - previousClose).toFixed(2);
-      const pct = previousClose ? +(change / previousClose * 100).toFixed(2) : null;
-      const date = row.d && String(row.d).length === 8
-        ? `${String(row.d).slice(0, 4)}-${String(row.d).slice(4, 6)}-${String(row.d).slice(6, 8)}`
-        : dateKeyInTaipei();
-      const orderBook = misOrderBookFields(row);
-      results.set(code, {
-        code, name: row.n || stock.name, price, change, pct, previousClose,
-        open: firstNumeric(row.o), high: firstNumeric(row.h), low: firstNumeric(row.l),
-        volume: toNumber(row.v), averagePrice: firstNumeric(row.p), turnover: toNumber(row.m),
-        ...orderBook,
-        source: "證交所 MIS", sourceKind: "official",
-        sourceDate: date, sourceTime: row.t || "", fallbackUsed: false,
-        marketTime: row.t ? `${date} ${row.t}` : date,
-        capturedAt: new Date().toISOString()
-      });
-    }
-  } catch (_) {}
-  return results;
+    return marketDataNormalizers().parseTwseMisBatchQuotes(text, stocks, {
+      fallbackDate: dateKeyInTaipei(),
+      capturedAt: new Date().toISOString()
+    });
+  } catch (_) {
+    return new Map();
+  }
 }
 
 // 並行限流器：最多 concurrency 個 worker 同時執行，全部完成才 resolve
@@ -6739,139 +6615,42 @@ function parsePodcastFeed(text, feed) {
 }
 
 function parseTwseQuote(text, stock) {
-  const json = JSON.parse(String(text).trim());
-  const row = json && Array.isArray(json.msgArray) ? json.msgArray[0] : null;
-  if (!row) throw new Error("TWSE MIS 無報價列");
-
-  const price = firstNumeric(row.z) ?? firstNumeric(row.a) ?? firstNumeric(row.b) ?? toNumber(row.y);
-  const previousClose = toNumber(row.y);
-  if (price === null || previousClose === null) {
-    throw new Error("TWSE MIS 報價缺價格或昨收");
-  }
-  const change = +(price - previousClose).toFixed(2);
-  const pct = previousClose ? +(change / previousClose * 100).toFixed(2) : null;
-  const date = row.d && String(row.d).length === 8
-    ? `${String(row.d).slice(0, 4)}-${String(row.d).slice(4, 6)}-${String(row.d).slice(6, 8)}`
-    : dateKeyInTaipei();
-  const orderBook = misOrderBookFields(row);
-
-  return {
-    code: stock.code,
-    name: row.n || stock.name,
-    price,
-    change,
-    pct,
-    previousClose,
-    open: firstNumeric(row.o),
-    high: firstNumeric(row.h),
-    low: firstNumeric(row.l),
-    volume: toNumber(row.v),
-    averagePrice: firstNumeric(row.p),
-    turnover: toNumber(row.m),
-    ...orderBook,
-    source: "證交所 MIS",
-    sourceKind: "official",
-    sourceDate: date,
-    sourceTime: row.t || "",
-    fallbackUsed: false,
-    marketTime: row.t ? `${date} ${row.t}` : date,
+  return marketDataNormalizers().parseTwseMisQuote(text, stock, {
+    fallbackDate: dateKeyInTaipei(),
     capturedAt: new Date().toISOString()
-  };
+  });
 }
 
 function parseYahooQuote(text, stock) {
-  const json = JSON.parse(String(text).trim());
-  const result = json && json.chart && Array.isArray(json.chart.result) ? json.chart.result[0] : null;
-  const meta = result && result.meta ? result.meta : null;
-  if (!meta) throw new Error("Yahoo 無報價資料");
-
-  const price = toNumber(meta.regularMarketPrice);
-  const previousClose = toNumber(meta.chartPreviousClose) ?? toNumber(meta.previousClose);
-  if (price === null || previousClose === null) {
-    throw new Error("Yahoo 報價缺價格或昨收");
-  }
-  const change = +(price - previousClose).toFixed(2);
-  const pct = previousClose ? +(change / previousClose * 100).toFixed(2) : null;
-  const marketTimestamp = toNumber(meta.regularMarketTime) || toNumber(result.timestamp?.at?.(-1));
-  const marketDate = marketTimestamp ? new Date(marketTimestamp * 1000) : null;
-  const sourceDate = marketDate && !Number.isNaN(marketDate.getTime()) ? dateKeyInTaipei(marketDate) : dateKeyInTaipei();
-  const sourceTime = marketDate && !Number.isNaN(marketDate.getTime()) ? timeKeyInTaipei(marketDate) : "";
-
-  const navPrice = toNumber(meta.navPrice);
+  const quote = marketDataNormalizers().parseYahooQuote(text, stock, {
+    capturedAt: new Date().toISOString()
+  });
+  const navPrice = toNumber(quote.navPrice);
   // 若有 navPrice（ETF 類型），順手存入 etfNavCache
   if (navPrice !== null && navPrice > 0 && isEtfCode(stock.code)) {
     state.etfNavCache = state.etfNavCache || {};
     state.etfNavCache[stock.code] = { nav: navPrice, date: dateKeyInTaipei(), fetchedAt: new Date().toISOString() };
   }
-  return {
-    code: stock.code,
-    name: stock.name,
-    price,
-    change,
-    pct,
-    previousClose,
-    open: toNumber(meta.regularMarketOpen),
-    high: toNumber(meta.regularMarketDayHigh),
-    low: toNumber(meta.regularMarketDayLow),
-    volume: toNumber(meta.regularMarketVolume),
-    averagePrice: null,
-    turnover: null,
-    navPrice,
-    source: "Yahoo Finance fallback",
-    sourceKind: "fallback",
-    fallbackUsed: true,
-    sourceDate,
-    sourceTime,
-    marketTime: marketDate ? marketDate.toISOString() : "",
-    exchangeTimezoneName: meta.exchangeTimezoneName || meta.timezone || "",
-    capturedAt: new Date().toISOString()
-  };
+  return quote;
 }
 
 let _officialDailyQuoteMapsPromise = null;
 
 function parseOfficialDailyQuoteRow(row, stock, market) {
-  if (!row || !stock) return null;
-  const isTpex = market === "TPEX";
-  const price = toNumber(isTpex ? row.Close : row.ClosingPrice);
-  if (price === null) return null;
-  const change = toNumber(row.Change);
-  const previousClose = change !== null ? +(price - change).toFixed(2) : price;
-  const pct = previousClose ? +(change / previousClose * 100).toFixed(2) : null;
-  const code = String(isTpex ? row.SecuritiesCompanyCode : row.Code || stock.code).trim();
-  const name = String(isTpex ? row.CompanyName : row.Name || stock.name).trim();
-  return {
-    code: stock.code || code,
-    name: name || stock.name,
-    price,
-    change,
-    pct,
-    previousClose,
-    open: toNumber(isTpex ? row.Open : row.OpeningPrice),
-    high: toNumber(isTpex ? row.High : row.HighestPrice),
-    low: toNumber(isTpex ? row.Low : row.LowestPrice),
-    volume: toNumber(isTpex ? row.TradingShares : row.TradeVolume),
-    averagePrice: null,
-    turnover: toNumber(isTpex ? row.TransactionAmount : row.TradeValue),
-    source: isTpex ? "TPEx 官方即時行情備援" : "TWSE 官方收盤表備援",
-    sourceKind: "official",
-    sourceDate: parseRocCompactDate(row.Date),
-    sourceTime: "",
-    fallbackUsed: true,
-    marketTime: parseRocCompactDate(row.Date),
+  return marketDataNormalizers().parseOfficialDailyQuoteRow(row, stock, market, {
     capturedAt: new Date().toISOString()
-  };
+  });
 }
 
 async function officialDailyQuoteMaps() {
   if (_officialDailyQuoteMapsPromise) return _officialDailyQuoteMapsPromise;
   _officialDailyQuoteMapsPromise = (async () => {
     const [twseResult, tpexResult] = await Promise.allSettled([
-      fetchText("https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL", { timeoutMs: 15000 }),
-      fetchText("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes", { timeoutMs: 15000 })
+      fetchText("https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL", providerRequestOptions("twse", { timeoutMs: 15000 })),
+      fetchText("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes", providerRequestOptions("tpex", { timeoutMs: 15000 }))
     ]);
-    const twseRows = twseResult.status === "fulfilled" ? JSON.parse(twseResult.value) : [];
-    const tpexRows = tpexResult.status === "fulfilled" ? JSON.parse(tpexResult.value) : [];
+    const twseRows = twseResult.status === "fulfilled" ? marketDataNormalizers().parseOfficialDailyQuoteRows(twseResult.value, "TWSE") : [];
+    const tpexRows = tpexResult.status === "fulfilled" ? marketDataNormalizers().parseOfficialDailyQuoteRows(tpexResult.value, "TPEX") : [];
     return {
       twse: new Map((Array.isArray(twseRows) ? twseRows : []).map((row) => [String(row.Code || "").trim(), row])),
       tpex: new Map((Array.isArray(tpexRows) ? tpexRows : []).map((row) => [String(row.SecuritiesCompanyCode || "").trim(), row])),
@@ -6944,13 +6723,13 @@ async function cnyesQuoteFallbackMap(stocks) {
 
 async function fetchQuote(stock) {
   try {
-    const text = await fetchText(twseMisUrl(stock));
+    const text = await fetchText(twseMisUrl(stock), providerRequestOptions("twse"));
     return parseTwseQuote(text, stock);
   } catch (officialError) {
     let lastError = officialError;
     for (const url of yahooUrls(stock)) {
       try {
-        const text = await fetchText(url);
+        const text = await fetchText(url, providerRequestOptions("yahoo"));
         return parseYahooQuote(text, stock);
       } catch (fallbackError) {
         lastError = fallbackError;
@@ -7028,166 +6807,33 @@ function yahooHistoryUrl(stock) {
 }
 
 function normalizeKline(row) {
-  if (!row || !row.date || row.close === null || row.close === undefined) return null;
-  const open = toNumber(row.open);
-  const high = toNumber(row.high);
-  const low = toNumber(row.low);
-  const close = toNumber(row.close);
-  if (close === null) return null;
-  return {
-    date: row.date,
-    open: open ?? close,
-    high: high ?? close,
-    low: low ?? close,
-    close,
-    volume: toNumber(row.volume) ?? 0,
-    turnover: toNumber(row.turnover) ?? toNumber(row.amount) ?? null,
-    source: row.source || "unknown"
-  };
+  return marketDataNormalizers().normalizeKline(row);
 }
 
 function parseTwseKlines(text, stock) {
-  const json = JSON.parse(String(text).trim());
-  const rows = Array.isArray(json.data) ? json.data : [];
-  if (!rows.length) return [];
-  return rows.map((row) => normalizeKline({
-    date: parseRocDate(row[0]),
-    volume: row[1],
-    turnover: row[2],
-    open: row[3],
-    high: row[4],
-    low: row[5],
-    close: row[6],
-    source: `TWSE STOCK_DAY ${stock.code}`
-  })).filter(Boolean);
+  return marketDataNormalizers().parseTwseKlines(text, stock);
 }
 
 function parseTpexKlines(text, stock) {
-  const json = JSON.parse(String(text).trim());
-  const table = json && Array.isArray(json.tables) ? json.tables[0] : null;
-  const rows = table && Array.isArray(table.data) ? table.data : [];
-  if (!rows.length) return [];
-  return rows.map((row) => normalizeKline({
-    date: parseRocDate(row[0]),
-    volume: toNumber(row[1]) !== null ? toNumber(row[1]) * 1000 : null,
-    turnover: row[2],
-    open: row[3],
-    high: row[4],
-    low: row[5],
-    close: row[6],
-    source: `TPEx tradingStock ${stock.code}`
-  })).filter(Boolean);
+  return marketDataNormalizers().parseTpexKlines(text, stock);
 }
 
 function parseYahooKlines(text, stock) {
-  const json = JSON.parse(String(text).trim());
-  const result = json && json.chart && Array.isArray(json.chart.result) ? json.chart.result[0] : null;
-  const timestamps = result && Array.isArray(result.timestamp) ? result.timestamp : [];
-  const quote = result && result.indicators && Array.isArray(result.indicators.quote)
-    ? result.indicators.quote[0]
-    : null;
-  if (!timestamps.length || !quote) return [];
-  return timestamps.map((timestamp, index) => normalizeKline({
-    date: new Date(timestamp * 1000).toISOString().slice(0, 10),
-    open: quote.open ? quote.open[index] : null,
-    high: quote.high ? quote.high[index] : null,
-    low: quote.low ? quote.low[index] : null,
-    close: quote.close ? quote.close[index] : null,
-    volume: quote.volume ? quote.volume[index] : null,
-    turnover: null,
-    source: `Yahoo history fallback ${stock.code}.${stock.suffix}`
-  })).filter(Boolean);
-}
-
-function normalizeValuationRecord(record) {
-  return {
-    code: record.code,
-    name: record.name,
-    market: record.market,
-    close: record.close ?? null,
-    pe: record.pe ?? null,
-    dividendYield: record.dividendYield ?? null,
-    dividendPerShare: record.dividendPerShare ?? null,
-    dividendYear: record.dividendYear || "",
-    pbr: record.pbr ?? null,
-    reportPeriod: record.reportPeriod || "",
-    sourceDate: record.sourceDate || "",
-    sourceLabel: record.sourceLabel || "",
-    fetchedAt: new Date().toISOString()
-  };
+  return marketDataNormalizers().parseYahooKlines(text, stock);
 }
 
 function parseTwseValuations(text) {
-  const json = JSON.parse(String(text).trim());
-  const rows = Array.isArray(json.data) ? json.data : [];
-  if (!rows.length) throw new Error("TWSE 官方估值無資料");
-  const sourceDate = parseCompactDay(json.date);
-  const records = {};
-  const universeRecords = {};
-  for (const row of rows) {
-    const code = String(row[0] || "").trim();
-    if (!code || !/^\d{4}$/.test(code)) continue;
-    const normalized = normalizeValuationRecord({
-      code,
-      name: officialTextValue(row[1]),
-      market: "TW",
-      close: officialNumberValue(row[2]),
-      dividendYield: officialNumberValue(row[3]),
-      dividendYear: officialTextValue(row[4]),
-      pe: officialNumberValue(row[5]),
-      pbr: officialNumberValue(row[6]),
-      reportPeriod: officialTextValue(row[7]),
-      sourceDate,
-      sourceLabel: "TWSE 官方估值"
-    });
-    universeRecords[code] = normalized;
-    if (!STOCK_MAP.has(code)) continue;
-    records[code] = normalized;
-  }
-  if (!Object.keys(records).length) throw new Error("TWSE 估值資料未涵蓋追蹤名單");
-  return {
-    market: "TW",
-    title: json.title || "",
-    sourceDate,
-    sourceLabel: "TWSE 官方估值",
-    records,
-    universeRecords
-  };
+  return marketDataNormalizers().parseTwseValuations(text, {
+    trackedCodes: WATCHLIST.map((stock) => stock.code),
+    fetchedAt: new Date().toISOString()
+  });
 }
 
 function parseTpexValuations(text) {
-  const json = JSON.parse(String(text).trim());
-  const table = json && Array.isArray(json.tables) ? json.tables[0] : null;
-  const rows = table && Array.isArray(table.data) ? table.data : [];
-  if (!rows.length) throw new Error("TPEx 官方估值無資料");
-  const sourceDate = parseRocDate((table && table.date) || json.date);
-  const records = {};
-  for (const row of rows) {
-    const code = String(row[0] || "").trim();
-    if (!code || !STOCK_MAP.has(code)) continue;
-    records[code] = normalizeValuationRecord({
-      code,
-      name: officialTextValue(row[1]),
-      market: "TWO",
-      close: null,
-      pe: officialNumberValue(row[2]),
-      dividendPerShare: officialNumberValue(row[3]),
-      dividendYear: officialTextValue(row[4]),
-      dividendYield: officialNumberValue(row[5]),
-      pbr: officialNumberValue(row[6]),
-      reportPeriod: officialTextValue(row[7]),
-      sourceDate,
-      sourceLabel: "TPEx 官方估值"
-    });
-  }
-  if (!Object.keys(records).length) throw new Error("TPEx 估值資料未涵蓋追蹤名單");
-  return {
-    market: "TWO",
-    title: (table && table.title) || "",
-    sourceDate,
-    sourceLabel: "TPEx 官方估值",
-    records
-  };
+  return marketDataNormalizers().parseTpexValuations(text, {
+    trackedCodes: WATCHLIST.map((stock) => stock.code),
+    fetchedAt: new Date().toISOString()
+  });
 }
 
 function storeValuationMarket(result) {
@@ -7215,7 +6861,7 @@ async function fetchOfficialValuationsForMarket(market, lookbackDays = 10) {
     date.setDate(date.getDate() - offset);
     const url = market === "TWO" ? tpexValuationUrl(date) : twseValuationUrl(date);
     try {
-      const text = await fetchText(url);
+      const text = await fetchText(url, providerRequestOptions(market === "TWO" ? "tpex" : "twse"));
       return market === "TWO" ? parseTpexValuations(text) : parseTwseValuations(text);
     } catch (error) {
       lastError = error;
@@ -7487,7 +7133,7 @@ async function fetchOfficialKlines(stock) {
   const rows = [];
   for (const anchor of monthAnchors()) {
     const url = stock.suffix === "TWO" ? tpexTradingStockUrl(stock, anchor) : twseStockDayUrl(stock, anchor);
-    const text = await fetchText(url);
+    const text = await fetchText(url, providerRequestOptions(stock.suffix === "TWO" ? "tpex" : "twse"));
     const parsed = stock.suffix === "TWO" ? parseTpexKlines(text, stock) : parseTwseKlines(text, stock);
     rows.push(...parsed);
     await wait(60);
@@ -7505,7 +7151,7 @@ async function fetchKlineHistory(stock) {
     return await fetchOfficialKlines(stock);
   } catch (officialError) {
     try {
-      const text = await fetchText(yahooHistoryUrl(stock));
+      const text = await fetchText(yahooHistoryUrl(stock), providerRequestOptions("yahoo"));
       const rows = parseYahooKlines(text, stock);
       if (!rows.length) throw new Error("Yahoo K 線無資料");
       return {
@@ -7522,7 +7168,7 @@ async function fetchKlineHistory(stock) {
 
 async function fetchKlineHistoryFast(stock) {
   try {
-    const text = await fetchText(yahooHistoryUrl(stock));
+    const text = await fetchText(yahooHistoryUrl(stock), providerRequestOptions("yahoo"));
     const rows = parseYahooKlines(text, stock);
     if (!rows.length) throw new Error("Yahoo K 線無資料");
     return {
@@ -16305,7 +15951,7 @@ function loadBundledStateDomain(path, label = path) {
 
 function ensureBundledStateDomainForTab(tab) {
   const target = normalizeTabTarget(tab);
-  if (!["overview", "screener", "report", "technical", "discovery", "ex-dividend"].includes(target)) return;
+  if (!["market", "overview", "screener", "report", "technical", "discovery", "ex-dividend"].includes(target)) return;
   if (_bundledStateDomainsLoaded.has(STATE_TECHNICAL_SEED_PATH)) return;
   const panel = typeof document !== "undefined" ? $(`tab-${target}`) : null;
   if (panel) {
@@ -18141,77 +17787,19 @@ async function fetchInstitutionalFlow(stock) {
 }
 
 function parseAllInstitutionalTWSE(data) {
-  if (!data || !Array.isArray(data.data) || data.stat !== "OK") return [];
-  const dateStr = slashDateFromCompact(data.date || "");
-  return data.data.map((row) => {
-    const code = String(row[0] || "").replace(/\s/g, "");
-    if (!code || !/^\d{4,6}[A-Z]?$/.test(code)) return null;
-    const foreignNet = sharesToLots(row[4]);
-    const trustNet   = sharesToLots(row[10] ?? row[7]);
-    const dealerNet  = sharesToLots(row[11] ?? row[8]);
-    const totalRaw   = cellNumber(row[18] ?? row[9]);
-    const totalNet   = totalRaw === null ? (foreignNet + trustNet + dealerNet) : totalRaw / 1000;
-    return { code, name: String(row[1] || "").trim(), market: "TW", date: dateStr, foreignNet, trustNet, dealerNet, totalNet, source: "TWSE T86" };
-  }).filter(Boolean);
+  try {
+    return chipDataNormalizers().parseAllInstitutionalTwse(data);
+  } catch (_) {
+    return [];
+  }
 }
 
 function parseAllInstitutionalTPEx(data) {
-  const parsed = typeof data === "string" ? JSON.parse(data) : data;
-  if (Array.isArray(parsed)) {
-    return parsed.map((row) => {
-      const code = String(objectValue(row, ["SecuritiesCompanyCode", "Code", "代號", "股票代號"]) || "").trim();
-      if (!code || !/^\d{4,6}[A-Z]?$/.test(code)) return null;
-      const name = String(objectValue(row, ["CompanyName", "Name", "公司名稱", "證券名稱", "名稱"]) || "").trim();
-      const foreignRaw = objectValue(row, [
-        "ForeignInvestorsIncludeMainlandAreaInvestors-Difference",
-        "ForeignInvestorsInclude MainlandAreaInvestors-Difference",
-        "ForeignInvestorsandMainlandChineseInvestors-Difference"
-      ]) ?? objectValueByKeyParts(row, ["foreigninvestors", "difference"]);
-      const trustRaw = objectValue(row, ["SecuritiesInvestmentTrustCompanies-Difference"])
-        ?? objectValueByKeyParts(row, ["securitiesinvestmenttrustcompanies", "difference"]);
-      const dealerRaw = objectValue(row, ["Dealers-Difference"])
-        ?? objectValueByKeyParts(row, ["dealers", "difference"], ["foreign"]);
-      const totalRaw = objectValue(row, ["TotalDifference"]) ?? objectValueByKeyParts(row, ["totaldifference"]);
-      const foreignNet = sharesToLots(foreignRaw);
-      const trustNet = sharesToLots(trustRaw);
-      const dealerNet = sharesToLots(dealerRaw);
-      const totalNumber = cellNumber(totalRaw);
-      return {
-        code,
-        name,
-        market: "TWO",
-        date: rocDateToStr(row.Date || row["資料日期"] || ""),
-        foreignNet,
-        trustNet,
-        dealerNet,
-        totalNet: totalNumber === null ? (foreignNet + trustNet + dealerNet) : totalNumber / 1000,
-        source: "TPEx OpenAPI 三大法人"
-      };
-    }).filter(Boolean);
+  try {
+    return chipDataNormalizers().parseAllInstitutionalTpex(data);
+  } catch (_) {
+    return [];
   }
-  const rows = parsed?.tables?.[0]?.data || parsed?.data || parsed?.aaData;
-  if (!Array.isArray(rows)) return [];
-  const date = rocDateToStr(parsed?.tables?.[0]?.date || parsed?.date || "");
-  return rows.map((row) => {
-    const code = String(row[0] || "").replace(/\s/g, "");
-    if (!code || !/^\d{4,6}[A-Z]?$/.test(code)) return null;
-    const foreignNet = sharesToLots(row[10] ?? row[4]);
-    const trustNet = sharesToLots(row[13] ?? row[10] ?? row[7]);
-    const dealerNet = sharesToLots(row[22] ?? row[11]);
-    const totalRaw = cellNumber(row[23] ?? row[12]);
-    const totalNet = totalRaw === null ? (foreignNet + trustNet + dealerNet) : totalRaw / 1000;
-    return {
-      code,
-      name: String(row[1] || "").trim(),
-      market: "TWO",
-      date,
-      foreignNet,
-      trustNet,
-      dealerNet,
-      totalNet,
-      source: "TPEx 三大法人日報"
-    };
-  }).filter(Boolean);
 }
 
 let _fullMarketInstCache = null;
@@ -18626,77 +18214,25 @@ function maybeRefreshMarketCrashRiskInputs(options = {}) {
 }
 
 function parseInstitutionalTWSE(data, code) {
-  if (!data || !Array.isArray(data.data)) return null;
-  if (data.stat && data.stat !== "OK") return null;
-  const row = data.data.find((r) => String(r[0] || "").replace(/\s/g, "") === code);
-  if (!row) return null;
-  const foreignNet = sharesToLots(row[4]);
-  const trustNet = sharesToLots(row[10] ?? row[7]);
-  const dealerNet = sharesToLots(row[11] ?? row[8]);
-  const totalRaw = cellNumber(row[18] ?? row[9]);
-  const totalNet = totalRaw === null ? (foreignNet + trustNet + dealerNet) : totalRaw / 1000;
-  return {
-    date: slashDateFromCompact(data.date || ""),
-    foreignNet,
-    trustNet,
-    dealerNet,
-    totalNet,
-    source: `TWSE T86 (${slashDateFromCompact(data.date || "最新")})`
-  };
+  try {
+    return chipDataNormalizers().parseInstitutionalTwse(data, code);
+  } catch (_) {
+    return null;
+  }
 }
 
 function parseInstitutionalTPEx(text, code) {
   try {
-    const data = typeof text === "string" ? JSON.parse(text) : text;
-    if (Array.isArray(data)) return parseInstitutionalTPExOpenAPI(data, code);
-    const rows = data?.tables?.[0]?.data || data?.data || data?.aaData;
-    if (!Array.isArray(rows)) return null;
-    const row = rows.find((r) => String(r[0] || "").replace(/\s/g, "") === code);
-    if (!row) return null;
-    const foreign = sharesToLots(row[10] ?? row[4]);
-    const trust = sharesToLots(row[13] ?? row[10] ?? row[7]);
-    const dealer = sharesToLots(row[22] ?? row[11]);
-    const totalRaw = cellNumber(row[23] ?? row[12]);
-    const total = totalRaw === null ? (foreign + trust + dealer) : totalRaw / 1000;
-    const tableDate = data?.tables?.[0]?.date || data?.date || "";
-    return {
-      date: rocDateToStr(tableDate),
-      foreignNet: foreign,
-      trustNet: trust,
-      dealerNet: dealer,
-      totalNet: total,
-      source: `TPEx 三大法人日報 (${rocDateToStr(tableDate) || "最新"})`
-    };
+    return chipDataNormalizers().parseInstitutionalTpex(text, code);
   } catch (_) { return null; }
 }
 
 function parseInstitutionalTPExOpenAPI(data, code) {
-  const row = data.find((r) => String(r.SecuritiesCompanyCode || r.Code || r["代號"] || "").trim() === code);
-  if (!row) return null;
-  const foreignRaw = objectValue(row, [
-    "ForeignInvestorsIncludeMainlandAreaInvestors-Difference",
-    "ForeignInvestorsInclude MainlandAreaInvestors-Difference",
-    "ForeignInvestorsandMainlandChineseInvestors-Difference"
-  ]) ?? objectValueByKeyParts(row, ["foreigninvestors", "difference"]);
-  const trustRaw = objectValue(row, [
-    "SecuritiesInvestmentTrustCompanies-Difference"
-  ]) ?? objectValueByKeyParts(row, ["securitiesinvestmenttrustcompanies", "difference"]);
-  const dealerRaw = objectValue(row, [
-    "Dealers-Difference"
-  ]) ?? objectValueByKeyParts(row, ["dealers", "difference"], ["foreign"]);
-  const totalRaw = objectValue(row, ["TotalDifference"]) ?? objectValueByKeyParts(row, ["totaldifference"]);
-  const foreignNet = sharesToLots(foreignRaw);
-  const trustNet = sharesToLots(trustRaw);
-  const dealerNet = sharesToLots(dealerRaw);
-  const totalNumber = cellNumber(totalRaw);
-  return {
-    date: rocDateToStr(row.Date || row["資料日期"] || ""),
-    foreignNet,
-    trustNet,
-    dealerNet,
-    totalNet: totalNumber === null ? (foreignNet + trustNet + dealerNet) : totalNumber / 1000,
-    source: "TPEx OpenAPI 三大法人"
-  };
+  try {
+    return chipDataNormalizers().parseInstitutionalTpexOpenApi(data, code);
+  } catch (_) {
+    return null;
+  }
 }
 
 async function fetchMarginBalance(stock) {
@@ -18733,103 +18269,25 @@ async function fetchMarginBalance(stock) {
 }
 
 function parseMarginTWSE(data, code) {
-  if (Array.isArray(data)) {
-    const row = data.find((r) => String(r["股票代號"] || r.Code || "").trim() === code);
-    if (!row) return null;
-    const marginBalance = cellNumberOrZero(row["融資今日餘額"]);
-    const marginLimit = cellNumber(row["融資限額"]);
-    const shortBalance = cellNumberOrZero(row["融券今日餘額"]);
-    const shortLimit = cellNumber(row["融券限額"]);
-    return {
-      date: row["資料日期"] || row.Date || "",
-      marginBuy: cellNumberOrZero(row["融資買進"]),
-      marginSell: cellNumberOrZero(row["融資賣出"]),
-      marginBalance,
-      marginLimit,
-      marginUsagePct: calcUsagePercent(marginBalance, marginLimit),
-      shortSell: cellNumberOrZero(row["融券賣出"]),
-      shortBuy: cellNumberOrZero(row["融券買進"]),
-      shortBalance,
-      shortLimit,
-      shortUsagePct: calcUsagePercent(shortBalance, shortLimit),
-      source: "TWSE OpenAPI MI_MARGN"
-    };
+  try {
+    return chipDataNormalizers().parseMarginTwse(data, code);
+  } catch (_) {
+    return null;
   }
-  if (!data || !Array.isArray(data.data) || !data.data.length) return null;
-  if (data.stat && data.stat !== "OK") return null;
-  const row = data.data.find((r) => String(r[0] || "").replace(/\s/g, "") === code);
-  if (!row) return null;
-  const marginBalance = cellNumberOrZero(row[6] ?? row[5]);
-  const marginLimit = cellNumber(row[7] ?? row[6]);
-  const shortBalance = cellNumberOrZero(row[12] ?? row[11]);
-  const shortLimit = cellNumber(row[13] ?? row[12]);
-  return {
-    date: slashDateFromCompact(data.date || ""),
-    marginBuy: cellNumberOrZero(row[2]),
-    marginSell: cellNumberOrZero(row[3]),
-    marginBalance,
-    marginLimit,
-    marginUsagePct: calcUsagePercent(marginBalance, marginLimit),
-    shortSell: cellNumberOrZero(row[9] ?? row[8]),
-    shortBuy: cellNumberOrZero(row[8] ?? row[9]),
-    shortBalance,
-    shortLimit,
-    shortUsagePct: calcUsagePercent(shortBalance, shortLimit),
-    source: `TWSE MI_MARGN (${slashDateFromCompact(data.date || "最新")})`
-  };
 }
 
 function parseMarginTPEx(text, code) {
   try {
-    const data = typeof text === "string" ? JSON.parse(text) : text;
-    if (Array.isArray(data)) return parseMarginTPExOpenAPI(data, code);
-    const rows = data?.tables?.[0]?.data || data?.data || data?.aaData;
-    if (!Array.isArray(rows)) return null;
-    const row = rows.find((r) => String(r[0] || "").replace(/\s/g, "") === code);
-    if (!row) return null;
-    const marginBalance = cellNumberOrZero(row[6] ?? row[4]);
-    const marginLimit = cellNumber(row[9]);
-    const shortBalance = cellNumberOrZero(row[14] ?? row[10]);
-    const shortLimit = cellNumber(row[17]);
-    const tableDate = data?.tables?.[0]?.date || data?.date || "";
-    return {
-      date: rocDateToStr(tableDate),
-      marginBuy: cellNumberOrZero(row[3] ?? row[2]),
-      marginSell: cellNumberOrZero(row[4] ?? row[3]),
-      marginBalance,
-      marginLimit,
-      marginUsagePct: calcUsagePercent(marginBalance, marginLimit, row[8]),
-      shortSell: cellNumberOrZero(row[11] ?? row[8]),
-      shortBuy: cellNumberOrZero(row[12] ?? row[9]),
-      shortBalance,
-      shortLimit,
-      shortUsagePct: calcUsagePercent(shortBalance, shortLimit, row[16]),
-      source: `TPEx 融資融券 (${rocDateToStr(tableDate) || "最新"})`
-    };
+    return chipDataNormalizers().parseMarginTpex(text, code);
   } catch (_) { return null; }
 }
 
 function parseMarginTPExOpenAPI(data, code) {
-  const row = data.find((r) => String(r.SecuritiesCompanyCode || r.Code || r["代號"] || "").trim() === code);
-  if (!row) return null;
-  const marginBalance = cellNumberOrZero(row.MarginPurchaseBalance);
-  const marginLimit = cellNumber(row.MarginPurchaseQuota);
-  const shortBalance = cellNumberOrZero(row.ShortSaleBalance);
-  const shortLimit = cellNumber(row.ShortSaleQuota);
-  return {
-    date: rocDateToStr(row.Date || row["資料日期"] || ""),
-    marginBuy: cellNumberOrZero(row.MarginPurchase),
-    marginSell: cellNumberOrZero(row.MarginSales),
-    marginBalance,
-    marginLimit,
-    marginUsagePct: calcUsagePercent(marginBalance, marginLimit, row.MarginPurchaseUtilizationRate),
-    shortSell: cellNumberOrZero(row.ShortSale),
-    shortBuy: cellNumberOrZero(row.ShortConvering ?? row.ShortCovering),
-    shortBalance,
-    shortLimit,
-    shortUsagePct: calcUsagePercent(shortBalance, shortLimit, row.ShortSaleUtilizationRate),
-    source: "TPEx OpenAPI 融資融券"
-  };
+  try {
+    return chipDataNormalizers().parseMarginTpexOpenApi(data, code);
+  } catch (_) {
+    return null;
+  }
 }
 
 async function fetchForeignOwnership(stock) {
@@ -19823,32 +19281,11 @@ async function fetchTDCC(stock) {
 }
 
 function parseTDCC(html, code) {
-  if (!html || html.length < 100) return null;
-  // 用 inert DOMParser 解析 TDCC HTML，不把遠端內容寫入目前頁面的 DOM。
-  const parsed = typeof DOMParser !== "undefined"
-    ? new DOMParser().parseFromString(String(html), "text/html")
-    : null;
-  const rows = parsed ? [...parsed.querySelectorAll("table tr")].slice(1) : []; // skip header
-  if (!rows.length) return null;
-  const tiers = [];
-  let totalShares = 0;
-  let whaleShares = 0;
-  for (const row of rows) {
-    const cells = [...row.querySelectorAll("td")].map((td) => td.textContent.trim());
-    if (cells.length < 6) continue;
-    const rangeLabel = cells[1] || cells[0];
-    const holders = toNumber(cells[2]) || 0;
-    const shares = toNumber(cells[4].replace(/,/g, "")) || 0;
-    const pct = toNumber(cells[5]) || 0;
-    tiers.push({ range: rangeLabel, holders, shares, pct });
-    totalShares += shares;
-    // 持股 400 張（40,000 股）以上視為主力/大戶
-    if (rangeLabel && /400|1000|2000|4000|1萬|10萬/i.test(rangeLabel.replace(/,/g, ""))) {
-      whaleShares += shares;
-    }
+  try {
+    return chipDataNormalizers().parseTdccHtml(html, code);
+  } catch (_) {
+    return null;
   }
-  const whalePercent = totalShares > 0 ? (whaleShares / totalShares * 100) : null;
-  return { tiers, totalShares, whalePercent, source: "TDCC 集保持股分布" };
 }
 
 // v7.8 Feature 4：TDCC 大戶持股歷史趨勢面板（個股研究頁顯示 52 週趨勢圖）
@@ -19910,117 +19347,24 @@ function taifexDateLabel(date = new Date()) {
 }
 
 function taifexPositionColumnIndexes(headerParts) {
-  const header = Array.isArray(headerParts) ? headerParts.map((cell) => stripHtml(cell).replace(/\s+/g, "")) : [];
-  const findIndex = (...needles) => header.findIndex((cell) => needles.every((needle) => cell.includes(needle)));
-  const columns = {
-    date: findIndex("日期"),
-    productName: findIndex("商品名稱"),
-    identity: findIndex("身份別"),
-    longTrade: findIndex("多方", "交易", "口數"),
-    shortTrade: findIndex("空方", "交易", "口數"),
-    netTrade: findIndex("多空", "交易", "淨額"),
-    longOI: findIndex("多方", "未平倉", "口數"),
-    shortOI: findIndex("空方", "未平倉", "口數"),
-    netOI: findIndex("多空", "未平倉", "淨額")
-  };
-  const required = ["date", "productName", "identity", "longOI", "shortOI", "netOI"];
-  return required.every((key) => columns[key] >= 0) ? columns : null;
-}
-
-function taifexPositionCell(parts, columns, key, fallbackIndex) {
-  const index = columns && columns[key] >= 0 ? columns[key] : fallbackIndex;
-  return parts[index];
+  return chipDataNormalizers().taifexPositionColumnIndexes(headerParts);
 }
 
 function normalizeTaifexPositionRow(parts, index, columns = null) {
-  const identity = String(taifexPositionCell(parts, columns, "identity", 2) || "").trim();
-  const role = identity.includes("外資") ? "foreign"
-    : identity.includes("投信") ? "trust"
-    : identity.includes("自營") ? "dealer"
-    : index === 2 ? "foreign"
-    : index === 1 ? "trust"
-    : index === 0 ? "dealer"
-    : "";
-  if (!role) return null;
-  const longTrade = toNumber(taifexPositionCell(parts, columns, "longTrade", 3)) || 0;
-  const shortTrade = toNumber(taifexPositionCell(parts, columns, "shortTrade", 5)) || 0;
-  const netTrade = toNumber(taifexPositionCell(parts, columns, "netTrade", 7));
-  const longOI = toNumber(taifexPositionCell(parts, columns, "longOI", 9)) || 0;
-  const shortOI = toNumber(taifexPositionCell(parts, columns, "shortOI", 11)) || 0;
-  const netOI = toNumber(taifexPositionCell(parts, columns, "netOI", 13));
-  return {
-    role,
-    identity,
-    date: String(taifexPositionCell(parts, columns, "date", 0) || "").trim(),
-    productName: String(taifexPositionCell(parts, columns, "productName", 1) || "").trim(),
-    long: longOI,
-    short: shortOI,
-    net: netOI !== null ? netOI : longOI - shortOI,
-    longTrade,
-    shortTrade,
-    netTrade: netTrade !== null ? netTrade : longTrade - shortTrade
-  };
+  return chipDataNormalizers().normalizeTaifexPositionRow(parts, index, columns);
 }
 
 function parseTaifexCSV(csv, product = null) {
-  if (!csv || csv.length < 50) return null;
-  const lines = String(csv).split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const result = { rows: [], source: "TAIFEX 三大法人期貨未平倉", commodityId: product?.commodityId || "", productLabel: product?.label || "" };
-  let rowIndex = 0;
-  let columns = null;
-  for (const line of lines) {
-    const parts = parseCsvLine(line);
-    const joined = parts.join("");
-    if (/日期|身份別|商品名稱/.test(joined)) {
-      columns = taifexPositionColumnIndexes(parts);
-      if (!columns) throw new Error("TAIFEX 期貨 CSV 表頭無法定位未平倉欄位");
-      continue;
-    }
-    if (parts.length < 14) continue;
-    const row = normalizeTaifexPositionRow(parts, rowIndex, columns);
-    rowIndex += 1;
-    if (!row) continue;
-    result.rows.push(row);
-    result[row.role] = {
-      long: row.long,
-      short: row.short,
-      net: row.net,
-      longTrade: row.longTrade,
-      shortTrade: row.shortTrade,
-      netTrade: row.netTrade,
-      identity: row.identity
-    };
-    result.sourceDate = row.date || result.sourceDate || "";
-    result.productName = row.productName || result.productName || product?.label || "";
+  try {
+    return chipDataNormalizers().parseTaifexCsv(csv, product);
+  } catch (error) {
+    if (error?.code === "SOURCE_ZERO_ROWS") return null;
+    throw error;
   }
-  return result.rows.length ? result : null;
 }
 
 function normalizeTaifexQuoteRow(row, product, marketType = "0") {
-  if (!row || typeof row !== "object") return null;
-  const symbolId = String(row.SymbolID || "");
-  const expectedSuffix = marketType === "1" ? "-M" : "-F";
-  if (!symbolId.includes(expectedSuffix)) return null;
-  const volume = toNumber(row.CTotalVolume) || 0;
-  return {
-    symbolId,
-    name: String(row.DispCName || product?.label || "").trim(),
-    last: toNumber(row.CLastPrice),
-    change: toNumber(row.CDiff),
-    pct: toNumber(row.CDiffRate),
-    open: toNumber(row.COpenPrice),
-    high: toNumber(row.CHighPrice),
-    low: toNumber(row.CLowPrice),
-    ref: toNumber(row.CRefPrice),
-    volume,
-    openInterest: toNumber(row.OpenInterest),
-    bid: toNumber(row.CBestBidPrice || row.CBidPrice1),
-    ask: toNumber(row.CBestAskPrice || row.CAskPrice1),
-    sourceDate: parseCompactDay(row.CDate),
-    sourceTime: String(row.CTime || "").replace(/^(\d{2})(\d{2})(\d{2})$/, "$1:$2:$3"),
-    session: marketType === "1" ? "盤後交易" : "一般交易",
-    source: marketType === "1" ? "TAIFEX 盤後交易即時行情 API" : "TAIFEX 即時行情 API"
-  };
+  return chipDataNormalizers().normalizeTaifexQuoteRow(row, product, marketType);
 }
 
 async function fetchTaifexQuote(product, marketType = "0") {
@@ -20829,7 +20173,7 @@ async function quickUpdateQuotes() {
     const batch = batches[bi];
     let batchMap;
     try {
-      const text = await fetchText(twseMisBatchUrl(batch));
+      const text = await fetchText(twseMisBatchUrl(batch), providerRequestOptions("twse"));
       batchMap = parseTwseBatchQuotes(text, batch);
     } catch (_) { batchMap = new Map(); }
     for (const stock of batch) {
@@ -20930,7 +20274,7 @@ async function updateAllStocks() {
     setStatus(`MIS 批次 ${bi + 1}/${batches.length}（${batch.length} 檔）...`);
     let batchMap;
     try {
-      const text = await fetchText(twseMisBatchUrl(batch));
+      const text = await fetchText(twseMisBatchUrl(batch), providerRequestOptions("twse"));
       batchMap = parseTwseBatchQuotes(text, batch);
     } catch (_) {
       batchMap = new Map();
@@ -20958,7 +20302,7 @@ async function updateAllStocks() {
     const fallbacks = await runConcurrent(yahooRetry, async (stock) => {
       for (const url of yahooUrls(stock)) {
         try {
-          const text = await fetchText(url);
+          const text = await fetchText(url, providerRequestOptions("yahoo"));
           return parseYahooQuote(text, stock);
         } catch (_) {}
       }
@@ -22504,29 +21848,31 @@ function queueBackgroundFullUpdateAttempt(attempt = 0, delayMs = BACKGROUND_FULL
 
 function runManualFullUpdate() {
   if (isPublishedWebRuntime()) {
-    quickUpdateQuotes().catch((error) => {
+    return quickUpdateQuotes().catch((error) => {
       setStatus(`網站快照讀取失敗：${error?.message || String(error)}`, "error");
+      return { status: "error", error: error?.message || String(error) };
     });
-    return;
   }
   if (_idleAutoUpdateRunning || state.busy) {
     setStatus("已有更新任務執行中，請稍後再手動啟動。", "warn");
-    return;
+    return Promise.resolve({ status: "busy" });
   }
   _idleAutoUpdateCancelled = false;
-  runIdleAutoUpdate({ mode: "manual" }).catch((error) => {
+  return runIdleAutoUpdate({ mode: "manual" }).catch((error) => {
     setStatus(`收盤後同步失敗：${error?.message || String(error)}`, "error");
+    return { status: "error", error: error?.message || String(error) };
   });
 }
 
 async function runIdleAutoUpdate(options = {}) {
-  if (_idleAutoUpdateRunning) return;
+  if (_idleAutoUpdateRunning) return { status: "busy", completed: [], failed: [] };
   stopIdleAutoUpdateTimer();
   _idleAutoUpdateRunning = true;
   _idleAutoUpdateCancelled = false;
   const mode = options.mode || "manual";
   const completed = [];
   const failed = [];
+  let finalStatus = "error";
   state.autoUpdateLog = normalizeAutoUpdateLog({
     status: "running",
     mode,
@@ -22541,7 +21887,8 @@ async function runIdleAutoUpdate(options = {}) {
     const startedAt = new Date().toISOString();
     setAutoUpdateLogPatch({ status: "running", currentKey: def.key, currentLabel: def.label });
     markAutoUpdateStep(def.key, { status: "running", startedAt, finishedAt: null, durationMs: null, detail: "", source: "", error: "" });
-    setStatus(`${mode === "manual" ? "收盤後同步" : "背景同步"}：${def.label}...`, "warn");
+    const runLabel = mode === "manual" ? "收盤後同步" : mode === "scheduled" ? "自動收盤同步" : "背景同步";
+    setStatus(`${runLabel}：${def.label}...`, "warn");
     try {
       await def.run();
       completed.push(def.label);
@@ -22577,6 +21924,7 @@ async function runIdleAutoUpdate(options = {}) {
     await saveState();
     render();
     if (_idleAutoUpdateCancelled) {
+      finalStatus = "cancelled";
       setAutoUpdateLogPatch({
         status: "cancelled",
         finishedAt: new Date().toISOString(),
@@ -22586,6 +21934,7 @@ async function runIdleAutoUpdate(options = {}) {
       });
       setStatus(`收盤後同步已停止；已完成 ${completed.length} 個步驟。`, "warn");
     } else if (failed.length) {
+      finalStatus = "warn";
       setAutoUpdateLogPatch({
         status: "warn",
         finishedAt: new Date().toISOString(),
@@ -22595,6 +21944,7 @@ async function runIdleAutoUpdate(options = {}) {
       });
       setStatus(`收盤後同步完成但有 ${failed.length} 個核心步驟待重試：${failed.slice(0, 2).join("；")}${failed.length > 2 ? "…" : ""}`, "warn");
     } else {
+      finalStatus = "completed";
       setAutoUpdateLogPatch({
         status: "completed",
         finishedAt: new Date().toISOString(),
@@ -22610,6 +21960,82 @@ async function runIdleAutoUpdate(options = {}) {
     persistStateSilently("收盤後同步流程");
     renderHero();
   }
+  return { status: finalStatus, completed, failed };
+}
+
+let _scheduledAfterCloseRequestId = "";
+
+function sendAfterCloseRuntimeMessage(message) {
+  if (isPublishedWebRuntime() || typeof chrome === "undefined" || !chrome.runtime?.sendMessage) {
+    return Promise.resolve(null);
+  }
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(message, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn("after-close runtime message failed", chrome.runtime.lastError.message);
+        resolve(null);
+        return;
+      }
+      resolve(response || null);
+    });
+  });
+}
+
+async function runScheduledAfterCloseSync(request) {
+  const requestId = String(request?.id || "");
+  if (!requestId || requestId === _scheduledAfterCloseRequestId || isPublishedWebRuntime()) return false;
+  if (_idleAutoUpdateRunning || state.busy) {
+    window.setTimeout(() => runScheduledAfterCloseSync(request), 15000);
+    return false;
+  }
+  _scheduledAfterCloseRequestId = requestId;
+  await sendAfterCloseRuntimeMessage({ type: "after-close-sync-ack", requestId });
+  renderAfterCloseScheduleStatus();
+  try {
+    const result = await runIdleAutoUpdate({ mode: "scheduled" });
+    const ok = ["completed", "warn"].includes(result?.status);
+    await sendAfterCloseRuntimeMessage({
+      type: "after-close-sync-result",
+      requestId,
+      ok,
+      result: result?.status || "unknown",
+      error: ok ? "" : (result?.failed || []).join("；") || "收盤後同步未完成"
+    });
+    return ok;
+  } catch (error) {
+    await sendAfterCloseRuntimeMessage({
+      type: "after-close-sync-result",
+      requestId,
+      ok: false,
+      result: "error",
+      error: error?.message || String(error)
+    });
+    return false;
+  } finally {
+    renderAfterCloseScheduleStatus();
+  }
+}
+
+function bindAfterCloseSyncRuntime() {
+  if (isPublishedWebRuntime() || typeof chrome === "undefined" || !chrome.runtime?.onMessage) return;
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message?.type !== "after-close-sync-request") return false;
+    runScheduledAfterCloseSync(message.request).catch((error) => {
+      console.warn("scheduled after-close sync failed", error);
+    });
+    return false;
+  });
+  sendAfterCloseRuntimeMessage({ type: "after-close-sync-ready" }).then((response) => {
+    const protocol = globalThis.TwStockAfterCloseProtocol;
+    if (response?.request
+        && response.request.dateKey === protocol?.dateKey()
+        && ["pending", "running"].includes(response.request.status)) {
+      runScheduledAfterCloseSync(response.request).catch((error) => {
+        console.warn("pending after-close sync failed", error);
+      });
+    }
+    renderAfterCloseScheduleStatus();
+  });
 }
 
 function toggleAutoRefresh() {
@@ -22662,6 +22088,7 @@ function renderHero() {
       ? `<span class="chip flat" title="公開網站只讀 GitHub Actions 同來源延遲快照">Web 延遲快照｜不自動跨站</span>`
       : `<span class="chip flat" title="開頁只讀本機快取；收盤後按一次同步">收盤後研究｜開頁不自動抓取</span>`;
   }
+  renderAfterCloseScheduleStatus();
 }
 
 function renderSidebarPoolManager() {
@@ -32983,45 +32410,6 @@ function stockChipStrengthContext(stock, technical = null) {
   const shortMarginRatio = marginBalance && marginBalance > 0 && shortBalance !== null ? shortBalance / marginBalance * 100 : null;
   const avgVolumeLots = toNumber(stockLiquidityInfo(code)?.avgVolume);
   const marginDeltaIntensity = avgVolumeLots && marginDelta !== null ? marginDelta / avgVolumeLots * 100 : null;
-  const positives = [];
-  const risks = [];
-
-  if (chip.level === "good") positives.push("Chip Score 偏多");
-  if (bigMoney.level === "good") positives.push(bigMoney.label);
-  if (inst5.totalNet !== null && inst5.totalNet > 0 && inst20.totalNet !== null && inst20.totalNet > 0) positives.push("法人短中期同步買超");
-  if (foreignTrend.signal === "accumulation") positives.push("外資持股累積");
-  if (tdccTrend.deltaPp !== null && tdccTrend.deltaPp > 0) positives.push("TDCC 大戶比率增加");
-  if (marginUsage !== null && marginUsage <= 20) positives.push("融資使用率偏低");
-  if (marginDelta !== null && marginDelta < 0 && (pricePct === null || pricePct >= -1)) positives.push("融資下降但價格未明顯轉弱");
-  if (volumeRegime.available && volumeRegime.volumeRatio20 !== null && volumeRegime.volumeRatio20 >= 1.3 && pricePct !== null && pricePct > 0 && inst5.totalNet !== null && inst5.totalNet > 0) positives.push("放量上漲且法人買超");
-
-  if (chip.level === "danger" || chip.level === "warn") risks.push(`Chip Score ${chipScoreLevelLabel(chip.level)}`);
-  if (bigMoney.level === "danger" || bigMoney.level === "warn") risks.push(bigMoney.label);
-  if (retail.level === "danger" || retail.level === "warn") risks.push(retail.label);
-  if (inst5.totalNet !== null && inst5.totalNet < 0 && inst20.totalNet !== null && inst20.totalNet < 0) risks.push("法人短中期同步賣超");
-  if (marginUsage !== null && marginUsage >= 80) risks.push("融資使用率過熱");
-  else if (marginUsage !== null && marginUsage >= 60) risks.push("融資使用率偏高");
-  if (marginDelta !== null && marginDelta > 0 && pricePct !== null && pricePct < 0) risks.push("融資增加但價格下跌");
-  if (marginDelta !== null && marginDelta > 0 && volumeRegime.available && volumeRegime.volumeRatio20 !== null && volumeRegime.volumeRatio20 < 0.8) risks.push("融資增加但量縮");
-  if (volumeRegime.available && volumeRegime.volumeRatio20 !== null && volumeRegime.volumeRatio20 >= 1.5 && pricePct !== null && pricePct < 0) risks.push("放量下跌");
-  if (shortMarginRatio !== null && shortMarginRatio >= 40) risks.push("券資比偏高，空方籌碼擁擠");
-
-  let tone = "flat";
-  let label = "籌碼中性，等待資料同步";
-  if (risks.some((text) => /過熱|下跌|賣超|撤退|轉弱|偏熱|偏空/.test(text))) {
-    tone = "down";
-    label = risks.slice(0, 2).join("；");
-  } else if (positives.length >= 2 && !risks.length) {
-    tone = "up";
-    label = positives.slice(0, 2).join("；");
-  } else if (positives.length > risks.length) {
-    tone = "up";
-    label = positives.slice(0, 2).join("；");
-  } else if (risks.length) {
-    tone = "down";
-    label = risks.slice(0, 2).join("；");
-  }
-
   const sourceParts = [
     inst?.date ? `法人 ${inst.date}` : "",
     marg?.date ? `資券 ${marg.date}` : "",
@@ -33029,11 +32417,35 @@ function stockChipStrengthContext(stock, technical = null) {
     tdccTrend.last?.date ? `TDCC ${tdccTrend.last.date}` : ""
   ].filter(Boolean);
   const dataItems = [inst, marg, foreignTrend?.latest, tdccTrend?.last].filter(Boolean).length;
+  const summary = globalThis.TwStockTraderWorkspace?.summarizeChipStrength({
+    chipLevel: chip.level,
+    chipLevelLabel: chipScoreLevelLabel(chip.level),
+    bigMoneyLevel: bigMoney.level,
+    bigMoneyLabel: bigMoney.label,
+    retailLevel: retail.level,
+    retailLabel: retail.label,
+    inst5TotalNet: inst5.totalNet,
+    inst20TotalNet: inst20.totalNet,
+    foreignSignal: foreignTrend.signal,
+    tdccDeltaPp: tdccTrend.deltaPp,
+    marginUsage,
+    marginDelta,
+    pricePct,
+    volumeAvailable: volumeRegime.available,
+    volumeRatio20: volumeRegime.volumeRatio20,
+    shortMarginRatio,
+    sourceParts,
+    dataItems
+  }) || {
+    label: "籌碼資料待更新",
+    tone: "flat",
+    positives: [],
+    risks: [],
+    sourceText: sourceParts.join(" | ") || "主要籌碼資料待更新",
+    confidence: dataItems >= 3 ? "medium" : dataItems >= 1 ? "low" : "very-low"
+  };
   return {
-    label,
-    tone,
-    positives,
-    risks,
+    ...summary,
     chip,
     bigMoney,
     retail,
@@ -33048,9 +32460,7 @@ function stockChipStrengthContext(stock, technical = null) {
     marginUsage,
     shortMarginRatio,
     marginDeltaIntensity,
-    pricePct,
-    sourceText: sourceParts.join(" | ") || "主要籌碼資料待更新",
-    confidence: dataItems >= 3 ? "medium" : dataItems >= 1 ? "low" : "very-low"
+    pricePct
   };
 }
 
@@ -44637,12 +44047,241 @@ function renderMarketSecondaryPanels() {
   }
 }
 
+function traderDeskCoverage(stock, technical, quote, valuation, rev) {
+  const inst = (state.institutional || {})[stock.code] || null;
+  const margin = (state.margin || {})[stock.code] || null;
+  const quoteFreshness = quoteFreshnessInfo(quote);
+  const workspace = globalThis.TwStockTraderWorkspace;
+  if (!workspace?.buildCoverage) {
+    return { ready: 0, total: 6, status: "bad", missing: ["報價", "日線", "法人", "資券", "營收", "估值"] };
+  }
+  return workspace.buildCoverage({
+    quote: {
+      hasPrice: Boolean(quote && toNumber(quote.price) !== null),
+      freshnessLevel: quoteFreshness.level,
+      freshnessLabel: quoteFreshness.label
+    },
+    technical: {
+      ready: technical?.ready === true,
+      ageDays: sourceDateAgeDays(technical?.latest?.date || "")
+    },
+    institutional: {
+      available: Boolean(inst),
+      ageDays: sourceDateAgeDays(inst?.date || inst?.sourceDate || "")
+    },
+    margin: {
+      available: Boolean(margin),
+      ageDays: sourceDateAgeDays(margin?.date || margin?.sourceDate || "")
+    },
+    revenueAvailable: Boolean(rev),
+    valuation: {
+      available: Boolean(valuation),
+      ageDays: sourceDateAgeDays(valuation?.date || valuation?.sourceDate || valuation?.asOf || "")
+    }
+  });
+}
+
+function traderDeskStockOptions(currentStock) {
+  const holdingCodes = new Set((state.holdings || []).map((entry) => String(entry?.code || "")).filter(Boolean));
+  const rows = [currentStock, ...WATCHLIST.filter((stock) => holdingCodes.has(stock.code) && stock.code !== currentStock.code)];
+  return rows.map((stock) => `
+    <option value="${escapeHtml(stock.code)}" ${stock.code === currentStock.code ? "selected" : ""}>
+      ${escapeHtml(stock.code)} ${escapeHtml(stock.name)}
+    </option>`).join("");
+}
+
+function renderTraderDesk() {
+  const container = $("traderDeskContent");
+  if (!container) return;
+  const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0];
+  const quote = quoteFor(stock.code);
+  const valuation = valuationFor(stock.code);
+  const rev = revenueFor(stock.code);
+  const technical = calculateTechnical(stock.code);
+  const rsMulti = calculateRSMulti(stock.code);
+  const price = latestValue(stock);
+  const tradePlan = buildTradePlan(stock, technical, price, quote, rsMulti, rev);
+  const analystLens = buildAnalystLens(stock, valuation, rev, rsMulti);
+  const beta = calculateBeta(stock.code);
+  const vol = volumeAnomalyInfo(stock.code);
+  const scoreParts = compositeScore(stock.code, null);
+  const total = scoreParts.ma + scoreParts.rs + scoreParts.vol + scoreParts.chip + scoreParts.rev;
+  const activeEtfSignal = activeEtfStockSignal(stock.code);
+  const dispositionRisk = dispositionRiskSignal(stock.code, { vol, quote });
+  const scale = stockScaleInfo(stock);
+  const radar = buildTradingRadarScore({
+    stock,
+    sc: scoreParts,
+    total,
+    rsMulti,
+    beta,
+    vol,
+    rev,
+    quote,
+    valuation,
+    technical,
+    tradePlan,
+    analystLens,
+    activeEtfSignal,
+    dispositionRisk,
+    scale
+  });
+  const execution = buildExecutionInfo(stock, tradePlan, radar, technical, quote);
+  const chip = stockChipStrengthContext(stock, technical);
+  const coverage = traderDeskCoverage(stock, technical, quote, valuation, rev);
+  const technicalLabel = technical?.ready
+    ? technical.tradingState?.label || technical.playbook?.trendLabel || technical.signal || "技術待判讀"
+    : technical?.message || "日線待更新";
+  const tradingStateKey = technical?.tradingState?.state || "";
+  const technicalTone = globalThis.TwStockTraderWorkspace?.technicalTone({
+    ready: technical?.ready === true,
+    tradingState: tradingStateKey,
+    trendLabel: technical?.playbook?.trendLabel || "",
+    score: technical?.score
+  }) || "flat";
+  const technicalNote = technical?.ready
+    ? `RSI ${formatNumber(technical.rsi14, 0)} · MA20 ${formatNumber(technical.ma20)} · ${escapeHtml(technical.latest?.date || "日期待補")}`
+    : "至少需要 20 根日線；缺資料不視為低風險。";
+  const quoteFreshness = quoteFreshnessInfo(quote);
+  const quoteSource = quote
+    ? `${quote.source || "報價快取"} · ${quote.sourceDate || quote.fetchedAt || "日期待補"} · ${quoteFreshness.label}`
+    : "尚無報價來源";
+  const rrTone = globalThis.TwStockTraderWorkspace?.rewardRiskTone(tradePlan.rr) || "flat";
+  const missingText = coverage.missing.length ? `缺：${coverage.missing.join("、")}` : "六層核心資料已覆蓋";
+
+  container.innerHTML = `
+    <section class="panel trader-desk" data-trader-desk data-stock-code="${escapeHtml(stock.code)}">
+      <div class="trader-desk-head">
+        <div>
+          <div class="trader-desk-kicker">Trader workspace · 先判斷，再看細節</div>
+          <h1 class="trader-desk-title">${escapeHtml(stock.code)} ${escapeHtml(stock.name)}</h1>
+          <p class="trader-desk-meta">${escapeHtml(quoteSource)}｜研究排序，不是買賣保證；盤中執行前仍需核對即時價量。</p>
+        </div>
+        <select id="traderStockSelect" class="select trader-stock-select" aria-label="操盤首頁選擇個股">
+          ${traderDeskStockOptions(stock)}
+        </select>
+      </div>
+
+      <div class="trader-decision-grid">
+        <article class="trader-decision-card trader-price-card">
+          <span>現價 / 今日</span>
+          <strong>${formatNumber(price)}</strong>
+          <small class="trader-price-change ${changeClass(quote?.pct)}">${quote ? `${formatNumber(quote.change)} / ${formatPct(quote.pct)}` : "報價待更新"}</small>
+        </article>
+        <article class="trader-decision-card">
+          <span>技術多空</span>
+          <strong class="${technicalTone}">${escapeHtml(technicalLabel)}</strong>
+          <p class="trader-decision-note">${technicalNote}</p>
+        </article>
+        <article class="trader-decision-card">
+          <span>籌碼強弱</span>
+          <strong class="${escapeHtml(chip.tone || "flat")}">${escapeHtml(chip.label)}</strong>
+          <p class="trader-decision-note">${escapeHtml(chip.sourceText)} · confidence ${escapeHtml(chip.confidence)}</p>
+        </article>
+        <article class="trader-decision-card">
+          <span>執行結論</span>
+          <strong class="${escapeHtml(execution.tone)}">${escapeHtml(execution.status)} · 雷達 ${formatNumber(radar.score, 0)}</strong>
+          <p class="trader-decision-note">${escapeHtml(execution.conclusion)}</p>
+        </article>
+      </div>
+
+      <div class="trader-plan-strip">
+        <div class="trader-level"><span>入場帶</span><strong>${escapeHtml(execution.entry || "-")}</strong></div>
+        <div class="trader-level trader-stop"><span>停損</span><strong>${tradePlan.stopPrice !== null ? formatNumber(tradePlan.stopPrice) : "-"}</strong></div>
+        <div class="trader-level trader-target"><span>目標</span><strong>${tradePlan.targetPrice !== null ? formatNumber(tradePlan.targetPrice) : "-"}</strong></div>
+        <div class="trader-readiness" data-status="${coverage.status}">
+          <span>R:R / 資料完整度</span>
+          <strong><span class="${rrTone}">${tradePlan.rr !== null ? `${tradePlan.rr.toFixed(2)}R` : "-"}</span> · ${coverage.ready}/${coverage.total}</strong>
+        </div>
+      </div>
+
+      <div class="trader-action-row">
+        <button class="secondary-btn" type="button" data-tab-target="technical">看線型與籌碼</button>
+        <button class="ghost-btn" type="button" data-tab-target="report">開完整決策</button>
+        <button class="ghost-btn" type="button" data-tab-target="screener">回標的雷達</button>
+        <p class="trader-blocker"><strong>目前限制：</strong>${escapeHtml(execution.blocker || tradePlan.actionNote || missingText)}｜${escapeHtml(missingText)}</p>
+      </div>
+    </section>`;
+}
+
+function renderSourceCatalogPanel() {
+  const container = $("sourceCatalogPanel");
+  if (!container) return;
+  const catalog = globalThis.TwStockSourceCatalog;
+  if (!catalog) {
+    container.innerHTML = `<div class="empty" style="margin-top:14px;">來源目錄模組尚未載入。</div>`;
+    return;
+  }
+  const validation = catalog.validate();
+  const summary = catalog.summary();
+  const rows = catalog.list();
+  container.innerHTML = `
+    <section class="panel-lite" data-source-catalog style="margin-top:14px;">
+      <div class="section-head">
+        <div>
+          <h3>決策資料來源目錄</h3>
+          <p>共 ${formatNumber(summary.domains, 0)} 個資料領域、${formatNumber(summary.tier1Sources, 0)} 個官方入口；每筆衍生資料應保留 ${escapeHtml(summary.requiredProvenanceFields.join(" / "))}。</p>
+        </div>
+        <span class="chip ${validation.ok ? "good" : "warn"}">${validation.ok ? "schema 通過" : `待修 ${validation.errors.length}`}</span>
+      </div>
+      <div class="source-catalog-grid">
+        ${rows.map((row) => `
+          <article class="source-catalog-card" data-source-domain="${escapeHtml(row.id)}">
+            <h4>${escapeHtml(row.label)}</h4>
+            <p><strong>用途：</strong>${escapeHtml(row.decisionUse)}</p>
+            <p><strong>節奏：</strong>${escapeHtml(row.cadence)}｜TTL ${formatNumber(row.ttlMinutes, 0)} 分</p>
+            <p><strong>Extension：</strong>${escapeHtml(row.extensionCapability)}<br><strong>Web：</strong>${escapeHtml(row.webCapability)}</p>
+            <p><strong>缺值規則：</strong>${escapeHtml(row.missingPolicy)}</p>
+            <div class="link-row">
+              ${row.canonical.slice(0, 3).map((source) => `<a class="link-chip" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">Tier ${source.tier} · ${escapeHtml(source.label)}</a>`).join("")}
+              ${row.fallback.slice(0, 1).map((source) => `<a class="link-chip" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">fallback · ${escapeHtml(source.label)}</a>`).join("")}
+            </div>
+          </article>`).join("")}
+      </div>
+    </section>`;
+}
+
+function renderAfterCloseScheduleStatus() {
+  const container = $("afterCloseScheduleStatus");
+  if (!container) return;
+  if (isPublishedWebRuntime()) {
+    container.textContent = "Web｜Actions 延遲快照";
+    container.title = "公開網站不直接跨站抓資料；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。";
+    return;
+  }
+  const protocol = globalThis.TwStockAfterCloseProtocol;
+  if (!protocol || typeof chrome === "undefined" || !chrome.storage?.local) {
+    container.textContent = "排程不可用";
+    return;
+  }
+  chrome.storage.local.get(protocol.storageKey, (result) => {
+    if (chrome.runtime?.lastError) {
+      container.textContent = "排程狀態待重試";
+      return;
+    }
+    const scheduler = protocol.normalizeState(result?.[protocol.storageKey]);
+    const request = scheduler.request;
+    const statusLabels = {
+      pending: "等待頁面",
+      running: "同步中",
+      completed: "今日完成",
+      failed: "今日失敗",
+      skipped: "今日略過"
+    };
+    container.textContent = request?.dateKey === protocol.dateKey()
+      ? `15:00 盤後同步 · ${statusLabels[request.status] || request.status}`
+      : "15:00 盤後同步 · 已啟用";
+    container.title = `台北時間每日 15:00；下次排程 ${scheduler.nextScheduledAt ? formatDateTime(scheduler.nextScheduledAt) : "待建立"}。裝置休眠不會被鬧鐘喚醒，會在喚醒後補送。`;
+  });
+}
+
 function renderActiveTab(tab = state.activeTab || "market") {
   const active = normalizeTabTarget(tab);
   const tabStartedAt = performanceDiagnosticsNow();
   try {
     if (state.activeTab === "risk") state.activeTab = "macro";
     if (active === "market") {
+      renderSection("操盤首頁", renderTraderDesk, "traderDeskContent");
       renderSection("大盤總覽", renderMarketDashboardTab, "marketDashboardContent");
       // 大盤主內容採逐 frame 分段渲染；完成後才由 renderMarketDashboardTab 接續次要面板。
     } else if (active === "overview") {
@@ -44677,6 +44316,7 @@ function renderActiveTab(tab = state.activeTab || "market") {
       renderSection("總體經濟", renderMacroTab, "macroContent");
     } else if (active === "help") {
       renderSection("資料可靠度", renderSourceReliabilityPanel, "sourceReliabilityPanel");
+      renderSection("來源目錄", renderSourceCatalogPanel, "sourceCatalogPanel");
       renderSection("效能診斷", renderPerformanceDiagnosticsPanel, "performanceDiagnosticsPanel");
       renderSection("版本日誌", renderChangelogPanel, "changelogMount");
     }
@@ -46051,6 +45691,14 @@ function bindEvents() {
   });
 
   document.body.addEventListener("change", (event) => {
+    if (event.target.id === "traderStockSelect") {
+      const code = String(event.target.value || "");
+      if (!STOCK_MAP.has(code)) return;
+      state.selectedCode = code;
+      persistStateSilently("操盤首頁選股");
+      render({ scope: "active" });
+      return;
+    }
     if (event.target.id === "activeEtfImportInput") {
       const file = event.target.files && event.target.files[0];
       importActiveEtfSnapshotFile(file);
@@ -46556,8 +46204,11 @@ async function init() {
   pruneSnapshots();
   bindEvents();
   requestNotificationPermission();
+  bindAfterCloseSyncRuntime();
   _startupRenderedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
   render({ immediate: true });
+  // v19 作戰首頁第一屏需要日線／籌碼；先顯示核心快取，再非阻塞載入 technical shard 並重畫。
+  ensureBundledStateDomainForTab(state.activeTab || "market");
   setStatus(isPublishedWebRuntime()
     ? `${cachedStateSummary()} 公開網站行情會讀取 GitHub Actions 延遲快照；不直接跨站抓取資料。`
     : `${cachedStateSummary()} 若要更新才需要再按更新；平常重新打開 extension 會先讀本機快取。`);

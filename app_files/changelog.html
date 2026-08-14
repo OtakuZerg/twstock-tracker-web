@@ -1,5 +1,21 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v19.0</strong>
+              <span>2026-08-13</span>
+              <span class="cl-badge major">Trader-first Rebuild</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>作戰首頁</strong>：第一屏直接顯示選取個股的現價、技術多空、籌碼強弱、執行結論、入場、停損、目標、R:R 與資料完整度。</li>
+              <li><strong>導覽收斂</strong>：頂層改為作戰首頁、標的雷達、個股決策、技術籌碼與資料健康；既有研究功能保留在「更多研究」，尚未刪除。</li>
+              <li><strong>來源目錄</strong>：建立 13 個決策資料領域，並沿用 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正。</li>
+              <li><strong>15:00 排程</strong>：Extension 以 Chrome alarms 建立台北時間盤後同步請求；休眠裝置會在喚醒後補送，不宣稱準時到秒。</li>
+              <li><strong>Web 邊界</strong>：公開 PWA 維持 same-origin GitHub Actions 延遲快照，畫面明示可能延遲，不直接跨站抓行情。</li>
+              <li><strong>重構策略</strong>：先以新 shell 接管操盤工作流，沿用已驗證的分析器與 parser；完成對等測試及取得刪除確認後才移除舊檔。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v18.2.1</strong>
               <span>2026-07-30</span>
               <span class="cl-badge major">Request Limit Hotfix</span>

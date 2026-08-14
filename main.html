@@ -5,17 +5,18 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; font-src 'self' data:; media-src 'self' blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex,nofollow,noarchive" />
-  <title>台股追蹤 v18.2.1</title>
+  <title>台股操盤台 v19.0</title>
   <meta name="theme-color" content="#f4efe8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="台股追蹤" />
-  <meta name="application-version" content="v18.2.1" />
-  <meta name="application-release-date" content="2026-07-30" />
+  <meta name="application-version" content="v19.0" />
+  <meta name="application-release-date" content="2026-08-13" />
   <meta property="og:image" content="https://otakuzerg.github.io/twstock-tracker-web/assets/icons/app-cover.png" />
   <link rel="manifest" href="site.webmanifest" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/app-icon-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="app_files/ui/trader_workspace.css" />
   <meta
     name="description"
     content="台股主題式個股追蹤 Chrome extension。支援證交所與櫃買官方資料優先、官方日線 K 線、技術分析、本機快照、個股研究報告、估值、催化劑與風險矩陣。"
@@ -5435,8 +5436,8 @@
         <!-- Brand -->
         <div class="sidebar-brand">
           <span class="sidebar-brand-title">台股追蹤</span>
-          <span class="sidebar-brand-ver">v18.2.1</span>
-          <span class="sidebar-brand-date" data-release-date="2026-07-30">2026-07-30</span>
+          <span class="sidebar-brand-ver">v19.0</span>
+          <span class="sidebar-brand-date" data-release-date="2026-08-13">2026-08-13</span>
           <button id="mobileSidebarToggle" class="mobile-sidebar-toggle" type="button" aria-expanded="false" aria-controls="filterRow sidebarPoolManager holdingsManager">主題 / 股池</button>
         </div>
 
@@ -5535,28 +5536,30 @@
           <button id="clearSyncDirBtn" class="ghost-btn" type="button" title="清除同步資料夾設定">清除 data</button>
         </div>
       </details>
+      <div id="afterCloseScheduleStatus" class="after-close-status" title="Extension 會在台北時間 15:00 建立盤後同步請求；裝置休眠時會在喚醒後補送。">排程載入中</div>
       <div id="statusLine" class="status" style="margin-left:auto;font-size:0.7rem;color:var(--muted);line-height:1.3;max-width:260px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;">尚未更新。</div>
     </div>
     <div id="topFuturesStrip" class="top-futures-strip"></div>
 
-    <!-- v17.9 修正：只收斂更新按鈕，不隱藏任何研究功能分頁 -->
+    <!-- v19：操盤首頁與既有 12 個研究入口全部直接可見；桌機／手機皆可橫向捲動，不隱藏功能。 -->
     <nav class="main-tab-nav" id="mainTabNav" aria-label="主功能分頁" title="按住 Cmd/Ctrl 顯示快捷鍵；Cmd/Ctrl+1 至 9 / 0 切換分頁">
-      <button class="tab-btn active" data-tab-target="market" data-shortcut="1">大盤總覽</button>
-      <button class="tab-btn" data-tab-target="overview" data-shortcut="2">主題總覽</button>
-      <button class="tab-btn" data-tab-target="screener" data-shortcut="3">量化篩選</button>
-      <button class="tab-btn" data-tab-target="report" data-shortcut="4">個股研究</button>
+      <button class="tab-btn active" data-tab-target="market" data-shortcut="1">作戰首頁</button>
+      <button class="tab-btn" data-tab-target="overview" data-shortcut="5">主題總覽</button>
+      <button class="tab-btn" data-tab-target="screener" data-shortcut="2">標的雷達</button>
+      <button class="tab-btn" data-tab-target="report" data-shortcut="3">個股決策</button>
       <button class="tab-btn" data-tab-target="revenue">個股營收</button>
-      <button class="tab-btn" data-tab-target="technical" data-shortcut="5">技術分析 &amp; 籌碼</button>
-      <button class="tab-btn" data-tab-target="discovery">標的找尋</button>
-      <button class="tab-btn" data-tab-target="disposition" data-shortcut="6">處置股</button>
+      <button class="tab-btn" data-tab-target="technical" data-shortcut="4">技術籌碼</button>
+      <button class="tab-btn" data-tab-target="discovery" data-shortcut="6">標的找尋</button>
+      <button class="tab-btn" data-tab-target="disposition">處置股</button>
       <button class="tab-btn" data-tab-target="ex-dividend">除權息</button>
       <button class="tab-btn" data-tab-target="catalyst" data-shortcut="7">催化劑 &amp; 新聞</button>
       <button class="tab-btn" data-tab-target="macro" data-shortcut="8">總體經濟與風險</button>
       <button class="tab-btn" data-tab-target="podcast" data-shortcut="9">Podcast</button>
-      <button class="tab-btn" data-tab-target="help" data-shortcut="0">資料健康 &amp; 版本</button>
+      <button class="tab-btn" data-tab-target="help" data-shortcut="0">資料健康</button>
     </nav>
 
     <section id="tab-market" class="tab-panel active">
+      <div id="traderDeskContent"></div>
       <div id="marketDashboardContent"></div>
       <!-- v17.0：全市場 + 今日族群集中在大盤總覽（原本散在主題總覽造成個股/族群/大盤混雜） -->
       <div id="todaySignalsPanel"></div>
@@ -5779,6 +5782,7 @@
           </div>
         </div>
         <div id="sourceReliabilityPanel"></div>
+        <div id="sourceCatalogPanel"></div>
         <div id="performanceDiagnosticsPanel"></div>
 
         <details style="margin-top:16px;">
@@ -5823,12 +5827,17 @@
   <script src="app_files/request_broker.js"></script>
   <script src="app_files/source_fallbacks.js"></script>
   <script src="app_files/source_adapters.js"></script>
+  <script src="app_files/sources/market_data_normalizers.js"></script>
+  <script src="app_files/sources/chip_data_normalizers.js"></script>
   <script src="app_files/web_adapter.js"></script>
   <script src="app_files/analysis_frameworks.js"></script>
   <script src="app_files/theme_regime.js"></script>
   <script src="app_files/cache_repository.js"></script>
   <script src="app_files/performance_diagnostics.js"></script>
   <script src="app_files/update_reliability.js"></script>
+  <script src="app_files/core/source_catalog.js"></script>
+  <script src="app_files/core/after_close_protocol.js"></script>
+  <script src="app_files/features/trader_workspace.js"></script>
   <script src="app_files/main.js"></script>
 </body>
 </html>
