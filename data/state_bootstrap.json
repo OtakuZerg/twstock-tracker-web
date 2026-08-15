@@ -985,7 +985,7 @@
   "performance": {},
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-08-14T14:59:31.547Z",
+    "builtAt": "2026-08-15T05:50:19.308Z",
     "sourcePath": "data/state_core.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"

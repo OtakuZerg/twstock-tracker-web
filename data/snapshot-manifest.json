@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-08-14T14:59:31.547Z",
+  "generatedAt": "2026-08-15T05:50:19.308Z",
   "asOf": null,
   "mode": "bundled-fallback",
   "stale": true,
@@ -10,7 +10,7 @@
       "id": "market",
       "path": "data/live_market.json",
       "sha256": null,
-      "generatedAt": "2026-08-14T14:59:31.547Z",
+      "generatedAt": "2026-08-15T05:50:19.308Z",
       "asOf": null,
       "stale": true,
       "fallback": true

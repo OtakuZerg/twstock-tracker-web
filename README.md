@@ -83,7 +83,7 @@
 ### GitHub Pages / iPhone、iPad Web App
 
 - 正式網站入口：[https://otakuzerg.github.io/twstock-tracker-web/](https://otakuzerg.github.io/twstock-tracker-web/)
-- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 49 個成品、README 雙輸出與自動化檔案。
+- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 53 個成品、README 雙輸出與自動化檔案。
 - private 原始碼倉庫的 GitHub Actions 先建立並用 Chrome 驗證 artifact；通過後使用只對公開成品倉庫有效的 deploy key 自動發布。公開倉庫再用 GitHub Pages workflow 部署 PWA。
 - 原始碼 `main` 更新並通過檢查後，網站會隨公開 artifact 自動更新；iPhone / iPad 主畫面 Web App 會由 Service Worker 接收新版。這不會自動更新家中電腦的 unpacked extension，該版本仍需同步專案資料夾並在 `chrome://extensions` 按「重新載入」。
 - 網頁版使用瀏覽器的 IndexedDB / localStorage 儲存持股與設定；Chrome extension 與網站資料彼此獨立，不會自動同步。
@@ -100,7 +100,7 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 
 #### 部署、隱私與功能邊界
 
-- Pages build 採明確 allowlist，公開倉庫只接收 49 個必要成品 / 自動化檔案；實際 Pages 上傳會排除 `.github/` 與 `scripts/`，因此瀏覽器端只提供 47 個執行成品。`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。
+- Pages build 採明確 allowlist，公開倉庫只接收 53 個必要成品 / 自動化檔案；實際 Pages 上傳會排除 `.github/` 與 `scripts/`，因此瀏覽器端只提供 51 個執行成品。`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。
 - 建置器會拒絕常見 token / private key、本機絕對路徑、owner identifier、未預期檔案與未清空的個人化 state；公開頁另有 CSP、HTTPS fetch host allowlist、請求 / 回應大小限制及 URL protocol 驗證。
 - **網站是公開的**：任何知道或猜到網址的人都能存取；`robots.txt` / `noindex` 只降低搜尋引擎收錄機率，不是登入或親友限定機制。不要輸入密碼、API key、醫療資料或其他敏感資訊。
 - 公開 PWA 的大盤行情不再由瀏覽器直接跨站抓 Yahoo / TWSE / TAIFEX，而由 GitHub Actions 約每 15 分鐘抓取固定 host/path 白名單並產生同來源 `data/live_market.json`。GitHub 排程與上游來源都可能延遲，因此畫面會同時顯示快照產生時間、行情資料時間與 fallback，不宣稱逐筆即時。
@@ -135,7 +135,7 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 - Extension 新增台北時間 15:00 盤後同步排程，讓收盤與盤後資料一起進入研究流程。Chrome alarms 可安排指定時間，但裝置休眠時不會被喚醒，錯過的 alarm 會在喚醒後執行，因此畫面會保留排程／完成狀態，而不宣稱準時到秒；詳見 [Chrome alarms 官方文件](https://developer.chrome.com/docs/extensions/reference/api/alarms)。
 - Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions 產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web 延遲快照，而不包裝成逐筆即時；詳見 [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) 與 [scheduled workflow troubleshooting](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)。
 - 本階段採 strangler migration：新 shell 與新核心模組先接管第一屏，既有分析器與 parser 暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。
-- R6a–R6d 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 `app_files/features/trader_workspace.js`，由 61 個 deterministic cases 保護。報價、日線與估值先由 `app_files/sources/market_data_normalizers.js` 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 則由 `app_files/sources/chip_data_normalizers.js` 接管純解析（58 cases）。兩個模組都沿用既有 `source_adapters.js` 契約，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。
+- R6a–R6e1 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 `app_files/features/trader_workspace.js`，由 61 個 deterministic cases 保護。報價、日線與估值由 `app_files/sources/market_data_normalizers.js` 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 由 `app_files/sources/chip_data_normalizers.js` 接管純解析（58 cases）；月營收與季報三率由 `app_files/sources/fundamental_data_normalizers.js` 接管（55 cases）；TWSE 大盤、VIX、美債殖利率、融資餘額、央行匯率、Fed RSS／SEP 與 FedWatch 由 `app_files/sources/macro_data_normalizers.js` 接管（67 cases）。四個來源模組都沿用既有 `source_adapters.js` 契約或其來源政策，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。R6e1 另將作戰首頁的選股／持股 store selector 與安全 HTML renderer 拆至 `app_files/store/trader_workspace_selectors.js`（24 cases）和 `app_files/ui/trader_workspace_renderer.js`（29 cases），保留原欄位、互動與台股紅漲綠跌語意，並攔截文字／class attribute 注入。
 
 ### 資料儲存與更新
 

@@ -5895,6 +5895,30 @@ function chipDataNormalizers() {
   return normalizers;
 }
 
+function fundamentalDataNormalizers() {
+  const normalizers = globalThis.TwStockFundamentalDataNormalizers;
+  if (!normalizers) throw new Error("Fundamental data normalizers 尚未載入");
+  return normalizers;
+}
+
+function macroDataNormalizers() {
+  const normalizers = globalThis.TwStockMacroDataNormalizers;
+  if (!normalizers) throw new Error("Macro data normalizers 尚未載入");
+  return normalizers;
+}
+
+function traderWorkspaceSelectors() {
+  const selectors = globalThis.TwStockTraderWorkspaceSelectors;
+  if (!selectors) throw new Error("Trader workspace selectors 尚未載入");
+  return selectors;
+}
+
+function traderWorkspaceRenderer() {
+  const renderer = globalThis.TwStockTraderWorkspaceRenderer;
+  if (!renderer) throw new Error("Trader workspace renderer 尚未載入");
+  return renderer;
+}
+
 function twseMisUrl(stock) {
   const exchange = officialMarketCode(stock);
   return `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${exchange}_${stock.code}.tw&json=1&delay=0&_=${Date.now()}`;
@@ -7612,29 +7636,7 @@ function parseNum(s) {
 }
 
 function monthKeyFromRevenueRow(row, fallbackDate = new Date()) {
-  const keys = ["資料年月", "營收年月", "年月", "出表年月", "出表日期", "Date", "RevenueMonth", "YearMonth"];
-  for (const key of keys) {
-    const raw = String(row?.[key] || "").trim();
-    const monthKey = normalizeMonthKey(raw);
-    if (monthKey) return monthKey;
-    const rocMatch = raw.match(/^(\d{2,3})\D+(\d{1,2})/);
-    if (rocMatch) {
-      const rocYear = Number(rocMatch[1]);
-      const rocMonth = Number(rocMatch[2]);
-      if (rocYear > 0 && rocMonth >= 1 && rocMonth <= 12) {
-        return `${rocYear + 1911}-${String(rocMonth).padStart(2, "0")}`;
-      }
-    }
-  }
-  const year = toNumber(row?.["年度"] || row?.["年"] || row?.["Year"]);
-  const month = toNumber(row?.["月份"] || row?.["月"] || row?.["Month"]);
-  if (year !== null && month !== null && month >= 1 && month <= 12) {
-    const fullYear = year < 1911 ? year + 1911 : year;
-    return `${fullYear}-${String(Math.round(month)).padStart(2, "0")}`;
-  }
-  const fallback = fallbackDate instanceof Date ? fallbackDate : new Date(fallbackDate || Date.now());
-  if (Number.isNaN(fallback.getTime())) return "";
-  return shiftMonthKey(fallback.getUTCFullYear(), fallback.getUTCMonth() + 1, -1);
+  return fundamentalDataNormalizers().monthKeyFromRevenueRow(row, fallbackDate);
 }
 
 function rowFirstValue(row, keys) {
@@ -7661,60 +7663,25 @@ function monthlyRevenueSourceUrl(market, fallbackUsed = false) {
 }
 
 function normalizeMonthlyRevenueRow(row, fetchedAt, market, options = {}) {
-  const yearMonth = monthKeyFromRevenueRow(row, fetchedAt);
   const fallbackUsed = options.fallbackUsed === true;
-  return {
-    current: parseNum(rowFirstValue(row, ["營業收入-當月營收", "當月營收", "Revenue"])),
-    prevMonth: parseNum(rowFirstValue(row, ["營業收入-上月營收", "上月營收"])),
-    prevYear: parseNum(rowFirstValue(row, ["營業收入-去年當月營收", "去年當月營收"])),
-    momPct: parseNum(rowFirstValue(row, ["營業收入-上月比較增減(%)", "上月比較增減(%)", "MoM(%)"])),
-    yoyPct: parseNum(rowFirstValue(row, ["營業收入-去年同月增減(%)", "去年同月增減(%)", "YoY(%)"])),
-    cumulative: parseNum(rowFirstValue(row, ["累計營業收入-當月累計營收", "當月累計營收"])),
-    cumulativePrevYear: parseNum(rowFirstValue(row, ["累計營業收入-去年累計營收", "去年累計營收"])),
-    cumYoyPct: parseNum(rowFirstValue(row, ["累計營業收入-前期比較增減(%)", "前期比較增減(%)"])),
-    yearMonth,
-    sourceDate: parseRocCompactDate(row["出表日期"]),
-    companyName: String(row["公司名稱"] || row["Name"] || "").trim(),
-    industry: String(row["產業別"] || row["Industry"] || "").trim(),
-    note: String(row["備註"] || row["Note"] || "").trim(),
+  return fundamentalDataNormalizers().normalizeMonthlyRevenueRow(row, fetchedAt, market, {
     source: options.source || monthlyRevenueSourceLabel(market, fallbackUsed),
     sourceUrl: options.sourceUrl || monthlyRevenueSourceUrl(market, fallbackUsed),
     sourceTier: "Tier 1 官方",
-    fallbackUsed,
-    fetchedAt
-  };
+    fallbackUsed
+  });
 }
 
 function monthlyRevenueRowsFromCsv(text, source, fetchedAt) {
-  return parseCsvTable(text).map((row) => {
-    const code = String(row["公司代號"] || "").trim().toUpperCase();
-    if (!code || !STOCK_MAP.has(code)) return null;
-    return {
-      code,
-      row: normalizeMonthlyRevenueRow(row, fetchedAt, source.market, {
-        source: source.label,
-        sourceUrl: source.url,
-        fallbackUsed: false
-      })
-    };
-  }).filter(Boolean);
+  return fundamentalDataNormalizers().parseMonthlyRevenueCsv(text, source, fetchedAt)
+    .filter((item) => STOCK_MAP.has(item.code));
 }
 
 function monthlyRevenueRowsFromJson(text, source, fetchedAt) {
-  const rows = JSON.parse(text);
-  if (!Array.isArray(rows)) throw new Error("回傳不是 JSON array");
-  return rows.map((row) => {
-    const code = String(row["公司代號"] || row["CompanyID"] || "").trim().toUpperCase();
-    if (!code || !STOCK_MAP.has(code)) return null;
-    return {
-      code,
-      row: normalizeMonthlyRevenueRow(row, fetchedAt, source.market, {
-        source: source.label,
-        sourceUrl: source.url,
-        fallbackUsed: true
-      })
-    };
-  }).filter(Boolean);
+  return fundamentalDataNormalizers().parseMonthlyRevenueJson(text, {
+    ...source,
+    sourceKey: source.market === "otc" ? "tpex" : "twse"
+  }, fetchedAt).filter((item) => STOCK_MAP.has(item.code));
 }
 
 function monthlyRevenueMissingHoldings(nextRevenue) {
@@ -14011,61 +13978,26 @@ function rowFirstNumber(row, keys) {
 }
 
 function normalizeQuarterKey(value) {
-  const text = String(value || "").trim();
-  if (!text) return "";
-  let match = text.match(/^(\d{4})[-/\s]?[Qq季]?([1-4])$/);
-  if (match) return `${match[1]}Q${match[2]}`;
-  match = text.match(/^(\d{4}).*第?\s*([1-4])\s*季/);
-  if (match) return `${match[1]}Q${match[2]}`;
-  match = text.match(/^(\d{2,3}).*第?\s*([1-4])\s*季/);
-  if (match) return `${Number(match[1]) + 1911}Q${match[2]}`;
-  match = text.match(/^(\d{2,3})[-/\s]?[Qq季]?([1-4])$/);
-  if (match) return `${Number(match[1]) + 1911}Q${match[2]}`;
-  return text;
+  return fundamentalDataNormalizers().normalizeQuarterKey(value);
 }
 
 function marginPctFromAmounts(numerator, denominator) {
-  const num = toNumber(numerator);
-  const den = toNumber(denominator);
-  if (num === null || den === null || den === 0) return null;
-  return num / den * 100;
+  return fundamentalDataNormalizers().marginPctFromAmounts(numerator, denominator);
 }
 
 function normalizeQuarterlyMarginRow(row, source = {}, fetchedAt = new Date().toISOString()) {
-  const code = rowFirstText(row, ["公司代號", "代號", "股票代號", "code", "Code"]).toUpperCase();
-  if (!code || !STOCK_MAP.has(code)) return null;
-  const period = normalizeQuarterKey(rowFirstText(row, ["期間", "年度季別", "年季", "季別", "quarter", "period", "yearQuarter"]));
-  if (!period) return null;
-  const revenue = rowFirstNumber(row, ["營業收入", "營業收入合計", "收入", "收益", "revenue", "operatingRevenue", "netRevenue"]);
-  const grossProfit = rowFirstNumber(row, ["營業毛利", "營業毛利（毛損）", "營業毛利(毛損)", "毛利", "grossProfit"]);
-  const operatingIncome = rowFirstNumber(row, ["營業利益", "營業利益（損失）", "營業利益(損失)", "營益", "operatingIncome"]);
-  const netIncome = rowFirstNumber(row, ["本期淨利", "本期淨利（淨損）", "本期淨利(淨損)", "稅後淨利", "淨利", "netIncome"]);
-  const grossMargin = rowFirstNumber(row, ["毛利率", "營業毛利率", "grossMargin", "grossProfitMargin"]) ?? marginPctFromAmounts(grossProfit, revenue);
-  const operatingMargin = rowFirstNumber(row, ["營益率", "營業利益率", "operatingMargin", "operatingProfitMargin"]) ?? marginPctFromAmounts(operatingIncome, revenue);
-  const netMargin = rowFirstNumber(row, ["淨利率", "稅後淨利率", "netMargin", "netProfitMargin"]) ?? marginPctFromAmounts(netIncome, revenue);
-  if (grossMargin === null && operatingMargin === null && netMargin === null) return null;
-  return {
-    code,
-    name: rowFirstText(row, ["公司名稱", "名稱", "name"]) || STOCK_MAP.get(code)?.name || code,
-    period,
-    revenue,
-    grossProfit,
-    operatingIncome,
-    netIncome,
-    grossMargin,
-    operatingMargin,
-    netMargin,
-    source: source.label || "MOPS 季損益表匯入",
-    sourceTier: source.sourceTier || "Tier 1 官方 / 本機匯入",
-    sourceUrl: source.url || FINANCIAL_MARGIN_SOURCE_LINKS.mopsFinancials,
-    fallbackUsed: source.fallbackUsed === true,
-    fetchedAt,
-    asOf: period
-  };
+  const normalized = fundamentalDataNormalizers().normalizeQuarterlyMarginRow(row, source, fetchedAt, {
+    nameForCode: (code) => STOCK_MAP.get(code)?.name || "",
+    defaultSourceUrl: FINANCIAL_MARGIN_SOURCE_LINKS.mopsFinancials
+  });
+  return normalized?.code && STOCK_MAP.has(normalized.code) ? normalized : null;
 }
 
 function quarterlyMarginRowsFromCsv(text, source = {}, fetchedAt = new Date().toISOString()) {
-  return parseCsvTable(text).map((row) => normalizeQuarterlyMarginRow(row, source, fetchedAt)).filter(Boolean);
+  return fundamentalDataNormalizers().parseQuarterlyMarginCsv(text, source, fetchedAt, {
+    nameForCode: (code) => STOCK_MAP.get(code)?.name || "",
+    defaultSourceUrl: FINANCIAL_MARGIN_SOURCE_LINKS.mopsFinancials
+  }).filter((row) => STOCK_MAP.has(row.code));
 }
 
 function parseRocCompactDate(value) {
@@ -26044,17 +25976,7 @@ function quantileNumber(values, q) {
 }
 
 function parseFedRssItems(text) {
-  try {
-    const doc = new DOMParser().parseFromString(text, "application/xml");
-    return Array.from(doc.querySelectorAll("item")).map((item) => ({
-      title: stripHtml(item.querySelector("title")?.textContent || ""),
-      description: stripHtml(item.querySelector("description")?.textContent || ""),
-      pubDate: item.querySelector("pubDate")?.textContent || "",
-      link: item.querySelector("link")?.textContent || FED_MONETARY_RSS_URL
-    })).filter((item) => item.title || item.description);
-  } catch (_) {
-    return [];
-  }
+  return macroDataNormalizers().parseFedRssItems(text, { fallbackUrl: FED_MONETARY_RSS_URL });
 }
 
 function fedPolicySignalFromText(item) {
@@ -26153,33 +26075,11 @@ function latestFedSepUrlFromCalendar(html) {
 }
 
 function parseRateRangeMidpoint(value) {
-  const raw = String(value || "").replace(/[–—−]/g, "-");
-  const nums = raw.match(/\d+(?:\.\d+)?/g)?.map(Number).filter(Number.isFinite) || [];
-  if (nums.length >= 2) return (nums[0] + nums[1]) / 2;
-  return nums.length === 1 ? nums[0] : null;
+  return macroDataNormalizers().parseRateRangeMidpoint(value);
 }
 
 function parseFedSepTable1Rates(text) {
-  const normalized = String(text || "")
-    .replace(/\u00a0/g, " ")
-    .replace(/[–—−]/g, "-")
-    .replace(/\s+/g, " ");
-  const match = normalized.match(/Federal funds rate\s+(.+?)\s+December projection/i);
-  const tokens = match ? match[1].trim().split(/\s+/).filter(Boolean) : [];
-  const labels = ["2026", "2027", "2028", "Longer Run"];
-  const medians = labels.map((year, index) => ({
-    year,
-    rate: parseRateRangeMidpoint(tokens[index])
-  })).filter((row) => row.rate !== null);
-  const centralTendency = labels.map((year, index) => ({
-    year,
-    range: tokens[index + 4] || ""
-  })).filter((row) => row.range);
-  const range = labels.map((year, index) => ({
-    year,
-    range: tokens[index + 8] || ""
-  })).filter((row) => row.range);
-  return { medians, centralTendency, range };
+  return macroDataNormalizers().parseFedSepTable1Rates(text);
 }
 
 function parseFedSepDotDistribution(doc) {
@@ -26256,25 +26156,7 @@ async function fetchFedSepProjectionPath() {
 }
 
 function collectFedWatchDates(value, out = []) {
-  if (!value) return out;
-  if (typeof value === "string" || typeof value === "number") {
-    const date = dateFromMixedFedValue(value);
-    if (date) out.push(date);
-    return out;
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item) => collectFedWatchDates(item, out));
-    return out;
-  }
-  if (typeof value === "object") {
-    ["meetingDate", "fomcMeetingDate", "date", "meeting", "eventDate"].forEach((key) => {
-      if (value[key]) collectFedWatchDates(value[key], out);
-    });
-    ["meetingDates", "dates", "data", "meetings"].forEach((key) => {
-      if (value[key]) collectFedWatchDates(value[key], out);
-    });
-  }
-  return out;
+  return macroDataNormalizers().collectFedWatchDates(value, out);
 }
 
 function fedWatchProbabilityValue(row) {
@@ -26321,27 +26203,7 @@ function collectFedWatchProbabilityRows(value, out = []) {
 }
 
 function parseCmeFedWatchMeetingPayload(payload, meetingDate = "") {
-  const rows = collectFedWatchProbabilityRows(payload)
-    .reduce((acc, row) => {
-      const key = `${row.range}|${row.midpoint}`;
-      const existing = acc.get(key);
-      if (!existing || row.probability > existing.probability) acc.set(key, row);
-      return acc;
-    }, new Map());
-  const probabilities = Array.from(rows.values()).sort((left, right) => left.midpoint - right.midpoint);
-  const totalProb = probabilities.reduce((sum, row) => sum + row.probability, 0);
-  const expectedRate = totalProb > 0
-    ? probabilities.reduce((sum, row) => sum + row.midpoint * row.probability, 0) / totalProb
-    : null;
-  const dominant = probabilities.reduce((best, row) => (!best || row.probability > best.probability ? row : best), null);
-  return {
-    meetingDate,
-    probabilities,
-    expectedRate,
-    dominant,
-    totalProb,
-    confidence: probabilities.length ? "medium" : "low"
-  };
+  return macroDataNormalizers().parseCmeFedWatchMeetingPayload(payload, meetingDate);
 }
 
 function fedWatchIsUsable(value) {
@@ -26583,18 +26445,7 @@ async function fetchFedPolicyPath(previousCache = null) {
 }
 
 function parseCbcUsdTwdRows(html) {
-  const text = stripHtml(html).replace(/\u00a0/g, " ");
-  const rows = [];
-  const seen = new Set();
-  const pattern = /(\d{4}\/\d{1,2}\/\d{1,2})\s+([23]\d(?:\.\d{2,4})?)/g;
-  for (const match of text.matchAll(pattern)) {
-    const date = parseSlashDate(match[1]);
-    const value = toNumber(match[2]);
-    if (!date || value === null || seen.has(date)) continue;
-    seen.add(date);
-    rows.push({ date, value });
-  }
-  return rows.sort((left, right) => right.date.localeCompare(left.date));
+  return macroDataNormalizers().parseCbcUsdTwdRows(html);
 }
 
 async function fetchCbcUsdTwdSignal() {
@@ -38463,67 +38314,17 @@ function macroNumberCell(value) {
 }
 
 function twseIndexRowToMacroItem(row, label, sourceDate) {
-  if (!row) return null;
-  const pct = macroNumberCell(row[4]);
-  const point = macroNumberCell(row[3]);
-  const signText = stripHtml(row[2] || "");
-  const signedPoint = signText.includes("-") && point !== null ? -Math.abs(point) : point;
-  return {
-    key: `twse-${label}`,
-    label,
-    value: macroNumberCell(row[1]),
-    valueSuffix: "",
-    change: signedPoint,
-    pct,
-    date: slashDateFromCompact(sourceDate || ""),
-    source: "TWSE MI_INDEX",
-    sourceTier: "官方",
-    url: "https://www.twse.com.tw/zh/trading/historical/mi-index.html",
-    note: "臺灣證券交易所每日收盤指數"
-  };
+  return macroDataNormalizers().twseIndexRowToMacroItem(row, label, sourceDate);
 }
 
 async function fetchTwseMacroItems() {
   const text = await fetchText("https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&type=IND", { timeoutMs: 12000 });
-  const data = JSON.parse(text);
-  const rows = data?.tables?.flatMap((table) => Array.isArray(table?.data) ? table.data : []) || [];
-  const findRow = (label) => rows.find((row) => String(row?.[0] || "").includes(label));
-  return [
-    twseIndexRowToMacroItem(findRow("發行量加權股價指數"), "加權指數", data.date),
-    twseIndexRowToMacroItem(findRow("電子工業類指數"), "電子指數", data.date),
-    twseIndexRowToMacroItem(findRow("半導體類指數"), "半導體指數", data.date)
-  ].filter(Boolean);
+  return macroDataNormalizers().parseTwseMacroItems(text);
 }
 
 async function fetchVixMacroItem() {
   const text = await fetchText("https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv", { timeoutMs: 15000 });
-  const rows = text.split(/\r?\n/).map((line) => line.trim()).filter((line) => /^\d{2}\/\d{2}\/\d{4},/.test(line));
-  const latest = rows.at(-1);
-  const previous = rows.at(-2);
-  if (!latest) throw new Error("Cboe VIX CSV 無資料");
-  const latestCells = latest.split(",");
-  const previousCells = previous ? previous.split(",") : [];
-  const close = macroNumberCell(latestCells[4]);
-  const prevClose = macroNumberCell(previousCells[4]);
-  const change = close !== null && prevClose !== null ? close - prevClose : null;
-  const pct = change !== null && prevClose ? change / prevClose * 100 : null;
-  return {
-    key: "vix",
-    label: "VIX",
-    value: close,
-    valueSuffix: "",
-    change,
-    pct,
-    date: latestCells[0] || "",
-    source: "Cboe VIX History CSV",
-    sourceTier: "官方",
-    url: "https://www.cboe.com/tradable-products/vix/",
-    note: "美股波動率，>20 通常代表風險情緒升溫",
-    series: rows.slice(-120).map((line) => {
-      const cells = line.split(",");
-      return { date: cells[0] || "", value: macroNumberCell(cells[4]) };
-    }).filter((point) => point.value !== null)
-  };
+  return macroDataNormalizers().parseVixCsv(text);
 }
 
 function xmlTagValue(block, tag) {
@@ -38535,72 +38336,12 @@ async function fetchTreasuryYieldCurveRows() {
   const year = new Date().getFullYear();
   const url = `https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=${year}`;
   const text = await fetchText(url, { timeoutMs: 18000 });
-  const entries = [...text.matchAll(/<m:properties>([\s\S]*?)<\/m:properties>/g)].map((match) => match[1]);
-  const rows = entries.map((block) => ({
-    date: xmlTagValue(block, "NEW_DATE").slice(0, 10),
-    twoYear: macroNumberCell(xmlTagValue(block, "BC_2YEAR")),
-    twentyYear: macroNumberCell(xmlTagValue(block, "BC_20YEAR")),
-    tenYear: macroNumberCell(xmlTagValue(block, "BC_10YEAR")),
-    thirtyYear: macroNumberCell(xmlTagValue(block, "BC_30YEAR"))
-  })).filter((row) => row.date && row.tenYear !== null).sort((a, b) => a.date.localeCompare(b.date));
-  if (!rows.length) throw new Error("Treasury yield XML 無資料");
-  return rows;
+  return macroDataNormalizers().parseTreasuryYieldCurveXml(text);
 }
 
 async function fetchTreasuryMacroItems() {
   const rows = await fetchTreasuryYieldCurveRows();
-  const latest = rows.at(-1);
-  const curveSpread = latest.tenYear !== null && latest.twoYear !== null ? latest.tenYear - latest.twoYear : null;
-  const tenYearSeries = rows.slice(-120).map((row) => ({ date: row.date, value: row.tenYear })).filter((point) => point.value !== null);
-  const thirtyYearSeries = rows.slice(-120).map((row) => ({ date: row.date, value: row.thirtyYear })).filter((point) => point.value !== null);
-  const spreadSeries = rows.slice(-120).map((row) => ({
-    date: row.date,
-    value: row.tenYear !== null && row.twoYear !== null ? row.tenYear - row.twoYear : null
-  })).filter((point) => point.value !== null);
-  return [
-    {
-      key: "ust10y",
-      label: "美債 10Y",
-      value: latest.tenYear,
-      valueSuffix: "%",
-      change: null,
-      pct: null,
-      date: latest.date,
-      source: "U.S. Treasury Yield Curve",
-      sourceTier: "官方",
-      url: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
-      note: "長天期利率，影響科技股估值與美債 ETF 久期",
-      series: tenYearSeries
-    },
-    {
-      key: "ust30y",
-      label: "美債 30Y",
-      value: latest.thirtyYear,
-      valueSuffix: "%",
-      change: null,
-      pct: null,
-      date: latest.date,
-      source: "U.S. Treasury Yield Curve",
-      sourceTier: "官方",
-      url: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
-      note: "長天期美債 ETF 的核心利率代理；工具燈號以此搭配 USD/TWD 與 Fed 狀態判讀",
-      series: thirtyYearSeries
-    },
-    {
-      key: "ust2y10y",
-      label: "10Y-2Y 利差",
-      value: curveSpread,
-      valueSuffix: "百分點",
-      change: null,
-      pct: null,
-      date: latest.date,
-      source: "U.S. Treasury Yield Curve",
-      sourceTier: "官方",
-      url: "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve",
-      note: "殖利率曲線斜率；負值代表倒掛",
-      series: spreadSeries
-    }
-  ];
+  return macroDataNormalizers().treasuryMacroItemsFromRows(rows);
 }
 
 function twseMarginRow(rows, keyword) {
@@ -38608,32 +38349,7 @@ function twseMarginRow(rows, keyword) {
 }
 
 function twseMarginSnapshotFromData(data) {
-  const rows = Array.isArray(data?.data)
-    ? data.data
-    : data?.tables?.flatMap((table) => Array.isArray(table?.data) ? table.data : []) || [];
-  const financeRow = twseMarginRow(rows, "融資(交易單位)");
-  const shortRow = twseMarginRow(rows, "融券(交易單位)");
-  const financeValueRow = twseMarginRow(rows, "融資金額");
-  const financeBalance = macroNumberCell(financeRow?.[5]);
-  const financePrevious = macroNumberCell(financeRow?.[4]);
-  const shortBalance = macroNumberCell(shortRow?.[5]);
-  const shortPrevious = macroNumberCell(shortRow?.[4]);
-  const financeValueThousand = macroNumberCell(financeValueRow?.[5]);
-  if (financeBalance === null && shortBalance === null && financeValueThousand === null) {
-    throw new Error("TWSE MI_MARGN 無法解析融資融券統計列");
-  }
-  return {
-    source: "TWSE MI_MARGN",
-    sourceTier: "官方",
-    date: slashDateFromCompact(data?.date || "") || stripHtml(data?.title || "").match(/\d{3,4}\/\d{1,2}\/\d{1,2}/)?.[0] || "",
-    url: "https://www.twse.com.tw/zh/trading/margin/MI_MARGN.html",
-    financeBalance,
-    financeChange: financeBalance !== null && financePrevious !== null ? financeBalance - financePrevious : null,
-    shortBalance,
-    shortChange: shortBalance !== null && shortPrevious !== null ? shortBalance - shortPrevious : null,
-    financeValue100m: financeValueThousand !== null ? financeValueThousand / 100000 : null,
-    note: "目前圖表先接 TWSE 上市信用交易統計；上櫃 TPEx 入口列在交叉核對卡，未併入前不當作完整全市場結論。"
-  };
+  return macroDataNormalizers().parseTwseMarketMarginSnapshot(data);
 }
 
 async function fetchTwseMarketMarginSnapshot() {
@@ -43220,7 +42936,7 @@ function renderMacroTab(options = {}) {
   `;
   container.innerHTML = `
     <div class="panel">
-      <div class="section-head">
+      <div class="section-head macro-section-head">
         <div>
           <h2>總體經濟與風險</h2>
           <p>上方直接顯示官方可抓取數值與本機趨勢圖；USD/TWD 匯率、融資券與風險矩陣併在同頁，避免和總經重複解讀。</p>
@@ -44047,53 +43763,49 @@ function renderMarketSecondaryPanels() {
   }
 }
 
-function traderDeskCoverage(stock, technical, quote, valuation, rev) {
-  const inst = (state.institutional || {})[stock.code] || null;
-  const margin = (state.margin || {})[stock.code] || null;
+function traderDeskCoverage(stock, technical, quote, valuation, rev, storeSlice = null) {
+  const selectedStore = storeSlice || traderWorkspaceSelectors().selectTraderDeskStore({
+    state,
+    selectedCode: stock.code,
+    stockMap: STOCK_MAP,
+    watchlist: WATCHLIST
+  });
+  const inst = selectedStore.institutional;
+  const margin = selectedStore.margin;
   const quoteFreshness = quoteFreshnessInfo(quote);
   const workspace = globalThis.TwStockTraderWorkspace;
   if (!workspace?.buildCoverage) {
     return { ready: 0, total: 6, status: "bad", missing: ["報價", "日線", "法人", "資券", "營收", "估值"] };
   }
-  return workspace.buildCoverage({
-    quote: {
-      hasPrice: Boolean(quote && toNumber(quote.price) !== null),
-      freshnessLevel: quoteFreshness.level,
-      freshnessLabel: quoteFreshness.label
-    },
-    technical: {
-      ready: technical?.ready === true,
-      ageDays: sourceDateAgeDays(technical?.latest?.date || "")
-    },
-    institutional: {
-      available: Boolean(inst),
-      ageDays: sourceDateAgeDays(inst?.date || inst?.sourceDate || "")
-    },
-    margin: {
-      available: Boolean(margin),
-      ageDays: sourceDateAgeDays(margin?.date || margin?.sourceDate || "")
-    },
+  return workspace.buildCoverage(traderWorkspaceSelectors().coverageInput({
+    quoteHasPrice: Boolean(quote && toNumber(quote.price) !== null),
+    quoteFreshnessLevel: quoteFreshness.level,
+    quoteFreshnessLabel: quoteFreshness.label,
+    technicalReady: technical?.ready === true,
+    technicalAgeDays: sourceDateAgeDays(technical?.latest?.date || ""),
+    institutionalAvailable: Boolean(inst),
+    institutionalAgeDays: sourceDateAgeDays(inst?.date || inst?.sourceDate || ""),
+    marginAvailable: Boolean(margin),
+    marginAgeDays: sourceDateAgeDays(margin?.date || margin?.sourceDate || ""),
     revenueAvailable: Boolean(rev),
-    valuation: {
-      available: Boolean(valuation),
-      ageDays: sourceDateAgeDays(valuation?.date || valuation?.sourceDate || valuation?.asOf || "")
-    }
-  });
-}
-
-function traderDeskStockOptions(currentStock) {
-  const holdingCodes = new Set((state.holdings || []).map((entry) => String(entry?.code || "")).filter(Boolean));
-  const rows = [currentStock, ...WATCHLIST.filter((stock) => holdingCodes.has(stock.code) && stock.code !== currentStock.code)];
-  return rows.map((stock) => `
-    <option value="${escapeHtml(stock.code)}" ${stock.code === currentStock.code ? "selected" : ""}>
-      ${escapeHtml(stock.code)} ${escapeHtml(stock.name)}
-    </option>`).join("");
+    valuationAvailable: Boolean(valuation),
+    valuationAgeDays: sourceDateAgeDays(valuation?.date || valuation?.sourceDate || valuation?.asOf || "")
+  }));
 }
 
 function renderTraderDesk() {
   const container = $("traderDeskContent");
   if (!container) return;
-  const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0];
+  const storeSlice = traderWorkspaceSelectors().selectTraderDeskStore({
+    state,
+    stockMap: STOCK_MAP,
+    watchlist: WATCHLIST
+  });
+  const stock = storeSlice.stock;
+  if (!stock) {
+    container.innerHTML = `<div class="empty">目前沒有可顯示的追蹤標的。</div>`;
+    return;
+  }
   const quote = quoteFor(stock.code);
   const valuation = valuationFor(stock.code);
   const rev = revenueFor(stock.code);
@@ -44128,7 +43840,7 @@ function renderTraderDesk() {
   });
   const execution = buildExecutionInfo(stock, tradePlan, radar, technical, quote);
   const chip = stockChipStrengthContext(stock, technical);
-  const coverage = traderDeskCoverage(stock, technical, quote, valuation, rev);
+  const coverage = traderDeskCoverage(stock, technical, quote, valuation, rev, storeSlice);
   const technicalLabel = technical?.ready
     ? technical.tradingState?.label || technical.playbook?.trendLabel || technical.signal || "技術待判讀"
     : technical?.message || "日線待更新";
@@ -44140,7 +43852,7 @@ function renderTraderDesk() {
     score: technical?.score
   }) || "flat";
   const technicalNote = technical?.ready
-    ? `RSI ${formatNumber(technical.rsi14, 0)} · MA20 ${formatNumber(technical.ma20)} · ${escapeHtml(technical.latest?.date || "日期待補")}`
+    ? `RSI ${formatNumber(technical.rsi14, 0)} · MA20 ${formatNumber(technical.ma20)} · ${technical.latest?.date || "日期待補"}`
     : "至少需要 20 根日線；缺資料不視為低風險。";
   const quoteFreshness = quoteFreshnessInfo(quote);
   const quoteSource = quote
@@ -44149,59 +43861,35 @@ function renderTraderDesk() {
   const rrTone = globalThis.TwStockTraderWorkspace?.rewardRiskTone(tradePlan.rr) || "flat";
   const missingText = coverage.missing.length ? `缺：${coverage.missing.join("、")}` : "六層核心資料已覆蓋";
 
-  container.innerHTML = `
-    <section class="panel trader-desk" data-trader-desk data-stock-code="${escapeHtml(stock.code)}">
-      <div class="trader-desk-head">
-        <div>
-          <div class="trader-desk-kicker">Trader workspace · 先判斷，再看細節</div>
-          <h1 class="trader-desk-title">${escapeHtml(stock.code)} ${escapeHtml(stock.name)}</h1>
-          <p class="trader-desk-meta">${escapeHtml(quoteSource)}｜研究排序，不是買賣保證；盤中執行前仍需核對即時價量。</p>
-        </div>
-        <select id="traderStockSelect" class="select trader-stock-select" aria-label="操盤首頁選擇個股">
-          ${traderDeskStockOptions(stock)}
-        </select>
-      </div>
-
-      <div class="trader-decision-grid">
-        <article class="trader-decision-card trader-price-card">
-          <span>現價 / 今日</span>
-          <strong>${formatNumber(price)}</strong>
-          <small class="trader-price-change ${changeClass(quote?.pct)}">${quote ? `${formatNumber(quote.change)} / ${formatPct(quote.pct)}` : "報價待更新"}</small>
-        </article>
-        <article class="trader-decision-card">
-          <span>技術多空</span>
-          <strong class="${technicalTone}">${escapeHtml(technicalLabel)}</strong>
-          <p class="trader-decision-note">${technicalNote}</p>
-        </article>
-        <article class="trader-decision-card">
-          <span>籌碼強弱</span>
-          <strong class="${escapeHtml(chip.tone || "flat")}">${escapeHtml(chip.label)}</strong>
-          <p class="trader-decision-note">${escapeHtml(chip.sourceText)} · confidence ${escapeHtml(chip.confidence)}</p>
-        </article>
-        <article class="trader-decision-card">
-          <span>執行結論</span>
-          <strong class="${escapeHtml(execution.tone)}">${escapeHtml(execution.status)} · 雷達 ${formatNumber(radar.score, 0)}</strong>
-          <p class="trader-decision-note">${escapeHtml(execution.conclusion)}</p>
-        </article>
-      </div>
-
-      <div class="trader-plan-strip">
-        <div class="trader-level"><span>入場帶</span><strong>${escapeHtml(execution.entry || "-")}</strong></div>
-        <div class="trader-level trader-stop"><span>停損</span><strong>${tradePlan.stopPrice !== null ? formatNumber(tradePlan.stopPrice) : "-"}</strong></div>
-        <div class="trader-level trader-target"><span>目標</span><strong>${tradePlan.targetPrice !== null ? formatNumber(tradePlan.targetPrice) : "-"}</strong></div>
-        <div class="trader-readiness" data-status="${coverage.status}">
-          <span>R:R / 資料完整度</span>
-          <strong><span class="${rrTone}">${tradePlan.rr !== null ? `${tradePlan.rr.toFixed(2)}R` : "-"}</span> · ${coverage.ready}/${coverage.total}</strong>
-        </div>
-      </div>
-
-      <div class="trader-action-row">
-        <button class="secondary-btn" type="button" data-tab-target="technical">看線型與籌碼</button>
-        <button class="ghost-btn" type="button" data-tab-target="report">開完整決策</button>
-        <button class="ghost-btn" type="button" data-tab-target="screener">回標的雷達</button>
-        <p class="trader-blocker"><strong>目前限制：</strong>${escapeHtml(execution.blocker || tradePlan.actionNote || missingText)}｜${escapeHtml(missingText)}</p>
-      </div>
-    </section>`;
+  container.innerHTML = traderWorkspaceRenderer().render({
+    stock,
+    stockOptions: storeSlice.stockOptions,
+    quoteSource,
+    quoteAvailable: Boolean(quote),
+    priceText: formatNumber(price),
+    quoteChangeTone: changeClass(quote?.pct),
+    quoteChangeText: quote ? `${formatNumber(quote.change)} / ${formatPct(quote.pct)}` : "報價待更新",
+    technicalTone,
+    technicalLabel,
+    technicalNote,
+    chipTone: chip.tone || "flat",
+    chipLabel: chip.label,
+    chipSourceText: chip.sourceText,
+    chipConfidence: chip.confidence,
+    executionTone: execution.tone,
+    executionStatus: execution.status,
+    radarScoreText: formatNumber(radar.score, 0),
+    executionConclusion: execution.conclusion,
+    entryText: execution.entry || "-",
+    stopText: tradePlan.stopPrice !== null ? formatNumber(tradePlan.stopPrice) : "-",
+    targetText: tradePlan.targetPrice !== null ? formatNumber(tradePlan.targetPrice) : "-",
+    coverageStatus: coverage.status,
+    rrTone,
+    rrText: tradePlan.rr !== null ? `${tradePlan.rr.toFixed(2)}R` : "-",
+    coverageText: `${coverage.ready}/${coverage.total}`,
+    blockerText: execution.blocker || tradePlan.actionNote || missingText,
+    missingText
+  });
 }
 
 function renderSourceCatalogPanel() {

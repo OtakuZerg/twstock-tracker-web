@@ -5329,6 +5329,18 @@
     @media (max-width: 900px) {
       html { scroll-padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
       body { overscroll-behavior-y: none; }
+      .macro-section-head {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .macro-section-head > div:first-child {
+        flex: 1 1 260px;
+        min-width: 0;
+      }
+      .macro-section-head #refreshMacroBtn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
       .main-content {
         padding-bottom: calc(92px + env(safe-area-inset-bottom));
       }
@@ -5415,6 +5427,44 @@
       .market-command-grid { grid-template-columns: 1fr; }
       .market-command-card:nth-child(2) { grid-row: auto; }
       .market-command-card { content-visibility: visible; }
+    }
+    @media (min-width: 601px) and (max-width: 900px) {
+      .main-content {
+        padding-bottom: calc(48px + env(safe-area-inset-bottom));
+      }
+      .main-tab-nav {
+        position: sticky;
+        inset: auto;
+        top: 38px !important;
+        z-index: 48;
+        gap: 3px;
+        margin: 0 0 16px;
+        padding: 7px 14px 9px;
+        background: linear-gradient(180deg, rgba(245, 238, 228, 0.98) 0%, rgba(244, 239, 232, 0.94) 100%);
+        border-top: 0;
+        border-bottom: 1px solid var(--line);
+        box-shadow: 0 4px 18px rgba(35, 26, 17, 0.05);
+        scroll-snap-type: none;
+        overscroll-behavior-x: contain;
+        touch-action: pan-x;
+      }
+      .main-tab-nav .tab-btn {
+        flex: 0 0 auto;
+        min-width: 0;
+        min-height: 44px;
+        padding: 7px 11px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        line-height: 1.2;
+        white-space: nowrap;
+        scroll-snap-align: none;
+      }
+      .main-tab-nav .tab-btn.active {
+        box-shadow: 0 6px 16px rgba(11, 109, 119, 0.28);
+      }
+      .main-tab-nav .tab-btn.active::after {
+        display: block;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -5829,6 +5879,8 @@
   <script src="app_files/source_adapters.js"></script>
   <script src="app_files/sources/market_data_normalizers.js"></script>
   <script src="app_files/sources/chip_data_normalizers.js"></script>
+  <script src="app_files/sources/fundamental_data_normalizers.js"></script>
+  <script src="app_files/sources/macro_data_normalizers.js"></script>
   <script src="app_files/web_adapter.js"></script>
   <script src="app_files/analysis_frameworks.js"></script>
   <script src="app_files/theme_regime.js"></script>
@@ -5838,6 +5890,8 @@
   <script src="app_files/core/source_catalog.js"></script>
   <script src="app_files/core/after_close_protocol.js"></script>
   <script src="app_files/features/trader_workspace.js"></script>
+  <script src="app_files/store/trader_workspace_selectors.js"></script>
+  <script src="app_files/ui/trader_workspace_renderer.js"></script>
   <script src="app_files/main.js"></script>
 </body>
 </html>
