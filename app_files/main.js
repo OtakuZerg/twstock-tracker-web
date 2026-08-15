@@ -1098,6 +1098,7 @@ const STOCK_UNIVERSE = {
   "3211": { name: "順達", suffix: "TW", officialIndustry: "28", sector: "電池模組 / BBU 三雄（伺服器備援電池）" },
   "2609": { name: "陽明", suffix: "TW", officialIndustry: "15", sector: "航運 / 貨櫃" },
   "0050": { name: "元大台灣50", suffix: "TW", sector: "ETF / 台灣50" },
+  "00935": { name: "野村臺灣新科技50", suffix: "TW", sector: "ETF / 台股創新科技50" },
   "00662": { name: "富邦NASDAQ", suffix: "TW", sector: "ETF / NASDAQ" },
   "00757": { name: "統一FANG+", suffix: "TW", sector: "ETF / 海外科技指數" },
   "00830": { name: "國泰費城半導體", suffix: "TW", sector: "ETF / 費城半導體" },
@@ -1287,7 +1288,7 @@ const OVERSEAS_ACTIVE_ETF_CODES = ["00983A", "00988A", "00989A", "00990A", "0099
 // 台股被動 ETF：僅放台股市場 ETF；海外科技 ETF 另歸第 15 主題。
 const TW_PASSIVE_ETF_CODES = [
   "0056", "00878", "00919", "00929", "006208",
-  "0050", "00713", "00881", "00692", "00680L",
+  "0050", "00935", "00713", "00881", "00692", "00680L",
   "00900", "00891"
 ];
 // 美股ETF（台灣掛牌規模前5）
@@ -3073,6 +3074,7 @@ const US_TREASURY_ETF_REGISTRY = [
 // ETF 基本資料（費用率、追蹤指數、配息頻率）⚠️ unverified — 請以各投信官方公開說明書為準
 const ETF_INFO = {
   "0050": { benchmark: "臺灣50指數", distribution: "以元大公告為準", category: "台股大型權值" },
+  "00935": { benchmark: "臺灣指數公司特選臺灣上市上櫃FactSet創新科技50指數", distribution: "半年配 / 以野村公告為準", category: "台股創新科技" },
   "0056": { benchmark: "臺灣高股息指數", distribution: "季配 / 以元大公告為準", category: "台股高股息" },
   "00662": { ter: 0.48, benchmark: "NASDAQ-100指數", distribution: "年配", category: "海外指數" },
   "00713": { benchmark: "臺灣指數公司特選高股息低波動指數", distribution: "季配 / 以元大公告為準", category: "台股高息低波" },
@@ -3120,6 +3122,10 @@ const EXTRA_STOCK_LINKS = {
   "0050": [
     RETIREMENT_INCOME_SOURCE_LINKS[0],
     RETIREMENT_INCOME_SOURCE_LINKS[4]
+  ],
+  "00935": [
+    { label: "TWSE ETF e添富 00935", url: "https://www.twse.com.tw/zh/ETFortune-institute/etfInfo/00935" },
+    { label: "野村投信 00935 官方", url: "https://www.nomurafunds.com.tw/event/ETF_00935/" }
   ],
   "00713": [
     RETIREMENT_INCOME_SOURCE_LINKS[1],
@@ -43860,10 +43866,18 @@ function renderTraderDesk() {
     : "尚無報價來源";
   const rrTone = globalThis.TwStockTraderWorkspace?.rewardRiskTone(tradePlan.rr) || "flat";
   const missingText = coverage.missing.length ? `缺：${coverage.missing.join("、")}` : "六層核心資料已覆蓋";
+  const holdingRows = storeSlice.holdingRows.map((row) => ({
+    ...row,
+    priceText: row.quoteAvailable ? formatNumber(row.price) : "待更新",
+    pctTone: changeClass(row.pct),
+    pctText: row.pct !== null ? formatPct(row.pct) : "報價待更新"
+  }));
 
   container.innerHTML = traderWorkspaceRenderer().render({
     stock,
     stockOptions: storeSlice.stockOptions,
+    holdingRows,
+    holdingSummary: storeSlice.holdingSummary,
     quoteSource,
     quoteAvailable: Boolean(quote),
     priceText: formatNumber(price),
@@ -44557,6 +44571,16 @@ function compactMobileSidebarAfterNavigation(options = {}) {
 }
 
 function bindEvents() {
+  document.body.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-trader-holding-code]");
+    if (!button) return;
+    const code = String(button.dataset.traderHoldingCode || "");
+    if (!STOCK_MAP.has(code) || code === state.selectedCode) return;
+    state.selectedCode = code;
+    persistStateSilently("操盤首頁持股快切");
+    render({ scope: "active" });
+  });
+
   document.body.addEventListener("click", (event) => {
     const link = event.target.closest("a[href]");
     if (!link) return;

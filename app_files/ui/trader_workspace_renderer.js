@@ -31,6 +31,27 @@
       </option>`).join("");
   }
 
+  function renderHoldingQuickSwitch(rows, summary = {}) {
+    const holdings = Array.isArray(rows) ? rows : [];
+    if (!holdings.length) return "";
+    const summaryText = `${Number(summary.total) || holdings.length} 檔 · ETF ${Number(summary.etfCount) || 0} / 個股 ${Number(summary.stockCount) || 0} · 報價 ${Number(summary.quotedCount) || 0}`;
+    return `
+      <section class="trader-holding-switch" aria-label="目前持股快切">
+        <div class="trader-holding-switch-head">
+          <strong>目前持股快切</strong>
+          <span>${escapeHtml(summaryText)}；清單僅供快速切換與研究排序，不處理張數、均價或損益。</span>
+        </div>
+        <div class="trader-holding-rail" role="group" aria-label="持股代碼">
+          ${holdings.map((row) => `
+            <button class="trader-holding-chip${row?.selected === true ? " is-selected" : ""}" type="button"
+              data-trader-holding-code="${escapeHtml(row?.code)}" aria-pressed="${row?.selected === true ? "true" : "false"}">
+              <span class="trader-holding-chip-title"><strong>${escapeHtml(row?.code)}</strong><small>${escapeHtml(row?.name)}</small></span>
+              <span class="trader-holding-chip-quote"><strong>${escapeHtml(row?.priceText || "待更新")}</strong><small class="${safeTone(row?.pctTone)}">${escapeHtml(row?.pctText || "報價待更新")}</small></span>
+            </button>`).join("")}
+        </div>
+      </section>`;
+  }
+
   function render(model = {}) {
     const stock = model.stock || {};
     const quoteChangeText = model.quoteAvailable === true ? model.quoteChangeText : "報價待更新";
@@ -46,6 +67,8 @@
           ${renderStockOptions(model.stockOptions)}
         </select>
       </div>
+
+      ${renderHoldingQuickSwitch(model.holdingRows, model.holdingSummary)}
 
       <div class="trader-decision-grid">
         <article class="trader-decision-card trader-price-card">
@@ -93,6 +116,7 @@
     version: VERSION,
     escapeHtml,
     renderStockOptions,
+    renderHoldingQuickSwitch,
     render
   });
 

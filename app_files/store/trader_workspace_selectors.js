@@ -21,6 +21,18 @@
     return normalizeStock(stockMap[key]);
   }
 
+  function finiteNumber(value) {
+    if (value === null || value === undefined || value === "") return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function valueFromMap(recordMap, code) {
+    const key = text(code);
+    if (!key || !recordMap) return null;
+    return typeof recordMap.get === "function" ? recordMap.get(key) || null : recordMap[key] || null;
+  }
+
   function selectCurrentStock(input = {}) {
     const selected = stockFromMap(input.stockMap, input.selectedCode);
     if (selected) return selected;
@@ -51,6 +63,40 @@
     }));
   }
 
+  function selectHoldingRows(input = {}) {
+    const selectedCode = text(input.selectedCode);
+    const seen = new Set();
+    return (Array.isArray(input.holdings) ? input.holdings : []).map((entry) => {
+      const holding = normalizeStock(entry);
+      if (!holding || seen.has(holding.code)) return null;
+      seen.add(holding.code);
+      const stock = stockFromMap(input.stockMap, holding.code) || holding;
+      const quote = valueFromMap(input.quotes, holding.code);
+      const price = finiteNumber(quote?.price);
+      const pct = finiteNumber(quote?.pct);
+      return {
+        code: stock.code,
+        name: stock.name,
+        suffix: text(holding.suffix || stock.suffix) || "TW",
+        selected: stock.code === selectedCode,
+        quoteAvailable: price !== null,
+        price,
+        pct
+      };
+    }).filter(Boolean);
+  }
+
+  function summarizeHoldingRows(rows) {
+    const holdings = Array.isArray(rows) ? rows : [];
+    const etfCount = holdings.filter((row) => text(row?.code).startsWith("00")).length;
+    return {
+      total: holdings.length,
+      etfCount,
+      stockCount: Math.max(0, holdings.length - etfCount),
+      quotedCount: holdings.filter((row) => row?.quoteAvailable === true).length
+    };
+  }
+
   function selectTraderDeskStore(input = {}) {
     const state = input.state && typeof input.state === "object" ? input.state : {};
     const stock = selectCurrentStock({
@@ -59,10 +105,18 @@
       watchlist: input.watchlist
     });
     const code = stock?.code || "";
+    const holdingRows = selectHoldingRows({
+      holdings: state.holdings,
+      stockMap: input.stockMap,
+      quotes: input.quotes || state.quotes,
+      selectedCode: code
+    });
     return {
       stock,
       institutional: code ? state.institutional?.[code] || null : null,
       margin: code ? state.margin?.[code] || null : null,
+      holdingRows,
+      holdingSummary: summarizeHoldingRows(holdingRows),
       stockOptions: stock ? selectStockOptions({
         currentStock: stock,
         watchlist: input.watchlist,
@@ -103,6 +157,8 @@
     selectCurrentStock,
     holdingCodeSet,
     selectStockOptions,
+    selectHoldingRows,
+    summarizeHoldingRows,
     selectTraderDeskStore,
     coverageInput
   });

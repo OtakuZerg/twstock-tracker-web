@@ -116,6 +116,101 @@
   min-height: 42px;
 }
 
+.trader-holding-switch {
+  padding: 12px 18px 14px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(248, 245, 239, 0.76);
+}
+
+.trader-holding-switch-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 9px;
+}
+
+.trader-holding-switch-head > strong {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+}
+
+.trader-holding-switch-head > span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.trader-holding-rail {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1px 1px 5px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.trader-holding-chip {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 7px;
+  flex: 0 0 154px;
+  min-width: 0;
+  min-height: 70px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+.trader-holding-chip:hover,
+.trader-holding-chip:focus-visible {
+  border-color: var(--accent);
+}
+
+.trader-holding-chip.is-selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.trader-holding-chip-title,
+.trader-holding-chip-quote {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 7px;
+  min-width: 0;
+}
+
+.trader-holding-chip-title > strong,
+.trader-holding-chip-quote > strong {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.trader-holding-chip-title > small,
+.trader-holding-chip-quote > small {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trader-holding-chip-title > small {
+  color: var(--muted);
+}
+
 .trader-decision-grid {
   display: grid;
   grid-template-columns: minmax(220px, 1.1fr) repeat(3, minmax(150px, 0.8fr));
@@ -380,6 +475,24 @@
 
   .trader-stock-select {
     width: 100%;
+  }
+
+  .trader-holding-switch {
+    padding: 11px 14px 12px;
+  }
+
+  .trader-holding-switch-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .trader-holding-switch-head > span {
+    text-align: left;
+  }
+
+  .trader-holding-chip {
+    flex-basis: 132px;
+    min-height: 68px;
   }
 
   .trader-decision-grid {
