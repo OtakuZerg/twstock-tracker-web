@@ -4682,8 +4682,14 @@
       margin-bottom: 10px;
     }
     .discovery-section-head h3 {
+      flex: 1 1 auto;
+      min-width: 0;
       margin: 0;
       font-size: 1rem;
+    }
+    .discovery-section-head > .chip {
+      flex: 0 0 auto;
+      white-space: nowrap;
     }
     .discovery-table {
       min-width: 1180px;
@@ -4719,6 +4725,18 @@
       line-height: 1.42;
       white-space: normal !important;
     }
+    .foreign-buy-streak-head > div:first-child {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .foreign-buy-streak-coverage {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+    .discovery-detail-load {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
     @media (max-width: 900px) {
       .discovery-hero {
         grid-template-columns: 1fr;
@@ -4730,6 +4748,18 @@
     @media (max-width: 560px) {
       .discovery-stat-grid {
         grid-template-columns: 1fr;
+      }
+      .foreign-buy-streak-head {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .discovery-detail-note-head {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .discovery-section-head {
+        flex-wrap: wrap;
+        align-items: flex-start;
       }
     }
 
@@ -5892,6 +5922,8 @@
   <script src="app_files/features/trader_workspace.js"></script>
   <script src="app_files/store/trader_workspace_selectors.js"></script>
   <script src="app_files/ui/trader_workspace_renderer.js"></script>
+  <script src="app_files/store/discovery_workspace_selectors.js"></script>
+  <script src="app_files/ui/discovery_workspace_renderer.js"></script>
   <script src="app_files/main.js"></script>
 </body>
 </html>

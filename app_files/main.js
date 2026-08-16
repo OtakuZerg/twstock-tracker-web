@@ -4736,7 +4736,7 @@ const LIQUIDITY_TREND_DISPLAY = {
   unknown: { arrow: "-", tone: "flat", label: "待更新"  }
 };
 
-function stockLiquidityChipHtml(code) {
+function stockLiquidityChipModel(code) {
   const info = stockLiquidityInfo(code);
   const meta = info.tierMeta || STOCK_LIQUIDITY_TIERS.unknown;
   const trendInfo = stockLiquidityTrend(code);
@@ -4762,7 +4762,16 @@ function stockLiquidityChipHtml(code) {
   // 過小流動性以更明顯的⚠️提示；下滑趨勢加 ↓
   const warn = (info.tier === "micro" || info.tier === "small") ? "⚠ " : "";
   const trendArrow = trendInfo.trend !== "unknown" ? ` ${trendDisplay.arrow}` : "";
-  return `<span class="chip ${meta.tone}" title="${escapeHtml(tip)}">${warn}${escapeHtml(meta.short)} ${escapeHtml(primaryText)}${trendArrow}</span>`;
+  return {
+    tone: meta.tone || "flat",
+    title: tip,
+    label: `${warn}${meta.short} ${primaryText}${trendArrow}`
+  };
+}
+
+function stockLiquidityChipHtml(code) {
+  const model = stockLiquidityChipModel(code);
+  return `<span class="chip ${escapeHtml(model.tone)}" title="${escapeHtml(model.title)}">${escapeHtml(model.label)}</span>`;
 }
 
 function compactDayFromDateLabel(value) {
@@ -5922,6 +5931,18 @@ function traderWorkspaceSelectors() {
 function traderWorkspaceRenderer() {
   const renderer = globalThis.TwStockTraderWorkspaceRenderer;
   if (!renderer) throw new Error("Trader workspace renderer 尚未載入");
+  return renderer;
+}
+
+function discoveryWorkspaceSelectors() {
+  const selectors = globalThis.TwStockDiscoveryWorkspaceSelectors;
+  if (!selectors) throw new Error("Discovery workspace selectors 尚未載入");
+  return selectors;
+}
+
+function discoveryWorkspaceRenderer() {
+  const renderer = globalThis.TwStockDiscoveryWorkspaceRenderer;
+  if (!renderer) throw new Error("Discovery workspace renderer 尚未載入");
   return renderer;
 }
 
@@ -30945,93 +30966,56 @@ function discoveryMetricLine(row) {
   ].join("｜");
 }
 
-function discoveryRowHtml(row, mode = "left") {
+function discoveryWorkspaceRowView(row, mode = "left") {
   const score = mode === "right" ? row.rightScore : row.leftScore;
   const source = row.indicators.inst5?.obsDays
     ? `法人 ${row.indicators.inst5.firstDate || "-"}-${row.indicators.inst5.lastDate || "-"}`
     : "法人待更新";
-  return `
-    <tr class="discovery-row" data-discovery-stock-code="${escapeHtml(row.stock.code)}">
-      <td class="sc-sticky">
-        <div style="font-weight:900;">${escapeHtml(row.stock.name)} ${escapeHtml(row.stock.code)}</div>
-        <div style="font-size:0.72rem;color:var(--muted);">${stockScaleBadgeHtml(row.stock)} ${stockLiquidityChipHtml(row.stock.code)}</div>
-      </td>
-      <td>${escapeHtml(row.theme.sectorLabel)}</td>
-      <td><strong>${escapeHtml(row.pattern)}</strong><div class="discovery-tags">${row.reasonTags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div></td>
-      <td class="num ${discoveryScoreClass(row.trendScore)}"><strong>${formatNumber(row.trendScore, 0)}</strong></td>
-      <td class="num ${discoveryScoreClass(row.chipScore)}"><strong>${formatNumber(row.chipScore, 0)}</strong></td>
-      <td><strong class="${row.risk.tone}">${escapeHtml(row.risk.label)}</strong><div style="font-size:0.72rem;color:var(--muted);">${escapeHtml(row.riskReasons.slice(0, 3).join("、") || "未見主要警訊")}</div></td>
-      <td><strong>${escapeHtml(row.action)}</strong><div style="font-size:0.72rem;color:var(--muted);">排序 ${formatNumber(score, 0)} · ${escapeHtml(source)}</div></td>
-      <td class="discovery-metrics">${escapeHtml(discoveryMetricLine(row))}</td>
-    </tr>
-  `;
-}
-
-function renderDiscoveryTable(title, rows, mode, emptyText, limit = 12) {
-  const list = rows.slice(0, limit);
-  return `
-    <article class="report-card discovery-section-card">
-      <div class="discovery-section-head">
-        <h3>${escapeHtml(title)}</h3>
-        <span class="chip flat">${formatNumber(rows.length, 0)} 檔${rows.length > list.length ? `（先顯示前 ${formatNumber(list.length, 0)}）` : ""}</span>
-      </div>
-      ${list.length ? `
-        <div class="table-wrap">
-          <table class="screener-table discovery-table">
-            <thead>
-              <tr>
-                <th class="sc-sticky">股票</th>
-                <th>產業</th>
-                <th>技術型態</th>
-                <th class="num">趨勢分數</th>
-                <th class="num">籌碼分數</th>
-                <th>風險</th>
-                <th>建議動作</th>
-                <th>指標摘要</th>
-              </tr>
-            </thead>
-            <tbody>${list.map((row) => discoveryRowHtml(row, mode)).join("")}</tbody>
-          </table>
-        </div>
-      ` : `<div class="empty">${escapeHtml(emptyText)}</div>`}
-    </article>
-  `;
+  const scale = stockScaleInfo(row.stock);
+  return {
+    code: row.stock.code,
+    name: row.stock.name,
+    scaleBadge: {
+      label: scale.label || "市值待更新",
+      tone: scale.tone || scale.key || "pending",
+      title: [scale.marketCapText, scale.rankText, scale.sourceDate].filter(Boolean).join(" / ")
+    },
+    liquidityBadge: stockLiquidityChipModel(row.stock.code),
+    sectorLabel: row.theme.sectorLabel,
+    pattern: row.pattern,
+    reasonTags: row.reasonTags,
+    trendScoreText: formatNumber(row.trendScore, 0),
+    trendTone: discoveryScoreClass(row.trendScore),
+    chipScoreText: formatNumber(row.chipScore, 0),
+    chipTone: discoveryScoreClass(row.chipScore),
+    riskLabel: row.risk.label,
+    riskTone: row.risk.tone,
+    riskText: row.riskReasons.slice(0, 3).join("、") || "未見主要警訊",
+    action: row.action,
+    rankText: formatNumber(score, 0),
+    sourceText: source,
+    metricsText: discoveryMetricLine(row)
+  };
 }
 
 function buildForeignBuyStreakRows(stocks, minStreak = 3) {
-  const rows = [];
-  for (const stock of stocks || []) {
-    const record = institutionalFor(stock.code);
-    const history = Array.isArray(record?.history) ? record.history : [];
-    if (history.length < minStreak) continue;
-    let streak = 0;
-    let sumNet = 0;
-    let lastDate = "";
-    for (let index = history.length - 1; index >= 0; index -= 1) {
-      const net = toNumber(history[index]?.foreignNet);
-      if (net === null || net <= 0) break;
-      streak += 1;
-      sumNet += net;
-      if (!lastDate) lastDate = String(history[index]?.date || "");
-    }
-    if (streak >= minStreak) {
-      rows.push({ stock, streak, sumNet, lastDate, coverageDays: history.length, source: record?.source || "TWSE / TPEx 三大法人" });
-    }
-  }
-  return rows.sort((a, b) => b.streak - a.streak || b.sumNet - a.sumNet).slice(0, 15);
+  const records = Object.fromEntries((stocks || []).map((stock) => [stock.code, institutionalFor(stock.code)]));
+  return discoveryWorkspaceSelectors().selectForeignBuyStreakRows({ stocks, records, minStreak, limit: 15 });
 }
 
 function renderForeignBuyStreakPanel(stocks) {
-  const rows = buildForeignBuyStreakRows(stocks);
-  const coveredCount = (stocks || []).filter((stock) => (institutionalFor(stock.code)?.history || []).length >= 3).length;
+  const records = Object.fromEntries((stocks || []).map((stock) => [stock.code, institutionalFor(stock.code)]));
+  const selectors = discoveryWorkspaceSelectors();
+  const rows = selectors.selectForeignBuyStreakRows({ stocks, records, minStreak: 3, limit: 15 });
+  const coveredCount = selectors.countForeignCoverage({ stocks, records, minimumDays: 3 });
   return `
     <div class="panel-lite" data-foreign-buy-streak style="margin-bottom:12px;">
-      <div class="section-head">
+      <div class="section-head foreign-buy-streak-head">
         <div>
           <h3>外資連續買超（趨勢資金 proxy）</h3>
           <p>依本機三大法人日資料，列出外資「連續 ≥ 3 個交易日買超」的追蹤股；連續買超代表趨勢資金持續進場，是研究排序依據，不是買進訊號。</p>
         </div>
-        <span class="chip">籌碼覆蓋 ${formatNumber(coveredCount, 0)} 檔</span>
+        <span class="chip foreign-buy-streak-coverage">籌碼覆蓋 ${formatNumber(coveredCount, 0)} 檔</span>
       </div>
       ${rows.length ? `
         <div class="table-wrap">
@@ -31079,56 +31063,29 @@ function renderDiscoveryCandidates(options = {}) {
   if (options.detail === true) _discoveryDetailView = true;
   else if (options.detail === false) _discoveryDetailView = false;
   const showDetail = _discoveryDetailView;
-  const tableLimit = showDetail ? 12 : 5;
   const baseStocks = quoteTrackableStocks(filteredStocks()).filter((stock) => !String(stock.code || "").startsWith("00"));
   const allRows = baseStocks.map(discoveryBuildRow);
-  const rows = allRows.filter((row) => row.universePass);
-  const excluded = allRows.length - rows.length;
-  const leftRows = rows
-    .filter((row) => row.leftSetup && row.leftScore >= 50 && row.risk.label !== "高")
-    .sort((a, b) => b.leftScore - a.leftScore || b.qualityScore - a.qualityScore);
-  const rightRows = rows
-    .filter((row) => row.rightSetup && row.rightScore >= 55 && row.risk.label !== "高")
-    .sort((a, b) => b.rightScore - a.rightScore || b.trendScore - a.trendScore);
-  const riskRows = rows
-    .filter((row) => row.risk.label === "高" || row.riskPoints >= 24)
-    .sort((a, b) => b.riskPoints - a.riskPoints || b.trendScore - a.trendScore)
-    .slice(0, 10);
-  const topLeft = leftRows[0];
-  const topRight = rightRows[0];
+  const workspace = discoveryWorkspaceSelectors().selectDiscoveryWorkspace({ allRows, showDetail });
+  const viewModel = {
+    tableLimit: workspace.tableLimit,
+    scannedCount: workspace.scannedCount,
+    excludedCount: workspace.excludedCount,
+    leftCount: workspace.leftRows.length,
+    rightCount: workspace.rightRows.length,
+    riskCount: workspace.riskRows.length,
+    topLeft: workspace.topLeft,
+    topRight: workspace.topRight,
+    leftRows: workspace.leftRows.map((row) => discoveryWorkspaceRowView(row, "left")),
+    rightRows: workspace.rightRows.map((row) => discoveryWorkspaceRowView(row, "right")),
+    riskRows: workspace.riskRows.map((row) => discoveryWorkspaceRowView(row, "right"))
+  };
+  const renderer = discoveryWorkspaceRenderer();
   container.innerHTML = `
-    <div class="discovery-hero">
-      <div>
-        <h3>標的找尋</h3>
-        <p>先過濾流動性與市值，再用技術線型、籌碼、月營收 / 殖利率與 AI / 產業題材做組合條件。單一 RSI、MACD 或爆量不會直接變成買賣訊號。</p>
-      </div>
-      <div class="discovery-stat-grid">
-        <div><span>可掃描</span><strong>${formatNumber(rows.length, 0)}</strong><small>已排除 ${formatNumber(excluded, 0)} 檔低流動性 / 小市值 / ETF</small></div>
-        <div><span>左側候選</span><strong>${formatNumber(leftRows.length, 0)}</strong><small>${topLeft ? `${topLeft.stock.code} ${topLeft.stock.name}` : "待更新資料"}</small></div>
-        <div><span>右側候選</span><strong>${formatNumber(rightRows.length, 0)}</strong><small>${topRight ? `${topRight.stock.code} ${topRight.stock.name}` : "待更新資料"}</small></div>
-        <div><span>風險警訊</span><strong>${formatNumber(riskRows.length, 0)}</strong><small>量縮創高 / RSI>80 / 法人轉賣 / 跌破20MA放量</small></div>
-      </div>
-    </div>
-    <div class="note-box" style="margin-bottom:12px;">
-      <strong>四層篩選：</strong>流動性（日均 >= 500 張或中型以上）與市值（官方 rank <= 500；缺 rank 時用本機市值級距 proxy） → 趨勢（MA5/10/20/60/120/240、RSI、MACD、量能、ATR、布林、20/60/120 日高低） → 籌碼（法人 5 / 10 日、Chip Score、融資） → 基本面 / 題材（月營收 YoY、PE / 殖利率、AI / CPO / 半導體 / PCB / 散熱電源等標籤）。
-    </div>
+    ${renderer.renderHero(viewModel)}
+    ${renderer.renderFilterNote()}
     ${renderForeignBuyStreakPanel(baseStocks)}
-    ${showDetail ? renderAnalystWinRatePanel(baseStocks) : `
-      <div class="panel-lite" data-discovery-detail-note style="margin-bottom:12px;">
-        <div class="section-head">
-          <div>
-            <h3>完整詳表已收斂</h3>
-            <p>初始畫面每張清單先顯示前 5 檔；「勝率 proxy / 歷史校準」與每張清單前 12 檔完整詳表改為按需載入。</p>
-          </div>
-          <button class="secondary-btn" type="button" data-discovery-detail-action="load" style="font-size:0.8rem;min-height:32px;">載入完整詳表</button>
-        </div>
-      </div>
-    `}
-    <div class="discovery-grid">
-      ${renderDiscoveryTable("左側交易：好公司倒楣事 / 回測月季線 / 底部翻揚", leftRows, "left", "目前沒有符合左側條件的標的。請先執行收盤後同步，補齊日線、籌碼、月營收與估值。", tableLimit)}
-      ${renderDiscoveryTable("右側交易：突破整理 / 主升段 / 籌碼轉強", rightRows, "right", "目前沒有符合右側突破條件的標的。", tableLimit)}
-      ${renderDiscoveryTable("避開清單：量價背離或出貨警訊", riskRows, "right", "目前沒有明顯高風險警訊。", tableLimit)}
-    </div>
+    ${showDetail ? renderAnalystWinRatePanel(baseStocks) : renderer.renderDetailNote()}
+    ${renderer.renderTables(viewModel)}
   `;
 }
 
