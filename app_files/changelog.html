@@ -7,6 +7,7 @@
             <ul class="cl-list">
               <li><strong>單一路徑 schema v2</strong>：直接升級既有 source catalog 的 provenance migration；舊 state 相容讀取，不建立第二套 store 或 parser。</li>
               <li><strong>隱私清理盤後快照</strong>：公開 Web 的中性示範清單新增官方收盤、6 個月日線、法人與資券；不含私人持股、成本、提醒或自訂研究。</li>
+              <li><strong>官方換日防護</strong>：日收盤表尚未換日時重用既有 TWSE MIS 批次 normalizer；四域未同日完整時由 Actions 最多重試 4 次。</li>
               <li><strong>同源資料合併</strong>：Web 快照灌回既有 quotes／klines／institutional／margin，重用原技術分析、Chip Score 與 Trader workspace。</li>
               <li><strong>回測執行模型</strong>：收盤訊號改為次日開盤成交、單一非重疊持倉、同根 K 棒停損優先，並加入可調成本與滑價假設。</li>
               <li><strong>R:R 安全閘門</strong>：缺目標價或 R:R 時不再顯示「可執行」或「攻擊觀察」。</li>

@@ -6358,6 +6358,7 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
     schemaVersion: 2,
     generatedAt: snapshot.generatedAt || null,
     attemptedDate: snapshot.attemptedDate || null,
+    attemptCount: Number(snapshot.attemptCount) || 0,
     asOf: snapshot.asOf || null,
     targetCount: Number(snapshot.targetCount) || 0,
     delivery: snapshot.delivery || null,
@@ -43986,9 +43987,12 @@ function renderAfterCloseScheduleStatus() {
   if (!container) return;
   if (isPublishedWebRuntime()) {
     const afterClose = state.afterCloseSnapshotMeta;
-    container.textContent = afterClose?.asOf ? `Web｜盤後 ${afterClose.asOf}` : "Web｜Actions 延遲快照";
+    const pendingCount = Array.isArray(afterClose?.errors) ? afterClose.errors.length : 0;
+    container.textContent = afterClose?.asOf
+      ? `Web｜盤後 ${afterClose.asOf}${pendingCount ? ` · 待複核 ${pendingCount}` : ""}`
+      : "Web｜Actions 延遲快照";
     container.title = afterClose?.asOf
-      ? `公開網站已載入 ${afterClose.asOf} 的隱私清理盤後報價／日線／籌碼；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。`
+      ? `公開網站已載入隱私清理盤後快照；${afterClose.asOf} 是整體最新資料日，各欄位仍須核對自己的來源日期與 fallback。${pendingCount ? `目前有 ${pendingCount} 項待複核。` : ""}同來源快照由 GitHub Actions 產生，可能因平台負載延遲。`
       : "公開網站不直接跨站抓資料；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。";
     return;
   }

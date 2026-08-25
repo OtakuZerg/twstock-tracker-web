@@ -20,6 +20,7 @@ const AFTER_CLOSE_HOUR = 15;
 const AFTER_CLOSE_HISTORY_RANGE = "6mo";
 const AFTER_CLOSE_CONCURRENCY = 4;
 const AFTER_CLOSE_MAX_CODES = 24;
+const AFTER_CLOSE_MAX_ATTEMPTS = 4;
 const TAIPEI_TIME_ZONE = "Asia/Taipei";
 const US_TIME_ZONE = "America/New_York";
 
@@ -628,7 +629,7 @@ async function buildTaifex(previous, generatedAt, fetchLog, errors, freshSources
 
 function marketNormalizers() {
   const value = globalThis.TwStockMarketDataNormalizers;
-  if (!value?.parseOfficialDailyQuoteRows || !value?.parseYahooKlines) throw new Error("Market data normalizers are unavailable");
+  if (!value?.parseOfficialDailyQuoteRows || !value?.parseTwseMisBatchQuotes || !value?.parseYahooKlines) throw new Error("Market data normalizers are unavailable");
   return value;
 }
 
@@ -689,13 +690,33 @@ function loadPublicTrackedStocks(stateCorePath) {
   return [];
 }
 
+function afterCloseSnapshotComplete(previous, date, targetCount) {
+  if (!previous || previous.asOf !== date || (Array.isArray(previous.errors) && previous.errors.length)) return false;
+  return ["quotes", "klines", "institutional", "margin"].every((id) => {
+    const domain = previous?.domains?.[id];
+    return domain?.asOf === date && Number(domain?.freshCount) >= targetCount;
+  });
+}
+
 function afterCloseRefreshDue(previous, generatedAt, trackedStocks) {
   if (!trackedStocks.length) return { due: false, reason: "no-public-tracked-universe" };
   const clock = taipeiClock(new Date(generatedAt));
   if (["Sat", "Sun"].includes(clock.weekday)) return { due: false, reason: "weekend", date: clock.date };
   if (clock.hour < AFTER_CLOSE_HOUR) return { due: false, reason: "before-after-close-window", date: clock.date };
-  if (previous?.attemptedDate === clock.date) return { due: false, reason: "already-attempted-today", date: clock.date };
-  return { due: true, reason: "after-close-refresh", date: clock.date };
+  const sameDayAttempt = previous?.attemptedDate === clock.date;
+  const previousAttempts = sameDayAttempt ? Math.max(1, Number(previous?.attemptCount) || 1) : 0;
+  if (sameDayAttempt && afterCloseSnapshotComplete(previous, clock.date, trackedStocks.length)) {
+    return { due: false, reason: "already-complete-today", date: clock.date, attemptCount: previousAttempts };
+  }
+  if (sameDayAttempt && previousAttempts >= AFTER_CLOSE_MAX_ATTEMPTS) {
+    return { due: false, reason: "partial-retry-limit", date: clock.date, attemptCount: previousAttempts };
+  }
+  return {
+    due: true,
+    reason: sameDayAttempt ? "partial-after-close-retry" : "after-close-refresh",
+    date: clock.date,
+    attemptCount: previousAttempts + 1
+  };
 }
 
 async function mapConcurrent(rows, limit, mapper) {
@@ -747,6 +768,45 @@ async function fetchOfficialTrackedQuotes(stocks, market, generatedAt, fetchLog)
   }
   if (!Object.keys(records).length) throw new Error(`${label} has no tracked records`);
   return records;
+}
+
+async function fetchMisTrackedQuotes(stocks, generatedAt, fetchLog) {
+  const channels = stocks.map((stock) => `${stock.suffix === "TWO" ? "otc" : "tse"}_${stock.code}.tw`).join("|");
+  if (!channels) return {};
+  const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${channels}&json=1&delay=0&_=${Date.now()}`;
+  const text = await fetchFixedText(url, { source: "TWSE MIS tracked batch", accept: "application/json" }, fetchLog);
+  const parsed = marketNormalizers().parseTwseMisBatchQuotes(text, stocks, { capturedAt: generatedAt });
+  const records = {};
+  for (const [code, row] of parsed.entries()) {
+    records[code] = normalizedProvenance({
+      ...row,
+      source: "TWSE MIS tracked batch",
+      sourceKind: "official",
+      fallbackUsed: false
+    }, { sourceTier: "Tier 1", fetchedAt: generatedAt, confidence: "high" });
+  }
+  if (!Object.keys(records).length) throw new Error("TWSE MIS tracked batch has no tracked records");
+  return records;
+}
+
+function selectLatestTrackedQuotes(tableQuotes, misQuotes, errors = []) {
+  const selected = {};
+  const codes = new Set([...Object.keys(tableQuotes || {}), ...Object.keys(misQuotes || {})]);
+  for (const code of codes) {
+    const table = tableQuotes?.[code] || null;
+    const mis = misQuotes?.[code] || null;
+    if (table && mis && table.asOf && table.asOf === mis.asOf) {
+      const tablePrice = numberValue(table.price);
+      const misPrice = numberValue(mis.price);
+      if (tablePrice !== null && misPrice !== null && Math.abs(tablePrice - misPrice) / Math.max(1, Math.abs(tablePrice)) > 0.01) {
+        errors.push(`${code} 收盤待複核：官方日表 ${tablePrice} vs MIS ${misPrice}`);
+      }
+    }
+    if (!table) selected[code] = mis;
+    else if (!mis) selected[code] = table;
+    else selected[code] = String(mis.asOf || "") >= String(table.asOf || "") ? mis : table;
+  }
+  return selected;
 }
 
 function mergeKlineRows(previousRows, incomingRows, limit = 140) {
@@ -913,21 +973,35 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
   const stocks = loadPublicTrackedStocks(options.stateCorePath);
   const scheduled = afterCloseRefreshDue(previous, generatedAt, stocks);
   const due = options.force === true && stocks.length
-    ? { due: true, reason: "forced-after-close-validation", date: taipeiClock(new Date(generatedAt)).date }
+    ? {
+      due: true,
+      reason: "forced-after-close-validation",
+      date: taipeiClock(new Date(generatedAt)).date,
+      attemptCount: previous?.attemptedDate === taipeiClock(new Date(generatedAt)).date
+        ? Math.max(1, Number(previous?.attemptCount) || 1) + 1
+        : 1
+    }
     : scheduled;
   if (!due.due) return { snapshot: previous || null, fresh: false, reason: due.reason, errors: [] };
 
   const errors = [];
-  const [twseQuotes, tpexQuotes] = await Promise.allSettled([
+  const [twseQuotes, tpexQuotes, misQuotes] = await Promise.allSettled([
     fetchOfficialTrackedQuotes(stocks, "TWSE", generatedAt, fetchLog),
-    fetchOfficialTrackedQuotes(stocks, "TPEX", generatedAt, fetchLog)
+    fetchOfficialTrackedQuotes(stocks, "TPEX", generatedAt, fetchLog),
+    fetchMisTrackedQuotes(stocks, generatedAt, fetchLog)
   ]);
   if (twseQuotes.status === "rejected") errors.push(`TWSE 收盤：${cleanError(twseQuotes.reason)}`);
   if (tpexQuotes.status === "rejected") errors.push(`TPEx 收盤：${cleanError(tpexQuotes.reason)}`);
-  const freshQuotes = {
+  if (misQuotes.status === "rejected") errors.push(`TWSE MIS 批次：${cleanError(misQuotes.reason)}`);
+  const tableQuotes = {
     ...(twseQuotes.status === "fulfilled" ? twseQuotes.value : {}),
     ...(tpexQuotes.status === "fulfilled" ? tpexQuotes.value : {})
   };
+  const freshQuotes = selectLatestTrackedQuotes(
+    tableQuotes,
+    misQuotes.status === "fulfilled" ? misQuotes.value : {},
+    errors
+  );
   const quotes = { ...previousDomainRecords(previous, "quotes"), ...freshQuotes };
   const previousKlines = previousDomainRecords(previous, "klines");
   const klineRows = await mapConcurrent(stocks, AFTER_CLOSE_CONCURRENCY, async (stock) => {
@@ -960,7 +1034,7 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
   const freshMarginCount = marginResult.status === "fulfilled" ? Object.keys(marginResult.value).length : 0;
   const domains = {
     quotes: domainPayload("quotes", quotes, generatedAt, {
-      source: "TWSE STOCK_DAY_ALL + TPEx mainboard quotes",
+      source: "TWSE / TPEx official close tables + TWSE MIS tracked batch",
       sourceTier: "Tier 1",
       fallbackUsed: freshQuoteCount < stocks.length,
       confidence: freshQuoteCount === stocks.length ? "high" : "low",
@@ -980,12 +1054,13 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
       schemaVersion: 2,
       generatedAt,
       attemptedDate: due.date,
+      attemptCount: due.attemptCount || 1,
       asOf,
       targetCount: stocks.length,
       delivery: {
         mode: "github-actions-sanitized-after-close",
         generatedAt,
-        schedule: "weekdays after 15:00 Asia/Taipei; at most one completed attempt per day",
+        schedule: "weekdays after 15:00 Asia/Taipei; retry partial domains up to four attempts",
         privacy: "public neutral holdings only; no cost basis, alerts, or private research"
       },
       domains,
@@ -1011,6 +1086,31 @@ function validSnapshotPayload(payload) {
   return Boolean(payload && typeof payload === "object" && cache && typeof cache === "object");
 }
 
+function validAfterCloseSnapshot(snapshot) {
+  return Boolean(snapshot && typeof snapshot === "object" && snapshot.schemaVersion === 2 && snapshot.domains && typeof snapshot.domains === "object");
+}
+
+function afterCloseSnapshotCoverage(snapshot) {
+  return ["quotes", "klines", "institutional", "margin"].reduce((sum, id) => {
+    const domain = snapshot?.domains?.[id];
+    const count = Number(domain?.count);
+    return sum + (Number.isFinite(count) ? count : Object.keys(domain?.records || {}).length);
+  }, 0);
+}
+
+function selectBestAfterCloseSnapshot(candidates) {
+  return candidates
+    .map((payload) => payload?.afterCloseSnapshot)
+    .filter(validAfterCloseSnapshot)
+    .sort((left, right) => {
+      const dateDifference = (Date.parse(`${right.asOf || ""}T00:00:00Z`) || 0) - (Date.parse(`${left.asOf || ""}T00:00:00Z`) || 0);
+      if (dateDifference) return dateDifference;
+      const coverageDifference = afterCloseSnapshotCoverage(right) - afterCloseSnapshotCoverage(left);
+      if (coverageDifference) return coverageDifference;
+      return (Date.parse(right.generatedAt || right.delivery?.generatedAt || "") || 0) - (Date.parse(left.generatedAt || left.delivery?.generatedAt || "") || 0);
+    })[0] || null;
+}
+
 async function loadPreviousSnapshot(outputPath, remoteFallback, fetchLog) {
   const candidates = [
     readJsonIfPresent(outputPath),
@@ -1027,7 +1127,10 @@ async function loadPreviousSnapshot(outputPath, remoteFallback, fetchLog) {
       if (validSnapshotPayload(remote)) candidates.push(remote);
     } catch (_) {}
   }
-  return candidates.sort((left, right) => snapshotTimestamp(right) - snapshotTimestamp(left))[0] || { schemaVersion: 1, delivery: {}, marketDashboardCache: {} };
+  const marketPayload = candidates.sort((left, right) => snapshotTimestamp(right) - snapshotTimestamp(left))[0]
+    || { schemaVersion: 1, delivery: {}, marketDashboardCache: {} };
+  const afterCloseSnapshot = selectBestAfterCloseSnapshot(candidates);
+  return afterCloseSnapshot ? { ...marketPayload, afterCloseSnapshot } : marketPayload;
 }
 
 function previousGlobal(cache, key) {
@@ -1155,8 +1258,25 @@ function selfTest() {
     holdings: [{ code: "2330", suffix: "TW", name: "台積電" }, { code: "6640", suffix: "TWO", name: "均華" }]
   });
   const afterCloseDue = afterCloseRefreshDue(null, "2026-08-21T07:10:00.000Z", publicStocks);
-  const afterCloseDone = afterCloseRefreshDue({ attemptedDate: "2026-08-21" }, "2026-08-21T07:22:00.000Z", publicStocks);
+  const completeDomains = Object.fromEntries(["quotes", "klines", "institutional", "margin"].map((id) => [id, { asOf: "2026-08-21", freshCount: 2 }]));
+  const afterCloseDone = afterCloseRefreshDue({ attemptedDate: "2026-08-21", attemptCount: 1, asOf: "2026-08-21", domains: completeDomains, errors: [] }, "2026-08-21T07:22:00.000Z", publicStocks);
+  const afterClosePartialRetry = afterCloseRefreshDue({ attemptedDate: "2026-08-21", attemptCount: 1, asOf: "2026-08-21", domains: { ...completeDomains, institutional: { asOf: "2026-08-20", freshCount: 0 } }, errors: ["T86 pending"] }, "2026-08-21T07:22:00.000Z", publicStocks);
+  const afterCloseRetryLimit = afterCloseRefreshDue({ attemptedDate: "2026-08-21", attemptCount: 4, asOf: "2026-08-20", domains: {}, errors: ["pending"] }, "2026-08-21T07:22:00.000Z", publicStocks);
   const afterCloseAsOf = latestDomainAsOf({ quotes: { asOf: "2026-05-12" }, klines: { asOf: "2026-08-21" } });
+  const selectedQuote = selectLatestTrackedQuotes(
+    { "2330": { code: "2330", price: 100, asOf: "2026-08-20" } },
+    { "2330": { code: "2330", price: 105, asOf: "2026-08-21" } }
+  )["2330"];
+  const selectedAfterClose = selectBestAfterCloseSnapshot([
+    {
+      delivery: { generatedAt: "2026-08-21T07:20:00.000Z" },
+      afterCloseSnapshot: { schemaVersion: 2, generatedAt: "2026-08-21T07:20:00.000Z", asOf: "2026-05-12", domains: { quotes: { count: 2, records: {} } } }
+    },
+    {
+      delivery: { generatedAt: "2026-08-20T07:20:00.000Z" },
+      afterCloseSnapshot: { schemaVersion: 2, generatedAt: "2026-08-20T07:20:00.000Z", asOf: "2026-08-20", domains: { quotes: { count: 16, records: {} }, klines: { count: 16, records: {} }, institutional: { count: 16, records: {} }, margin: { count: 16, records: {} } } }
+    }
+  ]);
   const provenance = normalizedProvenance({ source: "TWSE STOCK_DAY_ALL", sourceKind: "official", sourceDate: "2026-08-21" }, { fetchedAt: "2026-08-21T07:10:00.000Z" });
   const checks = {
     yahoo: yahoo.value === 100 && Math.round(yahoo.pct * 100) === 204,
@@ -1164,8 +1284,16 @@ function selfTest() {
     cmoney: cmoney.value === 45659 && cmoney.change === 94,
     cboe: cboe.value === 52637 && cboe.change === 150,
     publicUniverse: publicStocks.length === 2 && publicStocks[1].suffix === "TWO",
-    afterCloseSchedule: afterCloseDue.due === true && afterCloseDone.due === false,
+    afterCloseSchedule: afterCloseDue.due === true
+      && afterCloseDue.attemptCount === 1
+      && afterCloseDone.due === false
+      && afterCloseDone.reason === "already-complete-today"
+      && afterClosePartialRetry.due === true
+      && afterClosePartialRetry.attemptCount === 2
+      && afterCloseRetryLimit.due === false,
     afterCloseAsOf: afterCloseAsOf === "2026-08-21",
+    misBatchFreshness: selectedQuote?.asOf === "2026-08-21" && selectedQuote?.price === 105,
+    afterCloseFallbackSelection: selectedAfterClose?.asOf === "2026-08-20" && afterCloseSnapshotCoverage(selectedAfterClose) === 64,
     provenanceV2: sourceCatalog().schemaVersion === 2 && sourceCatalog().validateProvenance(provenance).ok,
     fixedUrlRejects: false
   };

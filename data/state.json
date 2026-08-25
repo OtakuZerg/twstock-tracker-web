@@ -147134,7 +147134,7 @@
   "performance": {},
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-08-25T06:10:20.605Z",
+    "builtAt": "2026-08-25T09:13:27.264Z",
     "sourcePath": "data/state.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"
@@ -147143,7 +147143,7 @@
   "schemaMigration": {
     "schemaVersion": 2,
     "mode": "compatible-in-memory",
-    "migratedAt": "2026-08-25T06:10:20.605Z",
+    "migratedAt": "2026-08-25T09:13:27.264Z",
     "records": 5983,
     "valid": 5666,
     "domains": {
