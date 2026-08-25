@@ -22,7 +22,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1503": {
       "code": "1503",
@@ -46,7 +50,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1504": {
       "code": "1504",
@@ -70,7 +78,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1513": {
       "code": "1513",
@@ -94,7 +106,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1514": {
       "code": "1514",
@@ -118,7 +134,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1515": {
       "code": "1515",
@@ -142,7 +162,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1519": {
       "code": "1519",
@@ -166,7 +190,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1536": {
       "code": "1536",
@@ -190,7 +218,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1560": {
       "code": "1560",
@@ -214,7 +246,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1569": {
       "code": "1569",
@@ -238,7 +274,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1583": {
       "code": "1583",
@@ -262,7 +302,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1590": {
       "code": "1590",
@@ -286,7 +330,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1597": {
       "code": "1597",
@@ -310,7 +358,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1605": {
       "code": "1605",
@@ -334,7 +386,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1608": {
       "code": "1608",
@@ -358,7 +414,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1609": {
       "code": "1609",
@@ -382,7 +442,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1612": {
       "code": "1612",
@@ -406,7 +470,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1618": {
       "code": "1618",
@@ -430,7 +498,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1711": {
       "code": "1711",
@@ -454,7 +526,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1723": {
       "code": "1723",
@@ -478,7 +554,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1773": {
       "code": "1773",
@@ -502,7 +582,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1785": {
       "code": "1785",
@@ -526,7 +610,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "1802": {
       "code": "1802",
@@ -550,7 +638,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "1815": {
       "code": "1815",
@@ -574,7 +666,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2049": {
       "code": "2049",
@@ -598,7 +694,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2247": {
       "code": "2247",
@@ -622,7 +722,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2301": {
       "code": "2301",
@@ -646,7 +750,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2308": {
       "code": "2308",
@@ -670,7 +778,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2312": {
       "code": "2312",
@@ -694,7 +806,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2313": {
       "code": "2313",
@@ -718,7 +834,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2317": {
       "code": "2317",
@@ -742,7 +862,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2324": {
       "code": "2324",
@@ -766,7 +890,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2327": {
       "code": "2327",
@@ -790,7 +918,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2330": {
       "code": "2330",
@@ -814,7 +946,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "2337": {
       "code": "2337",
@@ -838,7 +974,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2344": {
       "code": "2344",
@@ -862,7 +1002,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2345": {
       "code": "2345",
@@ -886,7 +1030,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2347": {
       "code": "2347",
@@ -910,7 +1058,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.266Z"
+      "capturedAt": "2026-05-12T16:00:27.266Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.266Z",
+      "confidence": "high"
     },
     "2352": {
       "code": "2352",
@@ -934,7 +1086,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2353": {
       "code": "2353",
@@ -958,7 +1114,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2356": {
       "code": "2356",
@@ -982,7 +1142,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2357": {
       "code": "2357",
@@ -1006,7 +1170,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2359": {
       "code": "2359",
@@ -1030,7 +1198,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2360": {
       "code": "2360",
@@ -1054,7 +1226,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2365": {
       "code": "2365",
@@ -1078,7 +1254,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2367": {
       "code": "2367",
@@ -1102,7 +1282,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2368": {
       "code": "2368",
@@ -1126,7 +1310,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2376": {
       "code": "2376",
@@ -1150,7 +1338,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2377": {
       "code": "2377",
@@ -1174,7 +1366,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2379": {
       "code": "2379",
@@ -1198,7 +1394,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2382": {
       "code": "2382",
@@ -1222,7 +1422,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2383": {
       "code": "2383",
@@ -1246,7 +1450,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2385": {
       "code": "2385",
@@ -1270,7 +1478,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2388": {
       "code": "2388",
@@ -1294,7 +1506,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2392": {
       "code": "2392",
@@ -1318,7 +1534,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2395": {
       "code": "2395",
@@ -1342,7 +1562,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2404": {
       "code": "2404",
@@ -1366,7 +1590,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "2408": {
       "code": "2408",
@@ -1390,7 +1618,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2412": {
       "code": "2412",
@@ -1414,7 +1646,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2421": {
       "code": "2421",
@@ -1438,7 +1674,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2436": {
       "code": "2436",
@@ -1462,7 +1702,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2449": {
       "code": "2449",
@@ -1486,7 +1730,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2451": {
       "code": "2451",
@@ -1510,7 +1758,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2454": {
       "code": "2454",
@@ -1534,7 +1786,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2455": {
       "code": "2455",
@@ -1558,7 +1814,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2458": {
       "code": "2458",
@@ -1582,7 +1842,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.805Z"
+      "capturedAt": "2026-05-12T16:00:27.805Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.805Z",
+      "confidence": "high"
     },
     "2464": {
       "code": "2464",
@@ -1606,7 +1870,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.806Z"
+      "capturedAt": "2026-05-12T16:00:27.806Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.806Z",
+      "confidence": "high"
     },
     "2467": {
       "code": "2467",
@@ -1630,7 +1898,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.806Z"
+      "capturedAt": "2026-05-12T16:00:27.806Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.806Z",
+      "confidence": "high"
     },
     "2471": {
       "code": "2471",
@@ -1654,7 +1926,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.806Z"
+      "capturedAt": "2026-05-12T16:00:27.806Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.806Z",
+      "confidence": "high"
     },
     "2485": {
       "code": "2485",
@@ -1678,7 +1954,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2548": {
       "code": "2548",
@@ -1702,7 +1982,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2603": {
       "code": "2603",
@@ -1726,7 +2010,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2609": {
       "code": "2609",
@@ -1750,7 +2038,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2618": {
       "code": "2618",
@@ -1774,7 +2066,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2630": {
       "code": "2630",
@@ -1798,7 +2094,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2634": {
       "code": "2634",
@@ -1822,7 +2122,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2645": {
       "code": "2645",
@@ -1846,7 +2150,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2834": {
       "code": "2834",
@@ -1870,7 +2178,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "2884": {
       "code": "2884",
@@ -1894,7 +2206,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3008": {
       "code": "3008",
@@ -1918,7 +2234,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3013": {
       "code": "3013",
@@ -1942,7 +2262,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3015": {
       "code": "3015",
@@ -1966,7 +2290,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3017": {
       "code": "3017",
@@ -1990,7 +2318,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3019": {
       "code": "3019",
@@ -2014,7 +2346,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3022": {
       "code": "3022",
@@ -2038,7 +2374,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3023": {
       "code": "3023",
@@ -2062,7 +2402,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3029": {
       "code": "3029",
@@ -2086,7 +2430,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3030": {
       "code": "3030",
@@ -2110,7 +2458,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3034": {
       "code": "3034",
@@ -2134,7 +2486,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3035": {
       "code": "3035",
@@ -2158,7 +2514,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3037": {
       "code": "3037",
@@ -2182,7 +2542,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3044": {
       "code": "3044",
@@ -2206,7 +2570,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3081": {
       "code": "3081",
@@ -2230,7 +2598,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3088": {
       "code": "3088",
@@ -2254,7 +2626,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3105": {
       "code": "3105",
@@ -2278,7 +2654,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3131": {
       "code": "3131",
@@ -2302,7 +2682,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3135": {
       "code": "3135",
@@ -2326,7 +2710,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3163": {
       "code": "3163",
@@ -2350,7 +2738,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3167": {
       "code": "3167",
@@ -2374,7 +2766,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3189": {
       "code": "3189",
@@ -2398,7 +2794,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3218": {
       "code": "3218",
@@ -2422,7 +2822,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3227": {
       "code": "3227",
@@ -2446,7 +2850,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.891Z"
+      "capturedAt": "2026-05-12T16:00:27.891Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.891Z",
+      "confidence": "high"
     },
     "3231": {
       "code": "3231",
@@ -2470,7 +2878,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3234": {
       "code": "3234",
@@ -2494,7 +2906,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3260": {
       "code": "3260",
@@ -2518,7 +2934,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3265": {
       "code": "3265",
@@ -2542,7 +2962,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3324": {
       "code": "3324",
@@ -2566,7 +2990,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3362": {
       "code": "3362",
@@ -2590,7 +3018,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3363": {
       "code": "3363",
@@ -2614,7 +3046,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3374": {
       "code": "3374",
@@ -2638,7 +3074,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3380": {
       "code": "3380",
@@ -2662,7 +3102,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3406": {
       "code": "3406",
@@ -2686,7 +3130,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3443": {
       "code": "3443",
@@ -2710,7 +3158,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3450": {
       "code": "3450",
@@ -2734,7 +3186,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3491": {
       "code": "3491",
@@ -2758,7 +3214,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3515": {
       "code": "3515",
@@ -2782,7 +3242,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3529": {
       "code": "3529",
@@ -2806,7 +3270,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3533": {
       "code": "3533",
@@ -2830,7 +3298,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3535": {
       "code": "3535",
@@ -2854,7 +3326,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3583": {
       "code": "3583",
@@ -2878,7 +3354,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3595": {
       "code": "3595",
@@ -2900,7 +3380,11 @@
       "sourceTime": "14:59:59",
       "marketTime": "2026-05-12T06:59:59.000Z",
       "exchangeTimezoneName": "Asia/Taipei",
-      "capturedAt": "2026-05-12T16:00:28.596Z"
+      "capturedAt": "2026-05-12T16:00:28.596Z",
+      "sourceTier": "Tier 2",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.596Z",
+      "confidence": "medium"
     },
     "3596": {
       "code": "3596",
@@ -2924,7 +3408,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3653": {
       "code": "3653",
@@ -2948,7 +3436,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3661": {
       "code": "3661",
@@ -2972,7 +3464,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3665": {
       "code": "3665",
@@ -2996,7 +3492,11 @@
       "sourceTime": "13:33:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:33:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3680": {
       "code": "3680",
@@ -3020,7 +3520,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "3693": {
       "code": "3693",
@@ -3044,7 +3548,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3704": {
       "code": "3704",
@@ -3068,7 +3576,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3706": {
       "code": "3706",
@@ -3092,7 +3604,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "3711": {
       "code": "3711",
@@ -3116,7 +3632,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "4506": {
       "code": "4506",
@@ -3140,7 +3660,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "4526": {
       "code": "4526",
@@ -3164,7 +3688,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "4561": {
       "code": "4561",
@@ -3188,7 +3716,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "4572": {
       "code": "4572",
@@ -3212,7 +3744,11 @@
       "sourceTime": "13:33:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:33:00",
-      "capturedAt": "2026-05-12T16:00:27.974Z"
+      "capturedAt": "2026-05-12T16:00:27.974Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:27.974Z",
+      "confidence": "high"
     },
     "4576": {
       "code": "4576",
@@ -3236,7 +3772,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4583": {
       "code": "4583",
@@ -3260,7 +3800,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4585": {
       "code": "4585",
@@ -3284,7 +3828,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4721": {
       "code": "4721",
@@ -3308,7 +3856,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4739": {
       "code": "4739",
@@ -3332,7 +3884,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4749": {
       "code": "4749",
@@ -3356,7 +3912,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "4763": {
       "code": "4763",
@@ -3380,7 +3940,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4766": {
       "code": "4766",
@@ -3404,7 +3968,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4772": {
       "code": "4772",
@@ -3428,7 +3996,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "4906": {
       "code": "4906",
@@ -3452,7 +4024,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4908": {
       "code": "4908",
@@ -3476,7 +4052,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4916": {
       "code": "4916",
@@ -3500,7 +4080,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4919": {
       "code": "4919",
@@ -3524,7 +4108,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4938": {
       "code": "4938",
@@ -3548,7 +4136,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4958": {
       "code": "4958",
@@ -3572,7 +4164,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4967": {
       "code": "4967",
@@ -3596,7 +4192,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4973": {
       "code": "4973",
@@ -3620,7 +4220,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "4979": {
       "code": "4979",
@@ -3644,7 +4248,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "4991": {
       "code": "4991",
@@ -3668,7 +4276,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5209": {
       "code": "5209",
@@ -3692,7 +4304,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5269": {
       "code": "5269",
@@ -3716,7 +4332,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5274": {
       "code": "5274",
@@ -3740,7 +4360,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5289": {
       "code": "5289",
@@ -3764,7 +4388,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5309": {
       "code": "5309",
@@ -3788,7 +4416,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5347": {
       "code": "5347",
@@ -3812,7 +4444,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5371": {
       "code": "5371",
@@ -3836,7 +4472,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5386": {
       "code": "5386",
@@ -3860,7 +4500,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5388": {
       "code": "5388",
@@ -3884,7 +4528,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5434": {
       "code": "5434",
@@ -3908,7 +4556,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "5443": {
       "code": "5443",
@@ -3932,7 +4584,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "5536": {
       "code": "5536",
@@ -3956,7 +4612,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "5538": {
       "code": "5538",
@@ -3980,7 +4640,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.058Z"
+      "capturedAt": "2026-05-12T16:00:28.058Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.058Z",
+      "confidence": "high"
     },
     "6104": {
       "code": "6104",
@@ -4004,7 +4668,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6125": {
       "code": "6125",
@@ -4028,7 +4696,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6139": {
       "code": "6139",
@@ -4052,7 +4724,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6146": {
       "code": "6146",
@@ -4076,7 +4752,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6187": {
       "code": "6187",
@@ -4100,7 +4780,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6188": {
       "code": "6188",
@@ -4124,7 +4808,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6190": {
       "code": "6190",
@@ -4148,7 +4836,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6191": {
       "code": "6191",
@@ -4172,7 +4864,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6192": {
       "code": "6192",
@@ -4196,7 +4892,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6196": {
       "code": "6196",
@@ -4220,7 +4920,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6202": {
       "code": "6202",
@@ -4244,7 +4948,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6209": {
       "code": "6209",
@@ -4268,7 +4976,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6213": {
       "code": "6213",
@@ -4292,7 +5004,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6214": {
       "code": "6214",
@@ -4316,7 +5032,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6223": {
       "code": "6223",
@@ -4340,7 +5060,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6230": {
       "code": "6230",
@@ -4364,7 +5088,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6239": {
       "code": "6239",
@@ -4388,7 +5116,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6257": {
       "code": "6257",
@@ -4412,7 +5144,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6269": {
       "code": "6269",
@@ -4436,7 +5172,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6274": {
       "code": "6274",
@@ -4460,7 +5200,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6278": {
       "code": "6278",
@@ -4484,7 +5228,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6282": {
       "code": "6282",
@@ -4508,7 +5256,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6285": {
       "code": "6285",
@@ -4532,7 +5284,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6409": {
       "code": "6409",
@@ -4556,7 +5312,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6412": {
       "code": "6412",
@@ -4580,7 +5340,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6414": {
       "code": "6414",
@@ -4602,7 +5366,11 @@
       "sourceTime": "13:23:15",
       "marketTime": "2014-04-17T05:23:15.000Z",
       "exchangeTimezoneName": "Asia/Taipei",
-      "capturedAt": "2026-05-12T16:00:28.851Z"
+      "capturedAt": "2026-05-12T16:00:28.851Z",
+      "sourceTier": "Tier 2",
+      "asOf": "2014-04-17",
+      "fetchedAt": "2026-05-12T16:00:28.851Z",
+      "confidence": "medium"
     },
     "6415": {
       "code": "6415",
@@ -4626,7 +5394,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6442": {
       "code": "6442",
@@ -4650,7 +5422,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6451": {
       "code": "6451",
@@ -4674,7 +5450,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6510": {
       "code": "6510",
@@ -4698,7 +5478,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.210Z"
+      "capturedAt": "2026-05-12T16:00:28.210Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.210Z",
+      "confidence": "high"
     },
     "6515": {
       "code": "6515",
@@ -4722,7 +5506,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6531": {
       "code": "6531",
@@ -4746,7 +5534,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6533": {
       "code": "6533",
@@ -4770,7 +5562,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6579": {
       "code": "6579",
@@ -4794,7 +5590,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6640": {
       "code": "6640",
@@ -4818,7 +5618,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "6643": {
       "code": "6643",
@@ -4842,7 +5646,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6664": {
       "code": "6664",
@@ -4866,7 +5674,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6669": {
       "code": "6669",
@@ -4890,7 +5702,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6683": {
       "code": "6683",
@@ -4914,7 +5730,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6691": {
       "code": "6691",
@@ -4938,7 +5758,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6756": {
       "code": "6756",
@@ -4962,7 +5786,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6770": {
       "code": "6770",
@@ -4986,7 +5814,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6789": {
       "code": "6789",
@@ -5010,7 +5842,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "6803": {
       "code": "6803",
@@ -5034,7 +5870,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "7402": {
       "code": "7402",
@@ -5058,7 +5898,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "7734": {
       "code": "7734",
@@ -5082,7 +5926,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "7750": {
       "code": "7750",
@@ -5106,7 +5954,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "7795": {
       "code": "7795",
@@ -5130,7 +5982,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "7853": {
       "code": "7853",
@@ -5152,7 +6008,11 @@
       "sourceTime": "14:59:55",
       "marketTime": "2026-05-12T06:59:55.000Z",
       "exchangeTimezoneName": "Asia/Taipei",
-      "capturedAt": "2026-05-12T16:00:28.984Z"
+      "capturedAt": "2026-05-12T16:00:28.984Z",
+      "sourceTier": "Tier 2",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.984Z",
+      "confidence": "medium"
     },
     "8021": {
       "code": "8021",
@@ -5176,7 +6036,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8027": {
       "code": "8027",
@@ -5200,7 +6064,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8039": {
       "code": "8039",
@@ -5224,7 +6092,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8046": {
       "code": "8046",
@@ -5248,7 +6120,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:26.923Z"
+      "capturedAt": "2026-05-12T16:00:26.923Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:26.923Z",
+      "confidence": "high"
     },
     "8050": {
       "code": "8050",
@@ -5272,7 +6148,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8080": {
       "code": "8080",
@@ -5296,7 +6176,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8081": {
       "code": "8081",
@@ -5320,7 +6204,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8084": {
       "code": "8084",
@@ -5344,7 +6232,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.319Z"
+      "capturedAt": "2026-05-12T16:00:28.319Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.319Z",
+      "confidence": "high"
     },
     "8086": {
       "code": "8086",
@@ -5368,7 +6260,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8088": {
       "code": "8088",
@@ -5392,7 +6288,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8114": {
       "code": "8114",
@@ -5416,7 +6316,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8150": {
       "code": "8150",
@@ -5440,7 +6344,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8210": {
       "code": "8210",
@@ -5464,7 +6372,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8222": {
       "code": "8222",
@@ -5488,7 +6400,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8234": {
       "code": "8234",
@@ -5512,7 +6428,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8271": {
       "code": "8271",
@@ -5536,7 +6456,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8277": {
       "code": "8277",
@@ -5560,7 +6484,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8299": {
       "code": "8299",
@@ -5584,7 +6512,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8358": {
       "code": "8358",
@@ -5608,7 +6540,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8422": {
       "code": "8422",
@@ -5632,7 +6568,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "8996": {
       "code": "8996",
@@ -5656,7 +6596,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "9911": {
       "code": "9911",
@@ -5680,7 +6624,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "9933": {
       "code": "9933",
@@ -5704,7 +6652,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "0050": {
       "code": "0050",
@@ -5728,7 +6680,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "0056": {
       "code": "0056",
@@ -5752,7 +6708,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "006208": {
       "code": "006208",
@@ -5776,7 +6736,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00631L": {
       "code": "00631L",
@@ -5800,7 +6764,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00646": {
       "code": "00646",
@@ -5824,7 +6792,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00662": {
       "code": "00662",
@@ -5848,7 +6820,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00679B": {
       "code": "00679B",
@@ -5872,7 +6848,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00680L": {
       "code": "00680L",
@@ -5896,7 +6876,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00687B": {
       "code": "00687B",
@@ -5920,7 +6904,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00692": {
       "code": "00692",
@@ -5944,7 +6932,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00694B": {
       "code": "00694B",
@@ -5968,7 +6960,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00713": {
       "code": "00713",
@@ -5992,7 +6988,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00719B": {
       "code": "00719B",
@@ -6016,7 +7016,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00757": {
       "code": "00757",
@@ -6040,7 +7044,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00830": {
       "code": "00830",
@@ -6064,7 +7072,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00865B": {
       "code": "00865B",
@@ -6088,7 +7100,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00878": {
       "code": "00878",
@@ -6112,7 +7128,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00881": {
       "code": "00881",
@@ -6136,7 +7156,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00891": {
       "code": "00891",
@@ -6160,7 +7184,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00900": {
       "code": "00900",
@@ -6184,7 +7212,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00919": {
       "code": "00919",
@@ -6208,7 +7240,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00929": {
       "code": "00929",
@@ -6232,7 +7268,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00949": {
       "code": "00949",
@@ -6256,7 +7296,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00980A": {
       "code": "00980A",
@@ -6280,7 +7324,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00981A": {
       "code": "00981A",
@@ -6304,7 +7352,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.461Z"
+      "capturedAt": "2026-05-12T16:00:28.461Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.461Z",
+      "confidence": "high"
     },
     "00982A": {
       "code": "00982A",
@@ -6328,7 +7380,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00983A": {
       "code": "00983A",
@@ -6352,7 +7408,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00984A": {
       "code": "00984A",
@@ -6376,7 +7436,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00985A": {
       "code": "00985A",
@@ -6400,7 +7464,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00986A": {
       "code": "00986A",
@@ -6424,7 +7492,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00987A": {
       "code": "00987A",
@@ -6448,7 +7520,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00988A": {
       "code": "00988A",
@@ -6472,7 +7548,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00989A": {
       "code": "00989A",
@@ -6496,7 +7576,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00990A": {
       "code": "00990A",
@@ -6520,7 +7604,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00991A": {
       "code": "00991A",
@@ -6544,7 +7632,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00992A": {
       "code": "00992A",
@@ -6568,7 +7660,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00993A": {
       "code": "00993A",
@@ -6592,7 +7688,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00994A": {
       "code": "00994A",
@@ -6616,7 +7716,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00995A": {
       "code": "00995A",
@@ -6640,7 +7744,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00996A": {
       "code": "00996A",
@@ -6664,7 +7772,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     },
     "00997A": {
       "code": "00997A",
@@ -6688,7 +7800,11 @@
       "sourceTime": "13:30:00",
       "fallbackUsed": false,
       "marketTime": "2026-05-12 13:30:00",
-      "capturedAt": "2026-05-12T16:00:28.563Z"
+      "capturedAt": "2026-05-12T16:00:28.563Z",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fetchedAt": "2026-05-12T16:00:28.563Z",
+      "confidence": "high"
     }
   },
   "snapshots": {
@@ -11730,7 +12846,12 @@
       "pe": 19.78,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1503": {
       "close": 202.5,
@@ -11745,7 +12866,12 @@
       "pe": 32.3,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1504": {
       "close": 72.8,
@@ -11760,7 +12886,12 @@
       "pe": 32.5,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1513": {
       "close": 158,
@@ -11775,7 +12906,12 @@
       "pe": 19.58,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1514": {
       "close": 123.5,
@@ -11790,7 +12926,12 @@
       "pe": 37.42,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1515": {
       "close": 21.95,
@@ -11805,7 +12946,12 @@
       "pe": 22.4,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1519": {
       "close": 896,
@@ -11820,7 +12966,12 @@
       "pe": 64.05,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1536": {
       "close": 53.7,
@@ -11835,7 +12986,12 @@
       "pe": null,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1560": {
       "close": 572,
@@ -11850,7 +13006,12 @@
       "pe": 61.9,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1569": {
       "close": null,
@@ -11865,7 +13026,12 @@
       "pe": null,
       "reportPeriod": "114Q4",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1583": {
       "close": 47.5,
@@ -11880,7 +13046,12 @@
       "pe": null,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1590": {
       "close": 1505,
@@ -11895,7 +13066,12 @@
       "pe": 35.83,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1597": {
       "close": 173,
@@ -11910,7 +13086,12 @@
       "pe": 145.38,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1605": {
       "close": 33.75,
@@ -11925,7 +13106,12 @@
       "pe": 24.64,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1608": {
       "close": 34,
@@ -11940,7 +13126,12 @@
       "pe": 6.17,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1609": {
       "close": 36.05,
@@ -11955,7 +13146,12 @@
       "pe": 21.85,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1612": {
       "close": 36.7,
@@ -11970,7 +13166,12 @@
       "pe": 13.25,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1618": {
       "close": 39.2,
@@ -11985,7 +13186,12 @@
       "pe": 9.31,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1711": {
       "close": 57.5,
@@ -12000,7 +13206,12 @@
       "pe": null,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1723": {
       "close": 79.9,
@@ -12015,7 +13226,12 @@
       "pe": 32.22,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1773": {
       "close": 172.5,
@@ -12030,7 +13246,12 @@
       "pe": 23.79,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1785": {
       "close": null,
@@ -12045,7 +13266,12 @@
       "pe": 50.48,
       "reportPeriod": "114Q4",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1802": {
       "close": 68.9,
@@ -12060,7 +13286,12 @@
       "pe": null,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "1815": {
       "close": null,
@@ -12075,7 +13306,12 @@
       "pe": 65.85,
       "reportPeriod": "114Q4",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2049": {
       "close": 319.5,
@@ -12090,7 +13326,12 @@
       "pe": 69.61,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2247": {
       "close": 215,
@@ -12105,7 +13346,12 @@
       "pe": 13.54,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2301": {
       "close": 204,
@@ -12120,7 +13366,12 @@
       "pe": 30,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2308": {
       "close": 2200,
@@ -12135,7 +13386,12 @@
       "pe": 81.12,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2312": {
       "close": 27.95,
@@ -12150,7 +13406,12 @@
       "pe": 26.88,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2313": {
       "close": 253.5,
@@ -12165,7 +13426,12 @@
       "pe": 44.71,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2330": {
       "close": 2290,
@@ -12180,7 +13446,12 @@
       "pe": 34.57,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "2408": {
       "close": 274,
@@ -12195,7 +13466,12 @@
       "pe": 24.53,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3008": {
       "close": 2570,
@@ -12210,7 +13486,12 @@
       "pe": 16.04,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3017": {
       "close": 2445,
@@ -12225,7 +13506,12 @@
       "pe": 49.98,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3037": {
       "close": 818,
@@ -12240,7 +13526,12 @@
       "pe": 120.29,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3081": {
       "close": null,
@@ -12255,7 +13546,12 @@
       "pe": 401.45,
       "reportPeriod": "115Q1",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3105": {
       "close": null,
@@ -12270,7 +13566,12 @@
       "pe": 98.08,
       "reportPeriod": "115Q1",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3653": {
       "close": 3650,
@@ -12285,7 +13586,12 @@
       "pe": 101.5,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "3665": {
       "close": 2750,
@@ -12300,7 +13606,12 @@
       "pe": 59.55,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "4585": {
       "close": 329.5,
@@ -12315,7 +13626,12 @@
       "pe": 253.46,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6188": {
       "close": null,
@@ -12330,7 +13646,12 @@
       "pe": 27.61,
       "reportPeriod": "115Q1",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6274": {
       "close": null,
@@ -12345,7 +13666,12 @@
       "pe": 104.77,
       "reportPeriod": "115Q1",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6278": {
       "close": 201,
@@ -12360,7 +13686,12 @@
       "pe": 22.95,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6285": {
       "close": 247.5,
@@ -12375,7 +13706,12 @@
       "pe": 36.5,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6442": {
       "close": 1965,
@@ -12390,7 +13726,12 @@
       "pe": 86,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6640": {
       "close": null,
@@ -12405,7 +13746,12 @@
       "pe": 91.61,
       "reportPeriod": "115Q1",
       "sourceDate": "2026-05-12",
-      "sourceLabel": "TPEx 官方估值"
+      "sourceLabel": "TPEx 官方估值",
+      "source": "TPEx 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-12",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "6669": {
       "close": 5200,
@@ -12420,7 +13766,12 @@
       "pe": 17.43,
       "reportPeriod": "115/1",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     },
     "8021": {
       "close": 401,
@@ -12435,7 +13786,12 @@
       "pe": 146.35,
       "reportPeriod": "114/4",
       "sourceDate": "2026-05-08",
-      "sourceLabel": "TWSE 官方估值"
+      "sourceLabel": "TWSE 官方估值",
+      "source": "TWSE 官方估值",
+      "sourceTier": "Tier 1",
+      "asOf": "2026-05-08",
+      "fallbackUsed": null,
+      "confidence": "high"
     }
   },
   "valuationMeta": {

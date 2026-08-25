@@ -1,29 +1,29 @@
 {
-  "schemaVersion": 1,
-  "version": "19.0",
-  "generatedAt": "2026-08-16T08:23:40.923Z",
+  "schemaVersion": 2,
+  "version": "19.1",
+  "generatedAt": "2026-08-25T06:10:20.605Z",
   "fallback": "data/state_core.json",
   "parts": [
     {
       "id": "bootstrap",
       "path": "data/state_bootstrap.json",
-      "sha256": "c5b8258cf16d3b95afee4a0f80f17504c10c4e0166cfea946ce353753b469fde",
-      "bytes": 18744,
-      "schemaVersion": 1
+      "sha256": "de69548b6f5fb0da7ece7f1b44e7856dee9283829a3af257648ad09988ea2744",
+      "bytes": 19199,
+      "schemaVersion": 2
     },
     {
       "id": "equity-core",
       "path": "data/state_equity_core.json",
-      "sha256": "ea6b7349a3eec88301e59ce1d68ee5ef7f455b4a7c2cb91541b0dd4a59f62cd9",
-      "bytes": 238951,
-      "schemaVersion": 1
+      "sha256": "8d89da401725ec0cce2bba0f522a1b879da5dcb47fdf6e04854a201c16e594b7",
+      "bytes": 272464,
+      "schemaVersion": 2
     },
     {
       "id": "technical",
       "path": "data/state_technical.json",
-      "sha256": "3b8336c81e134cbe5dc06ad3d6cb0090429075a48e1b80e859516a2ce2d40ead",
-      "bytes": 486969,
-      "schemaVersion": 1
+      "sha256": "7b88eed55c89cac9c710f35c24b332cdd4ca99273d65d676658e384dd2790261",
+      "bytes": 821143,
+      "schemaVersion": 2
     }
   ]
 }

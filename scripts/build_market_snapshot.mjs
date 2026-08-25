@@ -4,6 +4,10 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import "../app_files/source_adapters.js";
+import "../app_files/sources/market_data_normalizers.js";
+import "../app_files/sources/chip_data_normalizers.js";
+import "../app_files/core/source_catalog.js";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -12,6 +16,10 @@ const DEPLOYED_SNAPSHOT_URL = "https://otakuzerg.github.io/twstock-tracker-web/d
 const MAX_RESPONSE_BYTES = 8 * 1024 * 1024;
 const REQUEST_TIMEOUT_MS = 15000;
 const SCHEDULE_MINUTES = 15;
+const AFTER_CLOSE_HOUR = 15;
+const AFTER_CLOSE_HISTORY_RANGE = "6mo";
+const AFTER_CLOSE_CONCURRENCY = 4;
+const AFTER_CLOSE_MAX_CODES = 24;
 const TAIPEI_TIME_ZONE = "Asia/Taipei";
 const US_TIME_ZONE = "America/New_York";
 
@@ -37,9 +45,12 @@ const TAIFEX_SOURCE_LINKS = [
 ];
 
 const FIXED_FETCH_RULES = [
-  { host: "query1.finance.yahoo.com", path: /^\/v8\/finance\/chart\/%5E(?:TWII|DJI|GSPC|IXIC|SOX)$/i },
+  { host: "query1.finance.yahoo.com", path: /^\/v8\/finance\/chart\/(?:%5E(?:TWII|DJI|GSPC|IXIC|SOX)|\d{4,6}[A-Z]?\.(?:TW|TWO))$/i },
   { host: "mis.twse.com.tw", path: /^\/stock\/api\/getStockInfo\.jsp$/ },
   { host: "www.twse.com.tw", path: /^\/rwd\/zh\/afterTrading\/MI_INDEX$/ },
+  { host: "www.twse.com.tw", path: /^\/rwd\/zh\/fund\/T86$/ },
+  { host: "openapi.twse.com.tw", path: /^\/v1\/exchangeReport\/(?:STOCK_DAY_ALL|MI_MARGN)$/ },
+  { host: "www.tpex.org.tw", path: /^\/openapi\/v1\/(?:tpex_mainboard_quotes|tpex_3insti_daily_trading|tpex_mainboard_margin_balance)$/ },
   { host: "mis.taifex.com.tw", path: /^\/futures\/api\/getQuoteList$/ },
   { host: "www.cmoney.tw", path: /^\/forum\/futures\/TXF1$/ },
   { host: "cdn.cboe.com", path: /^\/api\/global\/delayed_quotes\/quotes\/(?:_DJX|_SPX|_NDX|_SOX)\.json$/ },
@@ -47,12 +58,13 @@ const FIXED_FETCH_RULES = [
 ];
 
 function parseArgs(argv) {
-  const args = { output: DEFAULT_OUTPUT, selfTest: false, remoteFallback: true };
+  const args = { output: DEFAULT_OUTPUT, selfTest: false, remoteFallback: true, forceAfterClose: false };
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (token === "--output") args.output = path.resolve(argv[++index]);
     else if (token === "--self-test") args.selfTest = true;
     else if (token === "--no-remote-fallback") args.remoteFallback = false;
+    else if (token === "--force-after-close") args.forceAfterClose = true;
     else if (token === "--help" || token === "-h") args.help = true;
     else throw new Error(`Unknown argument: ${token}`);
   }
@@ -614,6 +626,374 @@ async function buildTaifex(previous, generatedAt, fetchLog, errors, freshSources
   }
 }
 
+function marketNormalizers() {
+  const value = globalThis.TwStockMarketDataNormalizers;
+  if (!value?.parseOfficialDailyQuoteRows || !value?.parseYahooKlines) throw new Error("Market data normalizers are unavailable");
+  return value;
+}
+
+function chipNormalizers() {
+  const value = globalThis.TwStockChipDataNormalizers;
+  if (!value?.parseAllInstitutionalTwse || !value?.parseMarginTwse) throw new Error("Chip data normalizers are unavailable");
+  return value;
+}
+
+function sourceCatalog() {
+  const value = globalThis.TwStockSourceCatalog;
+  if (!value?.normalizeProvenance || value.schemaVersion !== 2) throw new Error("Source catalog v2 is unavailable");
+  return value;
+}
+
+function taipeiClock(value = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: TAIPEI_TIME_ZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    hourCycle: "h23"
+  }).formatToParts(value).reduce((result, part) => {
+    result[part.type] = part.value;
+    return result;
+  }, {});
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    weekday: parts.weekday,
+    hour: Number(parts.hour)
+  };
+}
+
+function trackedStocksFromStatePayload(payload) {
+  if (!String(payload?.publicBuild?.profile || "").startsWith("public-pages")) return [];
+  const seen = new Set();
+  return (Array.isArray(payload?.holdings) ? payload.holdings : [])
+    .map((row) => ({
+      code: String(row?.code || "").trim().toUpperCase(),
+      name: String(row?.name || "").trim(),
+      suffix: String(row?.suffix || "TW").toUpperCase() === "TWO" ? "TWO" : "TW"
+    }))
+    .filter((row) => /^\d{4,6}[A-Z]?$/.test(row.code) && !seen.has(row.code) && seen.add(row.code))
+    .slice(0, AFTER_CLOSE_MAX_CODES);
+}
+
+function loadPublicTrackedStocks(stateCorePath) {
+  const candidates = [
+    stateCorePath,
+    path.join(REPO_ROOT, "data/state_core.json")
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    const tracked = trackedStocksFromStatePayload(readJsonIfPresent(candidate));
+    if (tracked.length) return tracked;
+  }
+  return [];
+}
+
+function afterCloseRefreshDue(previous, generatedAt, trackedStocks) {
+  if (!trackedStocks.length) return { due: false, reason: "no-public-tracked-universe" };
+  const clock = taipeiClock(new Date(generatedAt));
+  if (["Sat", "Sun"].includes(clock.weekday)) return { due: false, reason: "weekend", date: clock.date };
+  if (clock.hour < AFTER_CLOSE_HOUR) return { due: false, reason: "before-after-close-window", date: clock.date };
+  if (previous?.attemptedDate === clock.date) return { due: false, reason: "already-attempted-today", date: clock.date };
+  return { due: true, reason: "after-close-refresh", date: clock.date };
+}
+
+async function mapConcurrent(rows, limit, mapper) {
+  const input = Array.isArray(rows) ? rows : [];
+  const results = new Array(input.length);
+  let cursor = 0;
+  async function worker() {
+    while (cursor < input.length) {
+      const index = cursor;
+      cursor += 1;
+      results[index] = await mapper(input[index], index);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(Math.max(1, limit), input.length) }, () => worker()));
+  return results;
+}
+
+function normalizedProvenance(record, defaults) {
+  return sourceCatalog().normalizeProvenance(record, defaults);
+}
+
+function officialQuoteCode(row, market) {
+  return String(String(market).toUpperCase() === "TPEX" ? row?.SecuritiesCompanyCode : row?.Code || "").trim().toUpperCase();
+}
+
+async function fetchOfficialTrackedQuotes(stocks, market, generatedAt, fetchLog) {
+  const isTpex = String(market).toUpperCase() === "TPEX";
+  const marketStocks = stocks.filter((row) => row.suffix === (isTpex ? "TWO" : "TW"));
+  if (!marketStocks.length) return {};
+  const url = isTpex
+    ? "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
+    : "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL";
+  const label = isTpex ? "TPEx mainboard quotes" : "TWSE STOCK_DAY_ALL";
+  const text = await fetchFixedText(url, { source: label, accept: "application/json" }, fetchLog);
+  const rows = marketNormalizers().parseOfficialDailyQuoteRows(text, isTpex ? "TPEX" : "TWSE");
+  const byCode = new Map(rows.map((row) => [officialQuoteCode(row, isTpex ? "TPEX" : "TWSE"), row]));
+  const records = {};
+  for (const stock of marketStocks) {
+    const row = byCode.get(stock.code);
+    if (!row) continue;
+    const parsed = marketNormalizers().parseOfficialDailyQuoteRow(row, stock, isTpex ? "TPEX" : "TWSE", { capturedAt: generatedAt });
+    if (!parsed) continue;
+    records[stock.code] = normalizedProvenance({
+      ...parsed,
+      source: label,
+      sourceKind: "official",
+      fallbackUsed: false
+    }, { sourceTier: "Tier 1", fetchedAt: generatedAt, confidence: "high" });
+  }
+  if (!Object.keys(records).length) throw new Error(`${label} has no tracked records`);
+  return records;
+}
+
+function mergeKlineRows(previousRows, incomingRows, limit = 140) {
+  const byDate = new Map();
+  for (const row of [...(Array.isArray(previousRows) ? previousRows : []), ...(Array.isArray(incomingRows) ? incomingRows : [])]) {
+    if (!row?.date || numberValue(row.close) === null) continue;
+    byDate.set(String(row.date), row);
+  }
+  return [...byDate.values()].sort((left, right) => String(left.date).localeCompare(String(right.date))).slice(-limit);
+}
+
+function officialQuoteAsKline(quote, generatedAt) {
+  if (!quote?.asOf || numberValue(quote.price) === null) return null;
+  return normalizedProvenance({
+    date: quote.asOf,
+    open: numberValue(quote.open) ?? numberValue(quote.price),
+    high: numberValue(quote.high) ?? numberValue(quote.price),
+    low: numberValue(quote.low) ?? numberValue(quote.price),
+    close: numberValue(quote.price),
+    volume: numberValue(quote.volume) ?? 0,
+    turnover: numberValue(quote.turnover),
+    source: quote.source,
+    sourceTier: quote.sourceTier,
+    asOf: quote.asOf,
+    fetchedAt: generatedAt,
+    fallbackUsed: false,
+    confidence: "high"
+  }, {});
+}
+
+async function fetchTrackedKlines(stock, officialQuote, previousRows, generatedAt, fetchLog, errors) {
+  let rows = [];
+  let fetched = false;
+  try {
+    const symbol = `${stock.code}.${stock.suffix}`;
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=${AFTER_CLOSE_HISTORY_RANGE}`;
+    const text = await fetchFixedText(url, { source: `Yahoo history ${symbol}`, accept: "application/json" }, fetchLog);
+    rows = marketNormalizers().parseYahooKlines(text, stock).map((row) => normalizedProvenance(row, {
+      sourceTier: "Tier 2",
+      fetchedAt: generatedAt,
+      fallbackUsed: true,
+      confidence: "medium"
+    }));
+    fetched = rows.length > 0;
+    if (officialQuote?.asOf) rows = rows.filter((row) => String(row.date || "") <= String(officialQuote.asOf));
+  } catch (error) {
+    errors.push(`${stock.code} 日線：${cleanError(error)}`);
+    rows = Array.isArray(previousRows) ? previousRows : [];
+  }
+  const officialBar = officialQuoteAsKline(officialQuote, generatedAt);
+  if (officialBar) {
+    const sameDay = rows.find((row) => row.date === officialBar.date);
+    const yahooClose = numberValue(sameDay?.close);
+    if (yahooClose !== null && Math.abs(yahooClose - officialBar.close) / Math.max(1, Math.abs(officialBar.close)) > 0.01) {
+      errors.push(`${stock.code} 收盤待複核：官方 ${officialBar.close} vs Yahoo ${yahooClose}`);
+    }
+    rows = mergeKlineRows(rows.filter((row) => row.date !== officialBar.date), [officialBar]);
+  }
+  return { rows, fresh: fetched || Boolean(officialBar) };
+}
+
+function trackedRecordMap(rows, trackedCodes, generatedAt, defaults = {}) {
+  const records = {};
+  for (const row of Array.isArray(rows) ? rows : []) {
+    const code = String(row?.code || "").trim().toUpperCase();
+    if (!trackedCodes.has(code)) continue;
+    records[code] = normalizedProvenance(row, { fetchedAt: generatedAt, ...defaults });
+  }
+  return records;
+}
+
+async function fetchTrackedInstitutional(stocks, date, generatedAt, fetchLog, errors) {
+  const trackedCodes = new Set(stocks.map((row) => row.code));
+  const dateCompact = date.replaceAll("-", "");
+  const hasTwse = stocks.some((row) => row.suffix === "TW");
+  const hasTpex = stocks.some((row) => row.suffix === "TWO");
+  const [twse, tpex] = await Promise.allSettled([
+    hasTwse
+      ? fetchFixedText(`https://www.twse.com.tw/rwd/zh/fund/T86?response=json&date=${dateCompact}&selectType=ALLBUT0999`, { source: "TWSE T86", accept: "application/json" }, fetchLog)
+        .then((text) => chipNormalizers().parseAllInstitutionalTwse(text))
+      : Promise.resolve([]),
+    hasTpex
+      ? fetchFixedText("https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading", { source: "TPEx institutional", accept: "application/json" }, fetchLog)
+        .then((text) => chipNormalizers().parseAllInstitutionalTpex(text))
+      : Promise.resolve([])
+  ]);
+  if (twse.status === "rejected") errors.push(`TWSE T86：${cleanError(twse.reason)}`);
+  if (tpex.status === "rejected") errors.push(`TPEx 法人：${cleanError(tpex.reason)}`);
+  return trackedRecordMap([
+    ...(twse.status === "fulfilled" ? twse.value : []),
+    ...(tpex.status === "fulfilled" ? tpex.value : [])
+  ], trackedCodes, generatedAt, { sourceTier: "Tier 1", fallbackUsed: false, confidence: "high" });
+}
+
+async function fetchTrackedMargin(stocks, officialQuotes, generatedAt, fetchLog, errors) {
+  const hasTwse = stocks.some((row) => row.suffix === "TW");
+  const hasTpex = stocks.some((row) => row.suffix === "TWO");
+  const [twse, tpex] = await Promise.allSettled([
+    hasTwse
+      ? fetchFixedText("https://openapi.twse.com.tw/v1/exchangeReport/MI_MARGN", { source: "TWSE MI_MARGN", accept: "application/json" }, fetchLog).then(JSON.parse)
+      : Promise.resolve([]),
+    hasTpex
+      ? fetchFixedText("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_margin_balance", { source: "TPEx margin balance", accept: "application/json" }, fetchLog).then(JSON.parse)
+      : Promise.resolve([])
+  ]);
+  if (twse.status === "rejected") errors.push(`TWSE 資券：${cleanError(twse.reason)}`);
+  if (tpex.status === "rejected") errors.push(`TPEx 資券：${cleanError(tpex.reason)}`);
+  const records = {};
+  for (const stock of stocks) {
+    try {
+      const payload = stock.suffix === "TWO"
+        ? (tpex.status === "fulfilled" ? tpex.value : null)
+        : (twse.status === "fulfilled" ? twse.value : null);
+      if (!payload) continue;
+      const parsed = stock.suffix === "TWO"
+        ? chipNormalizers().parseMarginTpex(payload, stock.code)
+        : chipNormalizers().parseMarginTwse(payload, stock.code);
+      if (parsed) records[stock.code] = normalizedProvenance(parsed, {
+        sourceTier: "Tier 1",
+        asOf: officialQuotes?.[stock.code]?.asOf || null,
+        fetchedAt: generatedAt,
+        fallbackUsed: false,
+        confidence: "high"
+      });
+    } catch (error) {
+      errors.push(`${stock.code} 資券：${cleanError(error)}`);
+    }
+  }
+  return records;
+}
+
+function domainPayload(id, records, generatedAt, defaults = {}) {
+  const values = Object.values(records || {}).flatMap((row) => Array.isArray(row) ? row : [row]);
+  const dates = values.map((row) => normalizedProvenance(row, {}).asOf).filter(Boolean).sort();
+  return {
+    schemaVersion: 2,
+    id,
+    asOf: dates.at(-1) || defaults.asOf || null,
+    fetchedAt: generatedAt,
+    source: defaults.source || "",
+    sourceTier: defaults.sourceTier || "",
+    fallbackUsed: defaults.fallbackUsed ?? false,
+    confidence: defaults.confidence || (values.length ? "medium-high" : "low"),
+    freshCount: Math.max(0, Number(defaults.freshCount) || 0),
+    count: Object.keys(records || {}).length,
+    records: records || {}
+  };
+}
+
+function previousDomainRecords(previous, id) {
+  const value = previous?.domains?.[id]?.records;
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+}
+
+function latestDomainAsOf(domains, previousAsOf = null) {
+  return Object.values(domains || {})
+    .map((domain) => String(domain?.asOf || "").trim())
+    .filter(Boolean)
+    .sort()
+    .at(-1) || previousAsOf || null;
+}
+
+async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options = {}) {
+  const stocks = loadPublicTrackedStocks(options.stateCorePath);
+  const scheduled = afterCloseRefreshDue(previous, generatedAt, stocks);
+  const due = options.force === true && stocks.length
+    ? { due: true, reason: "forced-after-close-validation", date: taipeiClock(new Date(generatedAt)).date }
+    : scheduled;
+  if (!due.due) return { snapshot: previous || null, fresh: false, reason: due.reason, errors: [] };
+
+  const errors = [];
+  const [twseQuotes, tpexQuotes] = await Promise.allSettled([
+    fetchOfficialTrackedQuotes(stocks, "TWSE", generatedAt, fetchLog),
+    fetchOfficialTrackedQuotes(stocks, "TPEX", generatedAt, fetchLog)
+  ]);
+  if (twseQuotes.status === "rejected") errors.push(`TWSE 收盤：${cleanError(twseQuotes.reason)}`);
+  if (tpexQuotes.status === "rejected") errors.push(`TPEx 收盤：${cleanError(tpexQuotes.reason)}`);
+  const freshQuotes = {
+    ...(twseQuotes.status === "fulfilled" ? twseQuotes.value : {}),
+    ...(tpexQuotes.status === "fulfilled" ? tpexQuotes.value : {})
+  };
+  const quotes = { ...previousDomainRecords(previous, "quotes"), ...freshQuotes };
+  const previousKlines = previousDomainRecords(previous, "klines");
+  const klineRows = await mapConcurrent(stocks, AFTER_CLOSE_CONCURRENCY, async (stock) => {
+    const result = await fetchTrackedKlines(stock, freshQuotes[stock.code] || quotes[stock.code], previousKlines[stock.code], generatedAt, fetchLog, errors);
+    return [stock.code, result];
+  });
+  const freshKlineCount = klineRows.filter(([, result]) => result.fresh).length;
+  const klines = {
+    ...previousKlines,
+    ...Object.fromEntries(klineRows.filter(([, result]) => result.rows.length).map(([code, result]) => [code, result.rows]))
+  };
+  const quoteDates = Object.values(freshQuotes).map((row) => row?.asOf).filter(Boolean).sort();
+  const institutionalDate = quoteDates.at(-1) || due.date;
+  const [institutionalResult, marginResult] = await Promise.allSettled([
+    fetchTrackedInstitutional(stocks, institutionalDate, generatedAt, fetchLog, errors),
+    fetchTrackedMargin(stocks, freshQuotes, generatedAt, fetchLog, errors)
+  ]);
+  if (institutionalResult.status === "rejected") errors.push(`法人摘要：${cleanError(institutionalResult.reason)}`);
+  if (marginResult.status === "rejected") errors.push(`資券摘要：${cleanError(marginResult.reason)}`);
+  const institutional = {
+    ...previousDomainRecords(previous, "institutional"),
+    ...(institutionalResult.status === "fulfilled" ? institutionalResult.value : {})
+  };
+  const margin = {
+    ...previousDomainRecords(previous, "margin"),
+    ...(marginResult.status === "fulfilled" ? marginResult.value : {})
+  };
+  const freshQuoteCount = Object.keys(freshQuotes).length;
+  const freshInstitutionalCount = institutionalResult.status === "fulfilled" ? Object.keys(institutionalResult.value).length : 0;
+  const freshMarginCount = marginResult.status === "fulfilled" ? Object.keys(marginResult.value).length : 0;
+  const domains = {
+    quotes: domainPayload("quotes", quotes, generatedAt, {
+      source: "TWSE STOCK_DAY_ALL + TPEx mainboard quotes",
+      sourceTier: "Tier 1",
+      fallbackUsed: freshQuoteCount < stocks.length,
+      confidence: freshQuoteCount === stocks.length ? "high" : "low",
+      freshCount: freshQuoteCount
+    }),
+    klines: domainPayload("klines", klines, generatedAt, { source: "TWSE / TPEx official close + Yahoo 6mo history", sourceTier: "Tier 1 + Tier 2", fallbackUsed: true, confidence: freshKlineCount === stocks.length ? "medium-high" : "low", freshCount: freshKlineCount }),
+    institutional: domainPayload("institutional", institutional, generatedAt, { source: "TWSE T86 + TPEx institutional", sourceTier: "Tier 1", fallbackUsed: freshInstitutionalCount < stocks.length, confidence: freshInstitutionalCount === stocks.length ? "high" : "low", freshCount: freshInstitutionalCount }),
+    margin: domainPayload("margin", margin, generatedAt, { source: "TWSE MI_MARGN + TPEx margin balance", sourceTier: "Tier 1", fallbackUsed: freshMarginCount < stocks.length, confidence: freshMarginCount === stocks.length ? "high" : "low", freshCount: freshMarginCount })
+  };
+  const fresh = [freshQuoteCount, freshKlineCount, freshInstitutionalCount, freshMarginCount].some((count) => count > 0);
+  const asOf = latestDomainAsOf(domains, previous?.asOf);
+  return {
+    fresh,
+    reason: due.reason,
+    errors,
+    snapshot: {
+      schemaVersion: 2,
+      generatedAt,
+      attemptedDate: due.date,
+      asOf,
+      targetCount: stocks.length,
+      delivery: {
+        mode: "github-actions-sanitized-after-close",
+        generatedAt,
+        schedule: "weekdays after 15:00 Asia/Taipei; at most one completed attempt per day",
+        privacy: "public neutral holdings only; no cost basis, alerts, or private research"
+      },
+      domains,
+      errors: uniqueStrings(errors).slice(-24)
+    }
+  };
+}
+
 function readJsonIfPresent(filePath) {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -673,11 +1053,20 @@ async function buildSnapshot(args) {
   const previousPayload = await loadPreviousSnapshot(args.output, args.remoteFallback, fetchLog);
   const previous = previousPayload.marketDashboardCache || {};
 
-  const [taiwanResult, taifexResult, ...globalResults] = await Promise.all([
-    buildTaiwan(previous.taiwan, generatedAt, fetchLog, errors, freshSources),
-    buildTaifex(previous.taifexNight, generatedAt, fetchLog, errors, freshSources),
-    ...GLOBAL_INDICES.map((config) => buildGlobalIndex(config, previousGlobal(previous, config.key), generatedAt, fetchLog, errors, freshSources))
+  const [marketResults, afterCloseResult] = await Promise.all([
+    Promise.all([
+      buildTaiwan(previous.taiwan, generatedAt, fetchLog, errors, freshSources),
+      buildTaifex(previous.taifexNight, generatedAt, fetchLog, errors, freshSources),
+      ...GLOBAL_INDICES.map((config) => buildGlobalIndex(config, previousGlobal(previous, config.key), generatedAt, fetchLog, errors, freshSources))
+    ]),
+    buildAfterCloseSnapshot(previousPayload.afterCloseSnapshot, generatedAt, fetchLog, {
+      force: args.forceAfterClose,
+      stateCorePath: path.join(path.dirname(args.output), "state_core.json")
+    })
   ]);
+  const [taiwanResult, taifexResult, ...globalResults] = marketResults;
+  if (afterCloseResult.fresh) freshSources.push("sanitized after-close");
+  if (afterCloseResult.errors.length) errors.push(`盤後個股快照：${afterCloseResult.errors.length} 項待複核`);
 
   const global = globalResults.map((result) => result.snapshot).filter(Boolean);
   const fresh = [taiwanResult, taifexResult, ...globalResults].some((result) => result.fresh);
@@ -699,30 +1088,42 @@ async function buildSnapshot(args) {
     }
   };
   const payload = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     delivery: marketDashboardCache.delivery,
     marketDashboardCache,
+    afterCloseSnapshot: afterCloseResult.snapshot,
     fetchLog
   };
   writeJsonAtomic(args.output, payload);
-  const relativeSnapshot = path.relative(REPO_ROOT, args.output).replaceAll(path.sep, "/");
+  const relativeSnapshot = `data/${path.basename(args.output)}`;
   writeJsonAtomic(path.join(path.dirname(args.output), "snapshot-manifest.json"), {
-    schemaVersion: 1,
+    schemaVersion: 2,
     generatedAt,
     asOf: marketDashboardCache.fetchedAt || null,
     mode: marketDashboardCache.delivery.mode,
     stale: !fresh,
     fallback: Boolean(marketDashboardCache.delivery.freshSources.length === 0 || errors.length),
-    parts: [{
-      id: "market",
-      path: relativeSnapshot,
-      sha256: sha256Json(payload),
-      generatedAt,
-      asOf: marketDashboardCache.fetchedAt || null,
-      stale: !fresh,
-      fallback: Boolean(errors.length || !fresh)
-    }],
-    errors: uniqueStrings(errors).slice(-8),
+    parts: [
+      {
+        id: "market",
+        path: relativeSnapshot,
+        sha256: sha256Json(payload),
+        generatedAt,
+        asOf: marketDashboardCache.fetchedAt || null,
+        stale: !fresh,
+        fallback: Boolean(errors.length || !fresh)
+      },
+      {
+        id: "after-close",
+        path: relativeSnapshot,
+        sha256: sha256Json(afterCloseResult.snapshot || null),
+        generatedAt,
+        asOf: afterCloseResult.snapshot?.asOf || null,
+        stale: !afterCloseResult.fresh,
+        fallback: !afterCloseResult.fresh || afterCloseResult.errors.length > 0
+      }
+    ],
+    errors: uniqueStrings([...errors, ...afterCloseResult.errors]).slice(-24),
     note: "generatedAt 是快照產生時間；asOf 是資料時間，兩者不可混用。"
   });
   return {
@@ -731,6 +1132,13 @@ async function buildSnapshot(args) {
     generatedAt,
     fresh,
     freshSources: marketDashboardCache.delivery.freshSources,
+    afterClose: {
+      fresh: afterCloseResult.fresh,
+      reason: afterCloseResult.reason,
+      asOf: afterCloseResult.snapshot?.asOf || null,
+      targetCount: afterCloseResult.snapshot?.targetCount || 0,
+      counts: Object.fromEntries(Object.entries(afterCloseResult.snapshot?.domains || {}).map(([id, domain]) => [id, domain.count || 0]))
+    },
     errors: marketDashboardCache.errors,
     fetches: fetchLog.map(({ source, host, status, bytes, durationMs, ok }) => ({ source, host, status, bytes, durationMs, ok }))
   };
@@ -742,11 +1150,23 @@ function selfTest() {
   const twse = parseTwseMis({ msgArray: [{ ch: "t00.tw", z: "45380.52", y: "45354.61", o: "45500.32", h: "46330.91", l: "45272.90", d: "20260713", t: "13:33:00", tlong: "1783920780000" }] }, null, generatedAt);
   const cmoney = parseCmoneyTxf(`<script type="application/ld+json">[{"@graph":[{"@type":"WebPage","dateModified":"2026-07-13T05:00:00Z"},{"@type":"Corporation","tickerSymbol":"TXF1","additionalProperty":[{"name":"成交","value":"45659.00"},{"name":"昨收","value":45565},{"name":"漲跌","value":"94.00"},{"name":"漲跌幅","value":"0.21"},{"name":"總量","value":"12855.00"}]}]}]</script>`, generatedAt);
   const cboe = parseCboeQuote({ data: { current_price: 526.37, price_change: 1.5, price_change_percent: 0.285, last_trade_time: "2026-07-13T09:30:00" } }, GLOBAL_INDICES[0], null, generatedAt);
+  const publicStocks = trackedStocksFromStatePayload({
+    publicBuild: { profile: "public-pages-hardened-v3" },
+    holdings: [{ code: "2330", suffix: "TW", name: "台積電" }, { code: "6640", suffix: "TWO", name: "均華" }]
+  });
+  const afterCloseDue = afterCloseRefreshDue(null, "2026-08-21T07:10:00.000Z", publicStocks);
+  const afterCloseDone = afterCloseRefreshDue({ attemptedDate: "2026-08-21" }, "2026-08-21T07:22:00.000Z", publicStocks);
+  const afterCloseAsOf = latestDomainAsOf({ quotes: { asOf: "2026-05-12" }, klines: { asOf: "2026-08-21" } });
+  const provenance = normalizedProvenance({ source: "TWSE STOCK_DAY_ALL", sourceKind: "official", sourceDate: "2026-08-21" }, { fetchedAt: "2026-08-21T07:10:00.000Z" });
   const checks = {
     yahoo: yahoo.value === 100 && Math.round(yahoo.pct * 100) === 204,
     twse: twse.value === 45380.52 && twse.series.length === 1,
     cmoney: cmoney.value === 45659 && cmoney.change === 94,
     cboe: cboe.value === 52637 && cboe.change === 150,
+    publicUniverse: publicStocks.length === 2 && publicStocks[1].suffix === "TWO",
+    afterCloseSchedule: afterCloseDue.due === true && afterCloseDone.due === false,
+    afterCloseAsOf: afterCloseAsOf === "2026-08-21",
+    provenanceV2: sourceCatalog().schemaVersion === 2 && sourceCatalog().validateProvenance(provenance).ok,
     fixedUrlRejects: false
   };
   try {
@@ -760,7 +1180,7 @@ function selfTest() {
 
 const args = parseArgs(process.argv.slice(2));
 if (args.help) {
-  process.stdout.write("Usage: node scripts/build_market_snapshot.mjs [--output PATH] [--no-remote-fallback] [--self-test]\n");
+  process.stdout.write("Usage: node scripts/build_market_snapshot.mjs [--output PATH] [--no-remote-fallback] [--force-after-close] [--self-test]\n");
 } else if (args.selfTest) {
   process.stdout.write(`${JSON.stringify(selfTest(), null, 2)}\n`);
 } else {

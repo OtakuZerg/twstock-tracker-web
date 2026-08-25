@@ -1,8 +1,8 @@
 (function initTwStockSourceCatalog(global) {
   "use strict";
 
-  const VERSION = "source-catalog-v1";
-  const SCHEMA_VERSION = 1;
+  const VERSION = "source-catalog-v2";
+  const SCHEMA_VERSION = 2;
   const REQUIRED_PROVENANCE_FIELDS = Object.freeze([
     "source",
     "sourceTier",
@@ -11,6 +11,117 @@
     "fallbackUsed",
     "confidence"
   ]);
+  const STATE_DOMAIN_MAP = Object.freeze({
+    quotes: "quotes",
+    klines: "daily-bars",
+    valuations: "valuation-market-cap",
+    institutional: "institutional",
+    margin: "margin-short",
+    foreignOwnership: "foreign-ownership",
+    tdcc: "tdcc"
+  });
+
+  function nonEmpty(value) {
+    return value !== null && value !== undefined && String(value).trim() !== "";
+  }
+
+  function normalizedDate(value) {
+    const text = String(value || "").trim();
+    if (!text) return null;
+    const match = text.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
+    if (match) return `${match[1]}-${String(match[2]).padStart(2, "0")}-${String(match[3]).padStart(2, "0")}`;
+    return text;
+  }
+
+  function inferSourceTier(record, fallbackUsed, defaults) {
+    if (nonEmpty(record?.sourceTier)) return record.sourceTier;
+    if (nonEmpty(defaults?.sourceTier)) return defaults.sourceTier;
+    const sourceKind = String(record?.sourceKind || "").toLowerCase();
+    const source = String(record?.source || record?.sourceLabel || "").toLowerCase();
+    if (sourceKind === "official" || /twse|tpex|mops|tdcc|taifex|證交所|櫃買|官方/.test(source)) return "Tier 1";
+    if (fallbackUsed === true || /yahoo|fallback|備援|cmoney|moneydj|goodinfo|wantgoo/.test(source)) return "Tier 2";
+    return "unverified";
+  }
+
+  function normalizeProvenance(record, defaults = {}) {
+    const input = record && typeof record === "object" && !Array.isArray(record) ? record : {};
+    const source = input.source || input.sourceLabel || defaults.source || "unknown";
+    const explicitFallback = typeof input.fallbackUsed === "boolean" ? input.fallbackUsed : null;
+    const fallbackUsed = explicitFallback !== null
+      ? explicitFallback
+      : String(input.sourceKind || "").toLowerCase() === "fallback"
+        ? true
+        : String(input.sourceKind || "").toLowerCase() === "official"
+          ? false
+          : typeof defaults.fallbackUsed === "boolean" ? defaults.fallbackUsed : null;
+    const asOf = normalizedDate(input.asOf || input.sourceDate || input.date || input.marketTime || defaults.asOf);
+    const fetchedAt = input.fetchedAt || input.capturedAt || input.updatedAt || defaults.fetchedAt || null;
+    const sourceTier = inferSourceTier(input, fallbackUsed, defaults);
+    const confidence = input.confidence || defaults.confidence
+      || (sourceTier === "Tier 1" && asOf ? "high" : sourceTier === "Tier 2" && asOf ? "medium" : "low");
+    return {
+      ...input,
+      source,
+      sourceTier,
+      asOf,
+      fetchedAt,
+      fallbackUsed,
+      confidence
+    };
+  }
+
+  function validateProvenance(record) {
+    const missing = REQUIRED_PROVENANCE_FIELDS.filter((field) => !Object.prototype.hasOwnProperty.call(record || {}, field));
+    const incomplete = REQUIRED_PROVENANCE_FIELDS.filter((field) => field !== "fallbackUsed" && !nonEmpty(record?.[field]));
+    return { ok: missing.length === 0 && incomplete.length === 0, missing, incomplete };
+  }
+
+  function migrateRecordMap(value, defaults = {}) {
+    const input = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    return Object.fromEntries(Object.entries(input).map(([key, record]) => {
+      if (Array.isArray(record)) {
+        return [key, record.map((row) => normalizeProvenance(row, { ...defaults, code: key }))];
+      }
+      if (record && typeof record === "object") {
+        const history = Array.isArray(record.history)
+          ? record.history.map((row) => normalizeProvenance(row, { ...defaults, source: record.source, sourceTier: record.sourceTier, fetchedAt: record.fetchedAt, code: key }))
+          : record.history;
+        const normalized = normalizeProvenance(record, { ...defaults, code: key });
+        return [key, history ? { ...normalized, history } : normalized];
+      }
+      return [key, record];
+    }));
+  }
+
+  function migrateStatePayload(payload, options = {}) {
+    const input = payload && typeof payload === "object" && !Array.isArray(payload) ? payload : {};
+    const output = { ...input, schemaVersion: SCHEMA_VERSION };
+    const domains = {};
+    let records = 0;
+    let valid = 0;
+    for (const [stateKey, domainId] of Object.entries(STATE_DOMAIN_MAP)) {
+      if (!input[stateKey] || typeof input[stateKey] !== "object") continue;
+      const migrated = migrateRecordMap(input[stateKey], {
+        domainId,
+        fetchedAt: options.fetchedAt || input.savedAt || input.lastUpdated || null
+      });
+      output[stateKey] = migrated;
+      const domainRows = Object.values(migrated).flatMap((record) => Array.isArray(record) ? record : [record]).filter((record) => record && typeof record === "object");
+      const domainValid = domainRows.filter((record) => validateProvenance(record).ok).length;
+      records += domainRows.length;
+      valid += domainValid;
+      domains[domainId] = { records: domainRows.length, valid: domainValid };
+    }
+    output.schemaMigration = {
+      schemaVersion: SCHEMA_VERSION,
+      mode: "compatible-in-memory",
+      migratedAt: options.migratedAt || null,
+      records,
+      valid,
+      domains
+    };
+    return output;
+  }
 
   const catalog = [
     {
@@ -286,6 +397,11 @@
     version: VERSION,
     schemaVersion: SCHEMA_VERSION,
     requiredProvenanceFields: REQUIRED_PROVENANCE_FIELDS,
+    stateDomainMap: STATE_DOMAIN_MAP,
+    normalizeProvenance,
+    validateProvenance,
+    migrateRecordMap,
+    migrateStatePayload,
     validate,
     get,
     list,

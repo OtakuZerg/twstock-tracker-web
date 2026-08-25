@@ -1,10 +1,20 @@
 # 台股追蹤 Taiwan Equity Tracker
 
-**版本：v19.0** ｜ **日期：2026-08-13** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
+**版本：v19.1** ｜ **日期：2026-08-21** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
 
 > ⚠️ **資料正確性說明**：本 extension 的報價、估值、月營收、股利、法人與市場資料以 MOPS / TWSE / TPEx 等官方來源為優先；季報三率目前需匯入 MOPS 季損益表或已整理 CSV。Tide 板塊資金、情緒快照與其他外部網站只作第三方 proxy / 交叉核對入口，所有資料都要檢查來源日期、fallback 與缺漏狀態。
 >
 > ⚠️ **稅務與規模提示**：海外 ETF 配息來源組成（5 類）為一般化分類，**每期實際比例需以投信「收益分配通知書」核對**；ETF 規模 (AUM) / 日均成交量為 2026-05 概估，需以投信月報實際數值更新。最低稅負制 / 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。
+
+---
+
+## v19.1 盤後資料、來源 schema 與回測執行模型（2026-08-21）
+
+- 沿用既有 `source_catalog.js`、source adapters、normalizers 與 state shards，將 provenance contract 升級為 schema v2；舊 `state.json` 仍可讀，載入時只做相容的 in-memory migration，不另建第二套 state store。每筆決策資料統一保留 `source`、`sourceTier`、`asOf`、`fetchedAt`、`fallbackUsed` 與 `confidence`。
+- 既有 `build_market_snapshot.mjs` 擴充為隱私清理盤後快照：台北時間 15:00 後每日最多完成一次，公開 Web 的 16 檔中性示範清單會取得 TWSE／TPEx 官方收盤、6 個月日線、三大法人與資券；公開檔不含私人持股、成本、提醒或自訂研究。盤前執行時會以官方最近收盤日截斷 Yahoo 日線，避免把尚未收盤的當日 K 棒當成完整資料。
+- Web 仍只抓 same-origin `data/live_market.json`，但載入後會把盤後資料合併回既有 `quotes / klines / institutional / margin`，直接重用同一套技術分析、Chip Score、作戰首頁與標的雷達，不新增平行 parser 或分析引擎。
+- Playbook 回測升級為 `playbook-next-open-v2`：收盤訊號在下一交易日開盤成交、同一標的不允許重疊持倉、同根 K 棒同時碰停損與目標時採保守的停損優先，並納入每邊 10 bps 成本與 5 bps 滑價的可調研究假設。模型假設不等於實際券商費率或稅負；目前股池仍可能有存活者偏差與回測過度擬合，方法限制可對照 [CFA Institute Backtesting & Simulation](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation) 與 [Bailey et al. 的 backtest overfitting 論文](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2308659)。
+- 作戰首頁與交易雷達的 R:R 閘門同步收緊：未定義目標價或 R:R 時只能標為資料不足／候選追蹤，不能顯示「可執行」或「攻擊觀察」。
 
 ---
 
@@ -83,7 +93,7 @@
 ### GitHub Pages / iPhone、iPad Web App
 
 - 正式網站入口：[https://otakuzerg.github.io/twstock-tracker-web/](https://otakuzerg.github.io/twstock-tracker-web/)
-- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 53 個成品、README 雙輸出與自動化檔案。
+- 公開成品倉庫：[OtakuZerg/twstock-tracker-web](https://github.com/OtakuZerg/twstock-tracker-web)。原始碼倉庫維持 private；公開倉庫只保存經過白名單建置與隱私掃描的 55 個成品、README 雙輸出與自動化檔案。
 - private 原始碼倉庫的 GitHub Actions 先建立並用 Chrome 驗證 artifact；通過後使用只對公開成品倉庫有效的 deploy key 自動發布。公開倉庫再用 GitHub Pages workflow 部署 PWA。
 - 原始碼 `main` 更新並通過檢查後，網站會隨公開 artifact 自動更新；iPhone / iPad 主畫面 Web App 會由 Service Worker 接收新版。這不會自動更新家中電腦的 unpacked extension，該版本仍需同步專案資料夾並在 `chrome://extensions` 按「重新載入」。
 - 網頁版使用瀏覽器的 IndexedDB / localStorage 儲存持股與設定；Chrome extension 與網站資料彼此獨立，不會自動同步。
@@ -100,7 +110,7 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 
 #### 部署、隱私與功能邊界
 
-- Pages build 採明確 allowlist，公開倉庫只接收 53 個必要成品 / 自動化檔案；實際 Pages 上傳會排除 `.github/` 與 `scripts/`，因此瀏覽器端只提供 51 個執行成品。`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。
+- Pages build 採明確 allowlist，公開倉庫只接收 55 個必要成品 / 自動化檔案；實際 Pages 上傳會排除 `.github/` 與 `scripts/`，因此瀏覽器端只提供 53 個執行成品。`data/state*.json` 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed 不會放進公開 artifact。
 - 建置器會拒絕常見 token / private key、本機絕對路徑、owner identifier、未預期檔案與未清空的個人化 state；公開頁另有 CSP、HTTPS fetch host allowlist、請求 / 回應大小限制及 URL protocol 驗證。
 - **網站是公開的**：任何知道或猜到網址的人都能存取；`robots.txt` / `noindex` 只降低搜尋引擎收錄機率，不是登入或親友限定機制。不要輸入密碼、API key、醫療資料或其他敏感資訊。
 - 公開 PWA 的大盤行情不再由瀏覽器直接跨站抓 Yahoo / TWSE / TAIFEX，而由 GitHub Actions 約每 15 分鐘抓取固定 host/path 白名單並產生同來源 `data/live_market.json`。GitHub 排程與上游來源都可能延遲，因此畫面會同時顯示快照產生時間、行情資料時間與 fallback，不宣稱逐筆即時。
@@ -136,14 +146,14 @@ Apple 官方操作說明：[將網站加入 iPhone 主畫面](https://support.ap
 - Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions 產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web 延遲快照，而不包裝成逐筆即時；詳見 [GitHub Actions workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax) 與 [scheduled workflow troubleshooting](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows)。
 - 本階段採 strangler migration：新 shell 與新核心模組先接管第一屏，既有分析器與 parser 暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。
 - R6a–R6e2a 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 `app_files/features/trader_workspace.js`，由 61 個 deterministic cases 保護。報價、日線與估值由 `app_files/sources/market_data_normalizers.js` 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 由 `app_files/sources/chip_data_normalizers.js` 接管純解析（58 cases）；月營收與季報三率由 `app_files/sources/fundamental_data_normalizers.js` 接管（55 cases）；TWSE 大盤、VIX、美債殖利率、融資餘額、央行匯率、Fed RSS／SEP 與 FedWatch 由 `app_files/sources/macro_data_normalizers.js` 接管（67 cases）。四個來源模組都沿用既有 `source_adapters.js` 契約或其來源政策，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。作戰首頁的 selector 與安全 renderer 已分別由 35 cases 保護，並加入可橫向捲動的持股快切與 ETF／個股檔數摘要；這份清單只供快速切換與研究排序，不要求張數、均價或損益。私人 Extension seed 可保存個人持股，但公開 Pages build 會強制換成中性示範清單並清空成本、提醒與自訂研究。
-- R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到 `app_files/store/discovery_workspace_selectors.js`，並把 hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到 `app_files/ui/discovery_workspace_renderer.js`。左側 50 分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3 日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的 badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web 共用相同模組，Service Worker cache 為 `v19.0-pwa-11`。
+- R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到 `app_files/store/discovery_workspace_selectors.js`，並把 hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到 `app_files/ui/discovery_workspace_renderer.js`。左側 50 分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3 日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的 badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web 共用相同模組，Service Worker cache 為 `v19.1-pwa-1`。
 
 ### 資料儲存與更新
 
 - `data/state_core.json`：新安裝初始畫面核心 seed，不在每次啟動解析完整歷史。
 - `data/state.json`：相容舊版的綜合 seed / 同步狀態檔；執行期以本機快取較新的資料為準。
 - `data/research_data.json`：月營收歷史、季報三率、現行方法與 cache policy 的單一長期資料基線。
-- `data/live_market.json`：公開 PWA 的大盤延遲快照；由固定來源 GitHub Actions 排程產生，包含來源、資料時間、fallback 與抓取紀錄。extension 不依賴此檔，仍保留原生背景抓取。
+- `data/live_market.json`：公開 PWA 的大盤與隱私清理盤後延遲快照；由固定來源 GitHub Actions 排程產生，包含來源、資料時間、fallback 與抓取紀錄。Extension 不依賴此檔，仍保留原生背景抓取。
 - K 線、量化校準與業績長期資料優先放 IndexedDB；設定 `data/` 後會同步 `state.json` 與 `research_data.json`。
 - 啟動時先顯示核心 state 與初始畫面，大盤 / 主題等 UI 不再等待 `research_data.json`、同步檔與 IndexedDB 業績資料層全部讀完；業績資料層完成後會重繪需要月營收 / 三率的作用中分頁。
 - v17.9 只保留一個「收盤後同步」主按鈕：先完成報價／官方估值／市值與日線；大盤、期貨、法人、處置、除權息、月營收、ETF、總經、Tide、記憶體與股利依 TTL 排入最多兩路背景佇列，未到期自動略過。
@@ -1365,6 +1375,7 @@ python3 scripts/update_youtube_market_lessons.py --audio szA2MSO_qTo=/path/to/EP
 
 | 版本 | 日期 | 重點 |
 |------|------|------|
+| **v19.1** | **2026-08-21** | **來源 schema v2 相容 migration、隱私清理盤後 Web 快照、next-open 非重疊回測與 R:R 執行閘門** |
 | **v19.0** | **2026-08-13** | **Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00 Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正** |
 | **v18.2.1** | **2026-07-30** | **修正 null transport options 誤套 1024-byte 上限，恢復 8 MiB／12 秒／重試與來源並行預設** |
 | **v18.2** | **2026-07-28** | **三段式今日市場導航、移除首頁目前個股、手機底部研究導覽、PWA 大型資料按需快取與單次跳頁渲染** |

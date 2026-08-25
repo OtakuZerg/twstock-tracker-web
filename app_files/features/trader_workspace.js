@@ -183,6 +183,7 @@
     const radar = input.radar || null;
     const rr = finiteNumber(tradePlan?.rr);
     const riskPerShare = finiteNumber(tradePlan?.riskPerShare);
+    const targetPrice = finiteNumber(tradePlan?.targetPrice);
     const candidateThreshold = finiteNumber(input.candidateThreshold);
     const hasCore = Boolean(tradePlan)
       && finiteNumber(tradePlan?.entryRef) !== null
@@ -201,6 +202,9 @@
     } else if (tradePlan.action === "先避開" || radar?.stage === "先避開") {
       status = "先避開";
       blocker = tradePlan.actionNote || "結構不在做多主場";
+    } else if (targetPrice === null || rr === null) {
+      status = "資料不足";
+      blocker = "目標價或風報比尚未定義，不能列為可執行";
     } else if (rr !== null && rr < 1) {
       status = "風報比不足";
       blocker = `R:R ${rr.toFixed(2)}R 偏低`;
@@ -210,11 +214,11 @@
     } else if (tradePlan.action === "等突破確認") {
       status = "等突破";
       blocker = "等突破關鍵均線或壓力後再執行";
-    } else if (tradePlan.inBuyZone && (rr === null || rr >= 1.2)
+    } else if (tradePlan.inBuyZone && rr >= 1.2
       && candidateThreshold !== null && (finiteNumber(radar?.score) ?? 0) >= candidateThreshold) {
       status = "可執行";
       blocker = "價格在可控入場帶，停損與風報比已定義";
-    } else if (["攻擊觀察", "候選追蹤"].includes(radar?.stage) && (rr === null || rr >= 1.2)) {
+    } else if (["攻擊觀察", "候選追蹤"].includes(radar?.stage) && rr >= 1.2) {
       status = "可執行";
       blocker = tradePlan.actionNote || "雷達與交易計畫同向";
     } else if (tradePlan.action === "等回檔，不追價") {
@@ -241,7 +245,7 @@
       price: input.price ?? null,
       entry: tradePlan?.entryHint || tradePlan?.entryText || "-",
       stopPrice: finiteNumber(tradePlan?.stopPrice),
-      targetPrice: finiteNumber(tradePlan?.targetPrice),
+      targetPrice,
       riskPerShare,
       rr,
       blocker,

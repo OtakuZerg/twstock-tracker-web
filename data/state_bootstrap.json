@@ -1,5 +1,5 @@
 {
-  "version": "19.0",
+  "version": "19.1",
   "savedAt": "2026-06-03T16:25:24.247Z",
   "lastUpdated": "2026-05-12T16:00:29.175Z",
   "klineUpdatedAt": "2026-05-12T15:42:50.670Z",
@@ -985,9 +985,47 @@
   "performance": {},
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-08-16T08:23:40.923Z",
+    "builtAt": "2026-08-25T06:10:20.605Z",
     "sourcePath": "data/state_core.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"
+  },
+  "schemaVersion": 2,
+  "schemaMigration": {
+    "schemaVersion": 2,
+    "mode": "compatible-in-memory",
+    "migratedAt": "2026-08-25T06:10:20.605Z",
+    "records": 2771,
+    "valid": 2682,
+    "domains": {
+      "quotes": {
+        "records": 279,
+        "valid": 279
+      },
+      "daily-bars": {
+        "records": 2252,
+        "valid": 2252
+      },
+      "valuation-market-cap": {
+        "records": 48,
+        "valid": 48
+      },
+      "institutional": {
+        "records": 48,
+        "valid": 48
+      },
+      "margin-short": {
+        "records": 48,
+        "valid": 7
+      },
+      "foreign-ownership": {
+        "records": 48,
+        "valid": 48
+      },
+      "tdcc": {
+        "records": 48,
+        "valid": 0
+      }
+    }
   }
 }

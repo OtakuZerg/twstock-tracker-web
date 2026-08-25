@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "19.0";
+const APP_VERSION = "19.1";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -3654,6 +3654,8 @@ const TRADING_RADAR_MODES = {
 };
 
 const state = {
+  schemaVersion: 2,
+  schemaMigration: null,
   quotes: {},
   snapshots: {},
   klines: {},
@@ -3752,6 +3754,7 @@ const state = {
   },
   macroCache: null,
   marketDashboardCache: null,
+  afterCloseSnapshotMeta: null,
   tideSectorCache: null,
   marketInstitutionalRankings: null,
   bondSignalCache: null,
@@ -5735,7 +5738,7 @@ function buildTradingRadarScore(row) {
   if (!technical || !technical.ready) stage = "資料待補";
   else if (dispositionRisk?.level === "active" || dispositionRisk?.level === "officialCumulative" || tradePlan?.action === "先避開" || score < thresholds.avoid) stage = "先避開";
   else if (tradePlan?.aboveBuyFar || (rr !== null && rr < 1)) stage = "等回測";
-  else if (score >= thresholds.attack && (rr === null || rr >= 1.2)) stage = "攻擊觀察";
+  else if (score >= thresholds.attack && rr !== null && rr >= 1.2) stage = "攻擊觀察";
   else if (score >= thresholds.candidate) stage = "候選追蹤";
 
   return {
@@ -6270,10 +6273,98 @@ function bundledAssetUrl(path) {
 
 async function readLimitedJsonResponse(response, maxBytes = 2 * 1024 * 1024) {
   const announcedBytes = Number(response.headers.get("content-length") || 0);
-  if (announcedBytes > maxBytes) throw new Error("行情快照超過 2 MB 安全上限");
+  const limitLabel = `${Math.round(maxBytes / 1024 / 1024 * 10) / 10} MB`;
+  if (announcedBytes > maxBytes) throw new Error(`行情快照超過 ${limitLabel} 安全上限`);
   const buffer = await response.arrayBuffer();
-  if (buffer.byteLength > maxBytes) throw new Error("行情快照超過 2 MB 安全上限");
+  if (buffer.byteLength > maxBytes) throw new Error(`行情快照超過 ${limitLabel} 安全上限`);
   return JSON.parse(new TextDecoder("utf-8").decode(buffer));
+}
+
+function snapshotRecordTime(row) {
+  const parsed = Date.parse(row?.asOf || row?.sourceDate || row?.date || row?.marketTime || row?.fetchedAt || "");
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function publishedDomainRecords(snapshot, id) {
+  const records = snapshot?.domains?.[id]?.records;
+  return records && typeof records === "object" && !Array.isArray(records) ? records : {};
+}
+
+function mergePublishedKlineRows(currentRows, incomingRows) {
+  const byDate = new Map();
+  for (const row of [...(Array.isArray(currentRows) ? currentRows : []), ...(Array.isArray(incomingRows) ? incomingRows : [])]) {
+    if (!row?.date || toNumber(row.close) === null) continue;
+    const existing = byDate.get(row.date);
+    if (!existing || snapshotRecordTime(row) >= snapshotRecordTime(existing)) byDate.set(row.date, row);
+  }
+  return compactKlineRows([...byDate.values()].sort((left, right) => String(left.date).localeCompare(String(right.date))));
+}
+
+function applyPublishedAfterCloseSnapshot(snapshot) {
+  if (!snapshot || snapshot.schemaVersion !== 2 || !snapshot.domains) return { applied: false, counts: {} };
+  const catalog = globalThis.TwStockSourceCatalog;
+  if (!catalog?.normalizeProvenance) throw new Error("盤後快照需要 source catalog v2");
+  const counts = { quotes: 0, klines: 0, institutional: 0, margin: 0 };
+
+  for (const [code, raw] of Object.entries(publishedDomainRecords(snapshot, "quotes"))) {
+    if (!STOCK_MAP.has(code)) continue;
+    const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
+    const current = state.quotes?.[code];
+    if (!current || snapshotRecordTime(incoming) >= snapshotRecordTime(current)) {
+      state.quotes[code] = incoming;
+      counts.quotes += 1;
+    }
+  }
+
+  for (const [code, rawRows] of Object.entries(publishedDomainRecords(snapshot, "klines"))) {
+    if (!STOCK_MAP.has(code) || !Array.isArray(rawRows)) continue;
+    const incomingRows = rawRows.map((row) => catalog.normalizeProvenance(row, { fetchedAt: snapshot.generatedAt }));
+    const merged = mergePublishedKlineRows(state.klines?.[code], incomingRows);
+    if (!merged.length) continue;
+    state.klines[code] = merged;
+    counts.klines += 1;
+  }
+
+  for (const [code, raw] of Object.entries(publishedDomainRecords(snapshot, "institutional"))) {
+    if (!STOCK_MAP.has(code)) continue;
+    const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
+    const current = state.institutional?.[code];
+    if (current && snapshotRecordTime(incoming) < snapshotRecordTime(current)) continue;
+    state.institutional[code] = normalizeInstitutionalRecord({
+      ...current,
+      ...incoming,
+      history: mergeInstitutionalHistoryRows(current?.history, [incoming])
+    });
+    counts.institutional += 1;
+  }
+
+  for (const [code, raw] of Object.entries(publishedDomainRecords(snapshot, "margin"))) {
+    if (!STOCK_MAP.has(code)) continue;
+    const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
+    const current = state.margin?.[code];
+    if (!current || snapshotRecordTime(incoming) >= snapshotRecordTime(current)) {
+      state.margin[code] = incoming;
+      counts.margin += 1;
+    }
+  }
+
+  state.schemaVersion = 2;
+  state.klineStorage = {
+    ...normalizeKlineStorageMeta(state.klineStorage),
+    updatedAt: snapshot.generatedAt || state.klineStorage?.updatedAt || null,
+    totalInMemory: Object.keys(state.klines || {}).length
+  };
+  state.afterCloseSnapshotMeta = {
+    schemaVersion: 2,
+    generatedAt: snapshot.generatedAt || null,
+    attemptedDate: snapshot.attemptedDate || null,
+    asOf: snapshot.asOf || null,
+    targetCount: Number(snapshot.targetCount) || 0,
+    delivery: snapshot.delivery || null,
+    counts,
+    errors: Array.isArray(snapshot.errors) ? snapshot.errors.slice(-24) : []
+  };
+  return { applied: Object.values(counts).some(Boolean), counts };
 }
 
 async function loadPublishedMarketSnapshot() {
@@ -6297,7 +6388,7 @@ async function loadPublishedMarketSnapshot() {
     });
     if (manifestResponse.ok) {
       const parsedManifest = await readLimitedJsonResponse(manifestResponse, 256 * 1024);
-      if (parsedManifest?.schemaVersion === 1 && Array.isArray(parsedManifest.parts)) snapshotManifest = parsedManifest;
+      if ([1, 2].includes(parsedManifest?.schemaVersion) && Array.isArray(parsedManifest.parts)) snapshotManifest = parsedManifest;
     }
   } catch (_) {
     // 舊版 Pages artifact 尚未附 manifest 時，沿用 live_market.json 相容路徑。
@@ -6310,10 +6401,11 @@ async function loadPublishedMarketSnapshot() {
     headers: { Accept: "application/json" }
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await readLimitedJsonResponse(response);
-  if (payload?.schemaVersion !== 1 || !payload.marketDashboardCache || typeof payload.marketDashboardCache !== "object") {
+  const payload = await readLimitedJsonResponse(response, 4 * 1024 * 1024);
+  if (![1, 2].includes(payload?.schemaVersion) || !payload.marketDashboardCache || typeof payload.marketDashboardCache !== "object") {
     throw new Error("行情快照格式不相容");
   }
+  if (payload.afterCloseSnapshot) applyPublishedAfterCloseSnapshot(payload.afterCloseSnapshot);
   return normalizeMarketDashboardCache({
     ...payload.marketDashboardCache,
     delivery: payload.marketDashboardCache.delivery || payload.delivery,
@@ -11642,19 +11734,18 @@ function calculateWeeklyTechnical(code) {
   return calculateTechnical(code, aggregateWeeklyBars(latestKlines(code)));
 }
 
-// ─── v7.7 簡易回測引擎 ─────────────────────────────────────────────────────
-// 對日 K 序列逐根呼叫 calculateTechnical()，遇到 playbook 多頭訊號則模擬進場，
-// 採 N×ATR 停損 / M×ATR 目標 / 最長 holdDays 滿期出場，產生交易紀錄與績效統計。
+// ─── Playbook 回測（next-open v2）──────────────────────────────────────────
+// 訊號只使用當日收盤以前資料，下一交易日開盤才成交；同一標的不重疊持倉，
+// 並由 analysis_frameworks.js 的單一 execution model 統一成本、滑價與同根 K 棒規則。
 function backtestPlaybook(code, opts = {}) {
   const lookback = opts.lookback ?? 252;      // 近 1 年交易日
-  const holdDays = opts.holdDays ?? 20;       // 最長持有天數
-  const stopAtrMul = opts.stopAtrMul ?? 2;    // 2 × ATR 停損
-  const targetAtrMul = opts.targetAtrMul ?? 3; // 3 × ATR 目標
   const rows = latestKlines(code);
   if (!Array.isArray(rows) || rows.length < 80) return null;
+  const simulator = analysisFrameworks()?.simulateLongTrades;
+  if (typeof simulator !== "function") return null;
   const startIdx = Math.max(60, rows.length - lookback);
-  const trades = [];
-  for (let i = startIdx; i < rows.length - holdDays; i++) {
+  const signals = [];
+  for (let i = startIdx; i < rows.length - 1; i++) {
     const partial = rows.slice(0, i + 1);
     let signal;
     try { signal = calculateTechnical(code, partial); } catch (_) { continue; }
@@ -11664,65 +11755,17 @@ function backtestPlaybook(code, opts = {}) {
     const isBullish = (pb.trendLabel && pb.trendLabel.includes("多"))
       || (pb.cardSummary && (pb.cardSummary.includes("進場") || pb.cardSummary.includes("做多")));
     if (!isBullish) continue;
-    const entry = signal.latest.close;
     const atr = signal.atr14 || (signal.latest.high - signal.latest.low);
-    if (!Number.isFinite(entry) || !Number.isFinite(atr) || atr <= 0) continue;
-    const stop = entry - atr * stopAtrMul;
-    const target = entry + atr * targetAtrMul;
-    let exitPrice = null;
-    let exitDay = null;
-    let exitReason = "time";
-    for (let j = i + 1; j <= Math.min(i + holdDays, rows.length - 1); j++) {
-      const r = rows[j];
-      if (!Number.isFinite(r.low) || !Number.isFinite(r.high)) continue;
-      if (r.low <= stop) { exitPrice = stop; exitDay = j; exitReason = "stop"; break; }
-      if (r.high >= target) { exitPrice = target; exitDay = j; exitReason = "target"; break; }
-    }
-    if (exitPrice === null) {
-      exitDay = Math.min(i + holdDays, rows.length - 1);
-      exitPrice = rows[exitDay].close;
-    }
-    if (!Number.isFinite(exitPrice)) continue;
-    const pnl = (exitPrice - entry) / entry;
-    const rMultiple = atr > 0 ? (exitPrice - entry) / (atr * stopAtrMul) : 0;
-    trades.push({
-      entryDate: rows[i].date,
-      entryPrice: entry,
-      exitDate: rows[exitDay].date,
-      exitPrice,
-      exitReason,
-      pnl,
-      rMultiple,
-      holdDays: exitDay - i
-    });
+    if (!Number.isFinite(atr) || atr <= 0) continue;
+    signals.push({ index: i, atr });
   }
-  if (!trades.length) {
-    return { trades: [], winRate: null, avgR: null, totalPnl: 0, maxDD: 0, count: 0, wins: 0, avgPnl: 0, stopReason: 0, targetReason: 0, timeReason: 0 };
-  }
-  const wins = trades.filter((t) => t.pnl > 0);
-  const avgR = trades.reduce((s, t) => s + t.rMultiple, 0) / trades.length;
-  const totalPnl = trades.reduce((s, t) => s + t.pnl, 0);
-  let peak = 0;
-  let cumul = 0;
-  let maxDD = 0;
-  for (const t of trades) {
-    cumul += t.pnl;
-    if (cumul > peak) peak = cumul;
-    if (peak - cumul > maxDD) maxDD = peak - cumul;
-  }
-  return {
-    trades,
-    count: trades.length,
-    wins: wins.length,
-    winRate: wins.length / trades.length,
-    avgR,
-    avgPnl: totalPnl / trades.length,
-    totalPnl,
-    maxDD,
-    stopReason: trades.filter((t) => t.exitReason === "stop").length,
-    targetReason: trades.filter((t) => t.exitReason === "target").length,
-    timeReason: trades.filter((t) => t.exitReason === "time").length
-  };
+  return simulator(rows, signals, {
+    holdDays: opts.holdDays ?? 20,
+    stopAtrMul: opts.stopAtrMul ?? 2,
+    targetAtrMul: opts.targetAtrMul ?? 3,
+    costBpsPerSide: opts.costBpsPerSide ?? 10,
+    slippageBpsPerSide: opts.slippageBpsPerSide ?? 5
+  });
 }
 
 // ─── v7.8 Feature 1：全 WATCHLIST 回測排名表 ──────────────────────────────────
@@ -11747,7 +11790,9 @@ async function runWatchlistBacktest(opts = {}) {
           maxDD: result.maxDD,
           stopReason: result.stopReason,
           targetReason: result.targetReason,
-          timeReason: result.timeReason
+          timeReason: result.timeReason,
+          methodVersion: result.methodVersion,
+          assumptions: result.assumptions
         });
       }
     } catch (_) {
@@ -11776,7 +11821,7 @@ function renderBacktestRankingPanel() {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
         <div>
           <h3 style="margin:0 0 4px;font-size:1rem;">📊 全 WATCHLIST 回測排名</h3>
-          <p style="color:var(--muted);font-size:0.78rem;margin:0;">對全部標的執行 playbook 回測（近 1 年、2 ATR 停損、3 ATR 目標、20 日上限），依「勝率 × 平均 R」綜合排序。</p>
+          <p style="color:var(--muted);font-size:0.78rem;margin:0;">訊號於收盤確認、下一交易日開盤成交；同標的不重疊持倉，納入每邊 10 bps 成本與 5 bps 滑價研究假設，再依「勝率 × 平均 R」排序。</p>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button id="runWatchlistBacktestBtn" class="secondary-btn" type="button">執行全市場回測</button>
@@ -11816,7 +11861,7 @@ function renderBacktestRankingPanel() {
           </table>
         </div>
         ${results.length > 30 ? `<p style="color:var(--muted);font-size:0.74rem;margin:6px 0 0;">顯示前 30 名，共 ${results.length} 檔</p>` : ""}
-        <p style="color:var(--muted);font-size:0.7rem;margin:6px 0 0;">⚠️ 未含手續費 / 滑價；僅為策略檢驗，不保證未來績效。</p>
+        <p style="color:var(--muted);font-size:0.7rem;margin:6px 0 0;">⚠️ 成本與滑價是可調模型假設，不代表實際券商費率或稅負；目前股池仍有存活者偏差，結果只供策略檢驗。</p>
       ` : '<p style="color:var(--muted);font-size:0.82rem;">尚未執行。按「執行全市場回測」開始（約 10-30 秒，依股池大小）。</p>'}
     </div>
   `;
@@ -11909,7 +11954,7 @@ function renderBacktestPanel(stock) {
     <div class="panel-lite" style="margin-bottom:14px;">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
         <h3 style="margin:0;font-size:1rem;">📈 Playbook 回測（近 1 年）</h3>
-        <span style="color:var(--muted);font-size:0.74rem;">2ATR 停損 / 3ATR 目標 / 最長 20 日</span>
+        <span style="color:var(--muted);font-size:0.74rem;">收盤訊號 → 次日開盤 / 2ATR 停損 / 3ATR 目標</span>
       </div>
       <div class="report-grid" style="margin-bottom:10px;">
         <article class="rank-card">
@@ -11935,15 +11980,16 @@ function renderBacktestPanel(stock) {
         <summary style="cursor:pointer;font-size:0.78rem;color:var(--muted);">最近 10 筆交易</summary>
         <div class="table-wrap" style="margin-top:8px;">
           <table style="font-size:0.78rem;">
-            <thead><tr><th>進場日</th><th class="num">進場價</th><th>出場日</th><th class="num">出場價</th><th>出場原因</th><th class="num">R</th><th class="num">報酬</th></tr></thead>
+            <thead><tr><th>訊號日</th><th>進場日</th><th class="num">進場價</th><th>出場日</th><th class="num">出場價</th><th>出場原因</th><th class="num">R</th><th class="num">報酬</th></tr></thead>
             <tbody>
               ${result.trades.slice(-10).reverse().map((t) => `
                 <tr>
+                  <td>${escapeHtml(t.signalDate)}</td>
                   <td>${escapeHtml(t.entryDate)}</td>
                   <td class="num">${formatNumber(t.entryPrice)}</td>
                   <td>${escapeHtml(t.exitDate)}</td>
                   <td class="num">${formatNumber(t.exitPrice)}</td>
-                  <td><span class="chip ${t.exitReason === "target" ? "up" : t.exitReason === "stop" ? "down" : "flat"}">${t.exitReason === "target" ? "目標" : t.exitReason === "stop" ? "停損" : "滿期"}</span></td>
+                  <td><span class="chip ${t.exitReason.startsWith("target") ? "up" : t.exitReason.startsWith("stop") ? "down" : "flat"}">${t.exitReason.startsWith("target") ? "目標" : t.exitReason.startsWith("stop") ? "停損" : "滿期"}</span></td>
                   <td class="num ${t.rMultiple > 0 ? "up" : "down"}">${t.rMultiple.toFixed(2)}R</td>
                   <td class="num ${t.pnl > 0 ? "up" : "down"}">${(t.pnl * 100).toFixed(2)}%</td>
                 </tr>
@@ -11952,7 +11998,7 @@ function renderBacktestPanel(stock) {
           </table>
         </div>
       </details>
-      <p style="color:var(--muted);font-size:0.7rem;margin:8px 0 0;">⚠️ 回測僅基於 playbook 的「進場 / 做多」訊號並以 ATR 倍數模擬停損目標；未含手續費 / 滑價，僅供策略檢驗，不保證未來績效。</p>
+      <p style="color:var(--muted);font-size:0.7rem;margin:8px 0 0;">⚠️ ${escapeHtml(result.methodVersion || "playbook-next-open-v2")} 採單一不重疊持倉、同根 K 棒先算停損，並納入每邊 10 bps 成本與 5 bps 滑價研究假設；不代表實際費率，也未消除目前股池的存活者偏差。</p>
     </div>
   `;
 }
@@ -15069,12 +15115,36 @@ function normalizeStateAfterLoad() {
   state.dividends = normalizeDividendState(state.dividends);
   state.macroCache = normalizeMacroCache(state.macroCache);
   state.marketDashboardCache = normalizeMarketDashboardCache(state.marketDashboardCache);
+  state.afterCloseSnapshotMeta = state.afterCloseSnapshotMeta && typeof state.afterCloseSnapshotMeta === "object" && !Array.isArray(state.afterCloseSnapshotMeta)
+    ? state.afterCloseSnapshotMeta
+    : null;
   state.tideSectorCache = normalizeTideSectorCache(state.tideSectorCache);
   state.marketInstitutionalRankings = normalizeMarketInstitutionalRankings(state.marketInstitutionalRankings);
   state.bondSignalCache = normalizeBondSignalCache(state.bondSignalCache);
   state.memoryMarketCache = normalizeMemoryMarketCache(state.memoryMarketCache);
   state.podcastDownloadDir = normalizePodcastDownloadDir(state.podcastDownloadDir);
   state.snapshotTrendWindow = normalizeSnapshotTrendWindow(state.snapshotTrendWindow);
+  const sourceCatalog = globalThis.TwStockSourceCatalog;
+  if (sourceCatalog?.migrateStatePayload) {
+    const migrated = sourceCatalog.migrateStatePayload({
+      savedAt: state.savedAt || null,
+      lastUpdated: state.lastUpdated || null,
+      quotes: state.quotes,
+      klines: state.klines,
+      valuations: state.valuations,
+      institutional: state.institutional,
+      margin: state.margin,
+      foreignOwnership: state.foreignOwnership,
+      tdcc: state.tdcc
+    }, {
+      migratedAt: state.schemaMigration?.migratedAt || new Date().toISOString()
+    });
+    for (const key of Object.keys(sourceCatalog.stateDomainMap || {})) {
+      if (migrated[key] !== undefined) state[key] = migrated[key];
+    }
+    state.schemaVersion = migrated.schemaVersion;
+    state.schemaMigration = migrated.schemaMigration;
+  }
 }
 
 // ─── File System Sync（跨裝置 Google Drive 同步） ────────────────────────
@@ -16394,6 +16464,8 @@ function buildStatePayload() {
   const inlineTdccHistory = buildStateTdccHistoryPayload();
   const inlineActiveEtf = buildStateActiveEtfPayload();
   return {
+    schemaVersion: Number(state.schemaVersion) || 2,
+    schemaMigration: state.schemaMigration,
     version: APP_VERSION,
     savedAt: new Date().toISOString(),
     quotes: state.quotes,
@@ -16440,6 +16512,7 @@ function buildStatePayload() {
     dividends: state.dividends,
     macroCache: state.macroCache,
     marketDashboardCache: state.marketDashboardCache,
+    afterCloseSnapshotMeta: state.afterCloseSnapshotMeta,
     tideSectorCache: state.tideSectorCache,
     marketInstitutionalRankings: state.marketInstitutionalRankings,
     bondSignalCache: state.bondSignalCache,
@@ -17952,7 +18025,7 @@ function recordMarketCrashRiskRefresh(payload) {
 function maybeRefreshMarketCrashRiskInputs(options = {}) {
   const force = options.force === true;
   const manual = options.manual === true;
-  if (!force && !TAB_OPEN_NETWORK_REFRESH_ENABLED) return null;
+  if (!force && !TAB_OPEN_NETWORK_REFRESH_ENABLED && !isPublishedWebRuntime()) return null;
   if (isPublishedWebRuntime()) {
     const checkedAt = new Date().toISOString();
     if (_marketDashboardRefreshPromise) return _marketDashboardRefreshPromise;
@@ -38814,12 +38887,20 @@ async function updateMarketDashboard(silent = false) {
         state.marketDashboardCache = await loadPublishedMarketSnapshot();
         _publishedMarketSnapshotLoadedThisSession = true;
         persistStateSilently("GitHub 大盤延遲快照");
-        if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) renderMarketDashboardTab();
+        if (state.afterCloseSnapshotMeta?.generatedAt) {
+          renderAfterCloseScheduleStatus();
+          if (!_marketCrashRiskBatchUpdating) render({ scope: "active" });
+        } else if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) {
+          renderMarketDashboardTab();
+        }
         const cache = state.marketDashboardCache;
         const sourceCount = [cache.taiwan, cache.taifexNight, ...(cache.global || [])].filter(Boolean).length;
+        const afterCloseCounts = state.afterCloseSnapshotMeta?.counts || {};
+        const afterCloseCount = ["quotes", "klines", "institutional", "margin"]
+          .reduce((sum, key) => sum + (Number(afterCloseCounts[key]) || 0), 0);
         if (!silent) {
           setStatus(
-            `GitHub 延遲快照已讀取：${sourceCount}/6 項可用；排程可能延遲，非逐筆即時行情。`,
+            `GitHub 延遲快照已讀取：大盤 ${sourceCount}/6 項、盤後資料 ${afterCloseCount || 0} 組；排程可能延遲，非逐筆即時行情。`,
             cache.errors.length || sourceCount < 3 ? "warn" : "good"
           );
         }
@@ -43904,8 +43985,11 @@ function renderAfterCloseScheduleStatus() {
   const container = $("afterCloseScheduleStatus");
   if (!container) return;
   if (isPublishedWebRuntime()) {
-    container.textContent = "Web｜Actions 延遲快照";
-    container.title = "公開網站不直接跨站抓資料；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。";
+    const afterClose = state.afterCloseSnapshotMeta;
+    container.textContent = afterClose?.asOf ? `Web｜盤後 ${afterClose.asOf}` : "Web｜Actions 延遲快照";
+    container.title = afterClose?.asOf
+      ? `公開網站已載入 ${afterClose.asOf} 的隱私清理盤後報價／日線／籌碼；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。`
+      : "公開網站不直接跨站抓資料；同來源快照由 GitHub Actions 產生，可能因平台負載延遲。";
     return;
   }
   const protocol = globalThis.TwStockAfterCloseProtocol;

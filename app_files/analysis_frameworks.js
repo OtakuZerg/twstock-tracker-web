@@ -1,7 +1,8 @@
 "use strict";
 
 (function attachAnalysisFrameworks(globalScope) {
-  const FRAMEWORK_VERSION = "twstock-win-rate-proxy-v1.1";
+  const FRAMEWORK_VERSION = "twstock-win-rate-proxy-v1.2";
+  const BACKTEST_METHOD_VERSION = "playbook-next-open-v2";
   const WALL_STREET_SOURCE_NOTES = [
     "CFA Institute equity research framing：估值、風險、投資論點與多模型交叉檢查。",
     "FINRA research analyst rules：研究需要揭露重大利益衝突，避免把評等當成無條件事實。",
@@ -15,6 +16,122 @@
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function simulateLongTrades(rows, signals, options = {}) {
+    const bars = Array.isArray(rows) ? rows : [];
+    const candidates = (Array.isArray(signals) ? signals : [])
+      .map((signal) => ({ ...signal, index: Math.floor(num(signal?.index) ?? -1), atr: num(signal?.atr) }))
+      .filter((signal) => signal.index >= 0 && signal.index < bars.length - 1 && signal.atr !== null && signal.atr > 0)
+      .sort((left, right) => left.index - right.index);
+    const holdDays = Math.max(1, Math.floor(num(options.holdDays) ?? 20));
+    const stopAtrMul = Math.max(0.1, num(options.stopAtrMul) ?? 2);
+    const targetAtrMul = Math.max(0.1, num(options.targetAtrMul) ?? 3);
+    const costBpsPerSide = Math.max(0, num(options.costBpsPerSide) ?? 10);
+    const slippageBpsPerSide = Math.max(0, num(options.slippageBpsPerSide) ?? 5);
+    const friction = (costBpsPerSide + slippageBpsPerSide) / 10000;
+    const trades = [];
+    let nextEligibleSignalIndex = 0;
+
+    for (const signal of candidates) {
+      if (signal.index < nextEligibleSignalIndex) continue;
+      const entryIndex = signal.index + 1;
+      const entryOpen = num(bars[entryIndex]?.open);
+      if (entryOpen === null || entryOpen <= 0) continue;
+      const entryPrice = entryOpen * (1 + friction);
+      const initialRisk = signal.atr * stopAtrMul;
+      const stop = entryOpen - initialRisk;
+      const target = entryOpen + signal.atr * targetAtrMul;
+      let exitIndex = Math.min(entryIndex + holdDays - 1, bars.length - 1);
+      let rawExitPrice = num(bars[exitIndex]?.close);
+      let exitReason = "time";
+      let ambiguousBar = false;
+
+      for (let index = entryIndex; index <= exitIndex; index += 1) {
+        const bar = bars[index] || {};
+        const open = num(bar.open);
+        const low = num(bar.low);
+        const high = num(bar.high);
+        if (low === null || high === null) continue;
+        const hitStop = low <= stop;
+        const hitTarget = high >= target;
+        if (!hitStop && !hitTarget) continue;
+        exitIndex = index;
+        ambiguousBar = hitStop && hitTarget && (open === null || (open > stop && open < target));
+        if (open !== null && open <= stop) {
+          rawExitPrice = open;
+          exitReason = "stop-gap";
+        } else if (open !== null && open >= target) {
+          rawExitPrice = open;
+          exitReason = "target-gap";
+        } else if (hitStop) {
+          rawExitPrice = stop;
+          exitReason = "stop";
+        } else {
+          rawExitPrice = target;
+          exitReason = "target";
+        }
+        break;
+      }
+
+      if (rawExitPrice === null || rawExitPrice <= 0) continue;
+      const exitPrice = rawExitPrice * (1 - friction);
+      const pnl = (exitPrice - entryPrice) / entryPrice;
+      const rMultiple = initialRisk > 0 ? (exitPrice - entryPrice) / initialRisk : 0;
+      trades.push({
+        signalDate: bars[signal.index]?.date || "",
+        entryDate: bars[entryIndex]?.date || "",
+        entryPrice,
+        rawEntryPrice: entryOpen,
+        exitDate: bars[exitIndex]?.date || "",
+        exitPrice,
+        rawExitPrice,
+        exitReason,
+        pnl,
+        rMultiple,
+        holdDays: exitIndex - entryIndex + 1,
+        ambiguousBar
+      });
+      nextEligibleSignalIndex = exitIndex + 1;
+    }
+
+    let equity = 1;
+    let peak = 1;
+    let maxDD = 0;
+    for (const trade of trades) {
+      equity *= 1 + trade.pnl;
+      peak = Math.max(peak, equity);
+      maxDD = Math.max(maxDD, peak > 0 ? (peak - equity) / peak : 0);
+    }
+    const wins = trades.filter((trade) => trade.pnl > 0).length;
+    const totalR = trades.reduce((sum, trade) => sum + trade.rMultiple, 0);
+    const totalArithmeticPnl = trades.reduce((sum, trade) => sum + trade.pnl, 0);
+    return {
+      methodVersion: BACKTEST_METHOD_VERSION,
+      assumptions: {
+        signalTiming: "daily-close",
+        entryTiming: "next-session-open",
+        positionPolicy: "one-position-non-overlapping",
+        sameBarPolicy: "stop-first-conservative",
+        costBpsPerSide,
+        slippageBpsPerSide,
+        stopAtrMul,
+        targetAtrMul,
+        holdDays
+      },
+      trades,
+      count: trades.length,
+      wins,
+      winRate: trades.length ? wins / trades.length : null,
+      avgR: trades.length ? totalR / trades.length : null,
+      avgPnl: trades.length ? totalArithmeticPnl / trades.length : 0,
+      totalPnl: equity - 1,
+      maxDD,
+      stopReason: trades.filter((trade) => trade.exitReason.startsWith("stop")).length,
+      targetReason: trades.filter((trade) => trade.exitReason.startsWith("target")).length,
+      timeReason: trades.filter((trade) => trade.exitReason === "time").length,
+      ambiguousBars: trades.filter((trade) => trade.ambiguousBar).length
+    };
   }
 
   function pushFactor(factors, label, points, detail, bucket) {
@@ -354,6 +471,8 @@
   globalScope.TwStockAnalysisFrameworks = {
     version: FRAMEWORK_VERSION,
     wallStreetSourceNotes: WALL_STREET_SOURCE_NOTES,
+    backtestMethodVersion: BACKTEST_METHOD_VERSION,
+    simulateLongTrades,
     scoreAnalystWinRateFeature,
     scoreAnalystWinRateBatch,
     analystWinRateCalibrationAdjustment,

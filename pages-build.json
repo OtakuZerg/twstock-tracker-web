@@ -1,10 +1,10 @@
 {
-  "schemaVersion": 1,
-  "appVersion": "19.0",
-  "releaseDate": "2026-08-13",
+  "schemaVersion": 2,
+  "appVersion": "19.1",
+  "releaseDate": "2026-08-21",
   "mode": "github-pages-pwa",
   "profile": "public-pages-hardened-v3",
-  "builtAt": "2026-08-16T08:23:40.923Z",
+  "builtAt": "2026-08-25T06:10:20.605Z",
   "sourceDataAsOf": {
     "state": "2026-05-12T16:00:29.175Z",
     "research": "2026-06-24T14:02:15+08:00",
@@ -14,31 +14,37 @@
     {
       "id": "market",
       "path": "data/live_market.json",
-      "sha256": "3615476de6e0b11433040f1cad4552217a3124367f3483f3474af94a6c76c257",
+      "sha256": "b5c174c357a0ff7ef85c7512881104f70cc6d4cb5992e2a59addc79d74470380",
       "asOf": null
+    },
+    {
+      "id": "after-close",
+      "path": "data/live_market.json",
+      "sha256": "b5c174c357a0ff7ef85c7512881104f70cc6d4cb5992e2a59addc79d74470380",
+      "asOf": "2026-05-12"
     },
     {
       "id": "state-core",
       "path": "data/state_core.json",
-      "sha256": "0a63b8fa938bddb7dcc47735bffdd68a08f6446e8c84fabb2ef5e26e8b13c967",
+      "sha256": "e8ce466b81cdf3be33bf009f1fb51afedf4d922e65620484506bd2a8eb21e9af",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
       "id": "state-bootstrap",
       "path": "data/state_bootstrap.json",
-      "sha256": "c5b8258cf16d3b95afee4a0f80f17504c10c4e0166cfea946ce353753b469fde",
+      "sha256": "de69548b6f5fb0da7ece7f1b44e7856dee9283829a3af257648ad09988ea2744",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
       "id": "state-equity-core",
       "path": "data/state_equity_core.json",
-      "sha256": "ea6b7349a3eec88301e59ce1d68ee5ef7f455b4a7c2cb91541b0dd4a59f62cd9",
+      "sha256": "8d89da401725ec0cce2bba0f522a1b879da5dcb47fdf6e04854a201c16e594b7",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
       "id": "state-technical",
       "path": "data/state_technical.json",
-      "sha256": "3b8336c81e134cbe5dc06ad3d6cb0090429075a48e1b80e859516a2ce2d40ead",
+      "sha256": "7b88eed55c89cac9c710f35c24b332cdd4ca99273d65d676658e384dd2790261",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
