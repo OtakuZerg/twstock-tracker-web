@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "19.2";
+const APP_VERSION = "19.3";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -15,7 +15,8 @@ const RESEARCH_DATA_SCHEMA_VERSION = 1;
 const REVENUE_HISTORY_MONTH_LIMIT = 72; // v16.7：Yahoo 5 年回補後需容納 60+ 個月（原 36）
 const QUARTERLY_MARGIN_RETENTION_QUARTERS = 20;
 const MONTHLY_REVENUE_RECHECK_TTL_MS = 6 * 60 * 60 * 1000;
-const CURRENT_HOLDINGS_PRESET_VERSION = "2026-07-13-v17.3-safe-starter";
+const CURRENT_HOLDINGS_PRESET_VERSION = "2026-09-02-v19.3-neutral-demo";
+const PRIVATE_HOLDINGS_MIGRATIONS_PATH = "data/private_holdings_migrations.json";
 const STARTUP_DEFER_BUNDLED_STATE_MIN_FOOTPRINT = 20;
 const STARTUP_DEFER_BUNDLED_STATE_MS = 6500;
 const STARTUP_NETWORK_DEFER_MS = 15000;
@@ -4327,8 +4328,7 @@ function currentHoldingsSeedCopy() {
 function applyCurrentHoldingsPresetIfNeeded() {
   if (state.holdingsPresetVersion === CURRENT_HOLDINGS_PRESET_VERSION) return false;
   if (Array.isArray(state.holdings) && state.holdings.length) {
-    // 使用者持股屬本機資料；版本更新只升級標記，不覆寫既有非空清單。
-    state.holdingsPresetVersion = CURRENT_HOLDINGS_PRESET_VERSION;
+    // 使用者持股屬本機資料；非空清單的 preset 標記也必須保留，才能精確判斷私有遷移。
     return false;
   }
   state.holdings = currentHoldingsSeedCopy();
@@ -4337,6 +4337,31 @@ function applyCurrentHoldingsPresetIfNeeded() {
     state.selectedCode = state.holdings[0]?.code || WATCHLIST[0]?.code || "";
   }
   return true;
+}
+
+function holdingsImportApi() {
+  const api = typeof window !== "undefined" ? window.TwStockHoldingsImport : null;
+  return api && typeof api.parseHoldingsText === "function" && typeof api.diffHoldings === "function" ? api : null;
+}
+
+function holdingsImportOptions() {
+  return {
+    resolveName(code) {
+      return state.userStocks?.[code]?.name || STOCK_UNIVERSE[code]?.name || STOCK_MAP.get(code)?.name || "";
+    }
+  };
+}
+
+async function applyBundledPrivateHoldingsMigration() {
+  if (isPublishedWebRuntime()) return null;
+  const payload = await readBundledStateFile(PRIVATE_HOLDINGS_MIGRATIONS_PATH);
+  const api = holdingsImportApi();
+  if (!api || typeof api.selectExactMigration !== "function") return null;
+  const selected = api.selectExactMigration(state.holdings, state.holdingsPresetVersion, payload?.migrations);
+  if (!selected) return null;
+  state.holdings = selected.holdings.map((entry) => ({ ...entry }));
+  state.holdingsPresetVersion = selected.presetVersion;
+  return selected;
 }
 
 function buildStockRecord(meta) {
@@ -4525,6 +4550,79 @@ async function removeCurrentHolding(code) {
   await saveState();
   render();
   setStatus(`已從目前持股移除 ${code}。`, "good");
+}
+
+let _holdingsImportDraft = "";
+let _holdingsImportPreview = null;
+
+function parseHoldingsImportDraft(rawText) {
+  const api = holdingsImportApi();
+  if (!api) throw new Error("持股匯入模組尚未載入");
+  const parsed = api.parseHoldingsText(rawText, holdingsImportOptions());
+  return {
+    raw: String(rawText || ""),
+    parsed,
+    diff: api.diffHoldings(state.holdings, parsed.holdings, holdingsImportOptions())
+  };
+}
+
+function previewHoldingsImport() {
+  const input = $("holdingImportText");
+  _holdingsImportDraft = input ? input.value : _holdingsImportDraft;
+  try {
+    _holdingsImportPreview = parseHoldingsImportDraft(_holdingsImportDraft);
+    renderHoldingsManager();
+    if (!_holdingsImportPreview.parsed.count) {
+      setStatus("未找到可匯入持股；請保留像 2330.TW 或 3105.TWO 的股號列。", "error");
+      return;
+    }
+    setStatus(`已解析 ${_holdingsImportPreview.parsed.count} 檔；請核對新增、移除與名稱變更後再套用。`, "warn");
+  } catch (error) {
+    _holdingsImportPreview = null;
+    renderHoldingsManager();
+    setStatus(`持股解析失敗：${error?.message || String(error)}`, "error");
+  }
+}
+
+function clearHoldingsImport() {
+  _holdingsImportDraft = "";
+  _holdingsImportPreview = null;
+  renderHoldingsManager();
+  setStatus("已清除持股匯入草稿；目前持股未變更。", "warn");
+}
+
+async function applyHoldingsImport() {
+  const input = $("holdingImportText");
+  const currentRaw = input ? input.value : _holdingsImportDraft;
+  if (!_holdingsImportPreview || currentRaw !== _holdingsImportPreview.raw) {
+    _holdingsImportDraft = currentRaw;
+    _holdingsImportPreview = parseHoldingsImportDraft(currentRaw);
+    renderHoldingsManager();
+    setStatus("貼上內容已變更；已重新產生差異，請再確認一次後套用。", "warn");
+    return;
+  }
+  const next = _holdingsImportPreview.parsed.holdings;
+  if (!next.length) {
+    setStatus("沒有可套用的持股；目前清單未變更。", "error");
+    return;
+  }
+  const appliedDiff = _holdingsImportPreview.diff;
+  state.holdings = next.map((entry) => ({ ...entry }));
+  state.holdingsPresetVersion = `manual-import-v${APP_VERSION}`;
+  syncCurrentHoldingsTheme();
+  invalidateStockSearchIndex();
+  state.filter = HOLDINGS_THEME_KEY;
+  if (!state.holdings.some((entry) => entry.code === state.selectedCode)) {
+    state.selectedCode = state.holdings[0]?.code || WATCHLIST[0]?.code || "";
+  }
+  await saveState();
+  _holdingsImportDraft = "";
+  _holdingsImportPreview = null;
+  render();
+  setStatus(
+    `已套用 ${state.holdings.length} 檔持股：新增 ${appliedDiff.added.length}、移除 ${appliedDiff.removed.length}、名稱更新 ${appliedDiff.renamed.length}、市場更新 ${appliedDiff.marketChanged.length}；行情仍由正式資料來源更新。`,
+    "good"
+  );
 }
 
 function changeClass(value) {
@@ -22351,6 +22449,41 @@ function renderHoldingsManager() {
   const container = $("holdingsManager");
   if (!container) return;
   const holdings = (state.holdings || []).map((entry) => normalizeHoldingEntry(entry)).filter(Boolean);
+  const preview = _holdingsImportPreview;
+  const diff = preview?.diff;
+  const parsed = preview?.parsed;
+  const renderImportRows = (rows, emptyLabel) => rows?.length
+    ? rows.map((entry) => `<span class="holding-import-row"><strong>${escapeHtml(entry.name)}</strong><span>${escapeHtml(entry.code)}.${escapeHtml(entry.suffix)}</span></span>`).join("")
+    : `<span class="holding-import-empty">${escapeHtml(emptyLabel)}</span>`;
+  const previewHtml = preview ? `
+    <div class="holdings-import-preview" aria-live="polite">
+      <div class="holdings-import-summary">
+        <span class="status-pill">解析 ${formatNumber(parsed.count, 0)} 檔</span>
+        <span class="status-pill">新增 ${formatNumber(diff.added.length, 0)}</span>
+        <span class="status-pill">移除 ${formatNumber(diff.removed.length, 0)}</span>
+        <span class="status-pill">名稱更新 ${formatNumber(diff.renamed.length, 0)}</span>
+        <span class="status-pill">市場更新 ${formatNumber(diff.marketChanged.length, 0)}</span>
+        <span class="status-pill">忽略 ${formatNumber(parsed.ignoredLineCount, 0)} 行</span>
+      </div>
+      <div class="holdings-import-diff-grid">
+        <section class="holdings-import-diff-card status-info" aria-label="新增持股">
+          <h4>新增</h4>
+          <div>${renderImportRows(diff.added, "沒有新增")}</div>
+        </section>
+        <section class="holdings-import-diff-card status-neutral" aria-label="移除持股">
+          <h4>移除</h4>
+          <div>${renderImportRows(diff.removed, "沒有移除")}</div>
+        </section>
+      </div>
+      ${diff.renamed.length ? `<div class="holdings-import-renames"><strong>名稱更新：</strong>${diff.renamed.map((row) => `${escapeHtml(row.before.code)}：${escapeHtml(row.before.name)} → ${escapeHtml(row.after.name)}`).join("；")}</div>` : ""}
+      ${diff.marketChanged.length ? `<div class="holdings-import-renames"><strong>市場更新：</strong>${diff.marketChanged.map((row) => `${escapeHtml(row.after.code)}：.${escapeHtml(row.before.suffix)} → .${escapeHtml(row.after.suffix)}`).join("；")}</div>` : ""}
+      ${parsed.warnings.length ? `<ul class="holdings-import-warnings">${parsed.warnings.map((warning) => `<li>${escapeHtml(warning)}</li>`).join("")}</ul>` : ""}
+      <div class="holdings-import-actions">
+        <button id="applyHoldingsImportBtn" class="primary-btn" type="button"${parsed.count ? "" : " disabled"}>確認套用 ${formatNumber(parsed.count, 0)} 檔</button>
+        <button id="clearHoldingsImportBtn" class="ghost-btn" type="button">清除草稿</button>
+      </div>
+    </div>
+  ` : "";
   container.innerHTML = `
     <div class="holdings-manager">
       <div class="holdings-inputs">
@@ -22358,6 +22491,15 @@ function renderHoldingsManager() {
         <input id="holdingNameInput" class="input" type="text" placeholder="可選：自訂名稱，空白則沿用已知名稱" />
         <button id="addHoldingBtn" class="secondary-btn" type="button">加入目前持股</button>
       </div>
+      <details class="holdings-import"${_holdingsImportDraft || preview ? " open" : ""}>
+        <summary>整段貼上匯入持股</summary>
+        <p>可直接貼上券商／行情頁文字；系統只解析公司名稱與 <code>.TW / .TWO</code> 股號。價格、漲跌、成交量與時間一律忽略，正式行情仍由具來源與日期的資料更新。</p>
+        <textarea id="holdingImportText" class="holdings-import-text" rows="9" placeholder="例如：&#10;台積電&#10;2330.TW&#10;聯發科&#10;2454.TW">${escapeHtml(_holdingsImportDraft)}</textarea>
+        <div class="holdings-import-actions">
+          <button id="previewHoldingsImportBtn" class="secondary-btn" type="button">解析並預覽差異</button>
+        </div>
+        ${previewHtml}
+      </details>
       <div class="holdings-list">
         ${holdings.length ? holdings.map((entry) => `
           <span class="holding-chip">
@@ -45674,6 +45816,18 @@ function bindEvents() {
       removeCurrentHolding(removeButton.dataset.removeHolding);
       return;
     }
+    if (event.target.closest("#previewHoldingsImportBtn")) {
+      previewHoldingsImport();
+      return;
+    }
+    if (event.target.closest("#applyHoldingsImportBtn")) {
+      applyHoldingsImport().catch((error) => setStatus(`持股套用失敗：${error?.message || String(error)}`, "error"));
+      return;
+    }
+    if (event.target.closest("#clearHoldingsImportBtn")) {
+      clearHoldingsImport();
+      return;
+    }
     if (event.target.id === "addHoldingBtn") {
       addCurrentHolding($("holdingCodeInput").value, $("holdingNameInput").value);
     }
@@ -46181,7 +46335,12 @@ async function init() {
     }
   }
   await loadState();
+  const holdingsMigration = await applyBundledPrivateHoldingsMigration();
   normalizeStateAfterLoad();
+  if (holdingsMigration) {
+    await saveState();
+    _cacheLoadInfo.seedMessage = `已套用私人持股遷移 ${holdingsMigration.fromCount} → ${holdingsMigration.toCount} 檔`;
+  }
   // v17.9 收盤後研究模式：舊版曾開啟的盤中定時 / 開頁完整更新不再自動恢復。
   state.autoRefreshEnabled = false;
   state.idleAutoUpdateEnabled = false;

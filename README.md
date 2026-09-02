@@ -1,10 +1,21 @@
 # 台股追蹤 Taiwan Equity Tracker
 
-**版本：v19.2** ｜ **日期：2026-09-02** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
+**版本：v19.3** ｜ **日期：2026-09-02** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
 
 > ⚠️ **資料正確性說明**：本 extension 的報價、估值、月營收、股利、法人與市場資料以 MOPS / TWSE / TPEx 等官方來源為優先；季報三率目前需匯入 MOPS 季損益表或已整理 CSV。Tide 板塊資金、情緒快照與其他外部網站只作第三方 proxy / 交叉核對入口，所有資料都要檢查來源日期、fallback 與缺漏狀態。
 >
 > ⚠️ **稅務與規模提示**：海外 ETF 配息來源組成（5 類）為一般化分類，**每期實際比例需以投信「收益分配通知書」核對**；ETF 規模 (AUM) / 日均成交量為 2026-05 概估，需以投信月報實際數值更新。最低稅負制 / 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。
+
+---
+
+## v19.3 安全貼上持股與私人清單遷移（2026-09-02）
+
+- 持股管理新增「整段貼上匯入持股」：可直接貼上包含公司名稱、`.TW / .TWO` 股號、報價、漲跌、成交量與時間的行情頁文字；`holdings-import-v1` 只抽取名稱與市場股號，保留原始順序並忽略重複項目。
+- 套用前會顯示解析檔數、新增、移除、名稱更新、市場後綴更新與忽略行數；使用者必須再次按下「確認套用」才會取代目前清單。若預覽後又修改文字，系統會強制重新產生差異，避免套用過期預覽。
+- 貼上內容中的價格、漲跌、成交量與時間不會寫入 canonical quote。行情仍由 TWSE／TPEx 官方來源與明示 fallback 更新，避免沒有來源日期的文字覆蓋可追溯市場資料。
+- Extension 私人 seed 更新為使用者提供的 20 檔：移除 00935、3665，新增 2454。舊 21 檔只在清單與舊 preset 完全一致時自動遷移；自行修改過的清單不會被覆寫，仍可用貼上預覽手動更新。
+- 私人 migration 檔不在 Pages allowlist；公開 Web 仍只發布 16 檔中性示範清單。Extension 與 Web 共用相同 parser、差異預覽、escape 防護與手機單欄版面。
+- 新增 23-case parser／migration smoke、20 檔 private seed gate，以及 Extension／Web 的實際預覽與套用 browser gate；Service Worker required shell 更新為 `v19.3-pwa-1`。
 
 ---
 
@@ -1385,6 +1396,7 @@ python3 scripts/update_youtube_market_lessons.py --audio szA2MSO_qTo=/path/to/EP
 
 | 版本 | 日期 | 重點 |
 |------|------|------|
+| **v19.3** | **2026-09-02** | **整段貼上持股、差異確認、20 檔私人 seed 精確遷移、行情 provenance 隔離與 Pages 隱私邊界** |
 | **v19.2** | **2026-09-02** | **資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界** |
 | **v19.1** | **2026-08-21** | **來源 schema v2 相容 migration、隱私清理盤後 Web 快照、next-open 非重疊回測與 R:R 執行閘門** |
 | **v19.0** | **2026-08-13** | **Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00 Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正** |

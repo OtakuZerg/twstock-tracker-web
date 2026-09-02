@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>台股追蹤 Taiwan Equity Tracker v19.2</title>
+  <title>台股追蹤 Taiwan Equity Tracker v19.3</title>
   <style>
     html {
       color: #1a1a1a;
@@ -234,7 +234,7 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">台股追蹤 Taiwan Equity Tracker v19.2</h1>
+<h1 class="title">台股追蹤 Taiwan Equity Tracker v19.3</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
@@ -242,6 +242,9 @@
 id="toc-台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
 Tracker</a>
 <ul>
+<li><a href="#v19.3-安全貼上持股與私人清單遷移2026-09-02"
+id="toc-v19.3-安全貼上持股與私人清單遷移2026-09-02">v19.3
+安全貼上持股與私人清單遷移（2026-09-02）</a></li>
 <li><a href="#v19.2-決策安全與每日差異摘要2026-09-02">v19.2 決策安全與每日差異摘要（2026-09-02）</a></li>
 <li><a href="#v19.1-盤後資料來源-schema-與回測執行模型2026-08-21"
 id="toc-v19.1-盤後資料來源-schema-與回測執行模型2026-08-21">v19.1
@@ -535,7 +538,7 @@ id="toc-podcast-更新維護者用">Podcast 更新（維護者用）</a></li>
 </nav>
 <h1 id="台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
 Tracker</h1>
-<p><strong>版本：v19.2</strong> ｜ <strong>日期：2026-09-02</strong> ｜
+<p><strong>版本：v19.3</strong> ｜ <strong>日期：2026-09-02</strong> ｜
 Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 <blockquote>
 <p>⚠️ <strong>資料正確性說明</strong>：本 extension
@@ -549,6 +552,19 @@ Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 概估，需以投信月報實際數值更新。最低稅負制 /
 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。</p>
 </blockquote>
+<hr />
+<!-- §1. v19.3 safe holdings import and private migration -->
+<section id="v19.3-安全貼上持股與私人清單遷移2026-09-02">
+<h2>v19.3 安全貼上持股與私人清單遷移（2026-09-02）</h2>
+<ul>
+<li>持股管理新增「整段貼上匯入持股」：可直接貼上包含公司名稱、<code>.TW / .TWO</code> 股號、報價、漲跌、成交量與時間的行情頁文字；<code>holdings-import-v1</code> 只抽取名稱與市場股號，保留原始順序並忽略重複項目。</li>
+<li>套用前會顯示解析檔數、新增、移除、名稱更新、市場後綴更新與忽略行數；使用者必須再次按下「確認套用」才會取代目前清單。若預覽後又修改文字，系統會強制重新產生差異，避免套用過期預覽。</li>
+<li>貼上內容中的價格、漲跌、成交量與時間不會寫入 canonical quote。行情仍由 TWSE／TPEx 官方來源與明示 fallback 更新，避免沒有來源日期的文字覆蓋可追溯市場資料。</li>
+<li>Extension 私人 seed 更新為使用者提供的 20 檔：移除 00935、3665，新增 2454。舊 21 檔只在清單與舊 preset 完全一致時自動遷移；自行修改過的清單不會被覆寫，仍可用貼上預覽手動更新。</li>
+<li>私人 migration 檔不在 Pages allowlist；公開 Web 仍只發布 16 檔中性示範清單。Extension 與 Web 共用相同 parser、差異預覽、escape 防護與手機單欄版面。</li>
+<li>新增 23-case parser／migration smoke、20 檔 private seed gate，以及 Extension／Web 的實際預覽與套用 browser gate；Service Worker required shell 更新為 <code>v19.3-pwa-1</code>。</li>
+</ul>
+</section>
 <hr />
 <!-- §1. v19.2 decision safety and daily digest -->
 <section id="v19.2-決策安全與每日差異摘要2026-09-02">
@@ -768,11 +784,6 @@ changelog，不代表同一頁存在多套互相競爭的研究建議。</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td><strong>v19.2</strong></td>
-<td><strong>2026-09-02</strong></td>
-<td><strong>資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界</strong></td>
-</tr>
 <tr>
 <td>作戰首頁</td>
 <td>選取個股的現價、技術多空、籌碼強弱、執行結論、入場、停損、目標、R:R
@@ -3629,6 +3640,16 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>v19.3</strong></td>
+<td><strong>2026-09-02</strong></td>
+<td><strong>整段貼上持股、差異確認、20 檔私人 seed 精確遷移、行情 provenance 隔離與 Pages 隱私邊界</strong></td>
+</tr>
+<tr>
+<td><strong>v19.2</strong></td>
+<td><strong>2026-09-02</strong></td>
+<td><strong>資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界</strong></td>
+</tr>
 <tr>
 <td><strong>v19.1</strong></td>
 <td><strong>2026-08-21</strong></td>

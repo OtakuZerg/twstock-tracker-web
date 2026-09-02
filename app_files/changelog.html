@@ -1,5 +1,20 @@
 <div class="cl-entry major">
             <div class="cl-ver">
+              <strong>v19.3</strong>
+              <span>2026-09-02</span>
+              <span class="cl-badge major">Safe Holdings Import</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>整段貼上</strong>：從混合行情文字抽取公司名稱與 .TW / .TWO 股號，保留順序、去重並忽略報價欄位。</li>
+              <li><strong>差異確認</strong>：套用前顯示新增、移除、名稱／市場後綴更新與忽略行數；預覽後文字若改變會要求重新確認。</li>
+              <li><strong>私人遷移</strong>：Extension seed 更新為 20 檔；舊 21 檔僅在完整符合舊 preset 時自動遷移，不覆寫自訂清單。</li>
+              <li><strong>來源隔離</strong>：貼上的價格、漲跌、成交量與時間不進入 canonical quote，行情仍由可追溯來源更新。</li>
+              <li><strong>Web 隱私</strong>：私人 migration 不進 Pages allowlist，公開 Web 維持 16 檔中性示範清單。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
               <strong>v19.2</strong>
               <span>2026-09-02</span>
               <span class="cl-badge major">Decision Safety &amp; Daily Digest</span>

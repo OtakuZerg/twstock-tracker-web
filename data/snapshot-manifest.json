@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-02T05:58:10.369Z",
+  "generatedAt": "2026-09-02T07:24:32.958Z",
   "asOf": null,
   "mode": "bundled-fallback",
   "stale": true,
@@ -10,7 +10,7 @@
       "id": "market",
       "path": "data/live_market.json",
       "sha256": null,
-      "generatedAt": "2026-09-02T05:58:10.369Z",
+      "generatedAt": "2026-09-02T07:24:32.958Z",
       "asOf": null,
       "stale": true,
       "fallback": true
@@ -19,7 +19,7 @@
       "id": "after-close",
       "path": "data/live_market.json",
       "sha256": null,
-      "generatedAt": "2026-09-02T05:58:10.369Z",
+      "generatedAt": "2026-09-02T07:24:32.958Z",
       "asOf": "2026-05-12",
       "stale": true,
       "fallback": true
