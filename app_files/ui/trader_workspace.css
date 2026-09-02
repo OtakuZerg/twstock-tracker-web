@@ -211,6 +211,141 @@
   color: var(--muted);
 }
 
+.trader-safety-gate,
+.technical-safety-gate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(248, 245, 239, 0.9);
+}
+
+.trader-safety-gate > div,
+.technical-safety-gate > div {
+  min-width: 0;
+}
+
+.trader-safety-gate strong,
+.trader-safety-gate span,
+.technical-safety-gate span,
+.technical-safety-gate strong,
+.technical-safety-gate p {
+  display: block;
+}
+
+.trader-safety-gate strong,
+.technical-safety-gate strong {
+  font-size: 0.85rem;
+}
+
+.trader-safety-gate span,
+.technical-safety-gate span,
+.technical-safety-gate p,
+.trader-safety-gate b,
+.technical-safety-gate b {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.technical-safety-gate {
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.technical-safety-gate p {
+  margin: 4px 0 0;
+}
+
+.trader-safety-gate[data-status="eligible"],
+.technical-safety-gate[data-status="eligible"] {
+  border-color: rgba(12, 138, 87, 0.3);
+  background: rgba(12, 138, 87, 0.08);
+}
+
+.trader-safety-gate[data-status="research-only"],
+.technical-safety-gate[data-status="research-only"] {
+  border-color: rgba(181, 106, 13, 0.34);
+  background: rgba(181, 106, 13, 0.08);
+}
+
+.trader-safety-gate[data-status="blocked"],
+.technical-safety-gate[data-status="blocked"] {
+  border-color: rgba(179, 39, 65, 0.34);
+  background: rgba(179, 39, 65, 0.08);
+}
+
+.decision-digest-panel {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-strong);
+}
+
+.decision-digest-head,
+.coverage-scope-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.decision-digest-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.decision-digest-head p,
+.decision-digest-empty {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.decision-digest-list {
+  margin: 10px 0 0;
+  padding-left: 1.2rem;
+}
+
+.decision-digest-list li {
+  margin: 5px 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.coverage-scope-grid {
+  align-items: stretch;
+  justify-content: flex-start;
+  margin: 12px 0;
+}
+
+.coverage-scope-card {
+  flex: 1 1 190px;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.coverage-scope-card span,
+.coverage-scope-card small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.coverage-scope-card strong {
+  display: block;
+  margin: 3px 0;
+  font-size: 1.05rem;
+}
+
 .trader-decision-grid {
   display: grid;
   grid-template-columns: minmax(220px, 1.1fr) repeat(3, minmax(150px, 0.8fr));
@@ -510,6 +645,13 @@
 
   .trader-action-row {
     padding: 0 14px 14px;
+  }
+
+  .trader-safety-gate,
+  .technical-safety-gate {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 11px 14px;
   }
 
   .source-catalog-grid {

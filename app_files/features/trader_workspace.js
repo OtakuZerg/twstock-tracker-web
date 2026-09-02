@@ -1,7 +1,7 @@
 (function initTwStockTraderWorkspace(global) {
   "use strict";
 
-  const VERSION = "trader-workspace-v1.2";
+  const VERSION = "trader-workspace-v1.3";
   const DEFAULT_MAX_AGE_DAYS = 10;
   const CORE_LABELS = Object.freeze({
     quote: "報價",
@@ -181,6 +181,7 @@
   function buildExecutionDecision(input = {}) {
     const tradePlan = input.tradePlan || null;
     const radar = input.radar || null;
+    const eligibility = input.eligibility || null;
     const rr = finiteNumber(tradePlan?.rr);
     const riskPerShare = finiteNumber(tradePlan?.riskPerShare);
     const targetPrice = finiteNumber(tradePlan?.targetPrice);
@@ -190,6 +191,24 @@
       && finiteNumber(tradePlan?.stopPrice) !== null
       && riskPerShare !== null
       && riskPerShare > 0;
+    if (eligibility && eligibility.allowExecution !== true) {
+      const blocked = eligibility.allowDerived !== true;
+      return {
+        status: blocked ? "資料不可採信" : "僅供研究",
+        tone: "down",
+        sortScore: 0,
+        price: input.price ?? null,
+        entry: "-",
+        stopPrice: null,
+        targetPrice: null,
+        riskPerShare: null,
+        rr: null,
+        blocker: eligibility.reason || "決策資料未通過可信度閘門",
+        conclusion: blocked
+          ? "舊快取或不可核對資料已鎖定，不顯示衍生交易結論"
+          : "核心資料覆蓋不足，只保留研究視角，不列為可執行"
+      };
+    }
     let status = "觀察";
     let blocker = tradePlan?.actionNote || radar?.notes?.[0] || "";
 

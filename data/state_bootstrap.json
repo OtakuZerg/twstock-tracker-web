@@ -1,5 +1,5 @@
 {
-  "version": "19.1",
+  "version": "19.2",
   "savedAt": "2026-06-03T16:25:24.247Z",
   "lastUpdated": "2026-05-12T16:00:29.175Z",
   "klineUpdatedAt": "2026-05-12T15:42:50.670Z",
@@ -981,11 +981,12 @@
   "customMID100": null,
   "autoRefreshEnabled": false,
   "autoUpdateLog": null,
+  "decisionDigest": null,
   "futuresSettlementReminderLast": "",
   "performance": {},
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-08-25T09:13:27.264Z",
+    "builtAt": "2026-09-02T05:36:23.559Z",
     "sourcePath": "data/state_core.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"
@@ -994,7 +995,7 @@
   "schemaMigration": {
     "schemaVersion": 2,
     "mode": "compatible-in-memory",
-    "migratedAt": "2026-08-25T09:13:27.264Z",
+    "migratedAt": "2026-09-02T05:36:23.559Z",
     "records": 2771,
     "valid": 2682,
     "domains": {

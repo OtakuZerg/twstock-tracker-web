@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "19.1";
+const APP_VERSION = "19.2";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
 const STATE_SEED_PATH = "data/state.json";
@@ -3788,6 +3788,7 @@ const state = {
   idleAutoUpdateEnabled: false,
   idleAutoUpdateUserOptIn: false,
   autoUpdateLog: null,
+  decisionDigest: null,
   performance: {},
   analystWinRate: null,
   analystWinRateCalibration: null,
@@ -5755,6 +5756,7 @@ function buildTradingRadarScore(row) {
 }
 
 function buildExecutionInfo(stock, tradePlan, radar, technical, quote) {
+  const eligibility = arguments.length >= 6 ? arguments[5] : null;
   const mode = tradingRadarModeConfig(radar?.modeKey);
   const thresholds = mode.thresholds || TRADING_RADAR_MODES[DEFAULT_TRADING_RADAR_MODE].thresholds;
   return globalThis.TwStockTraderWorkspace?.buildExecutionDecision({
@@ -5762,7 +5764,8 @@ function buildExecutionInfo(stock, tradePlan, radar, technical, quote) {
     radar,
     technicalReady: technical?.ready === true,
     candidateThreshold: thresholds.candidate,
-    price: quote?.price ?? latestValue(stock)
+    price: quote?.price ?? latestValue(stock),
+    eligibility
   }) || {
     status: "資料不足",
     tone: "down",
@@ -6363,6 +6366,10 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
     targetCount: Number(snapshot.targetCount) || 0,
     delivery: snapshot.delivery || null,
     counts,
+    freshCounts: Object.fromEntries(["quotes", "klines", "institutional", "margin"].map((key) => [
+      key,
+      Math.max(0, Number(snapshot.domains?.[key]?.freshCount) || 0)
+    ])),
     errors: Array.isArray(snapshot.errors) ? snapshot.errors.slice(-24) : []
   };
   return { applied: Object.values(counts).some(Boolean), counts };
@@ -15103,6 +15110,7 @@ function normalizeStateAfterLoad() {
   state.idleAutoUpdateUserOptIn = state.idleAutoUpdateUserOptIn === true;
   state.idleAutoUpdateEnabled = state.idleAutoUpdateUserOptIn && state.idleAutoUpdateEnabled === true;
   state.autoUpdateLog = normalizeAutoUpdateLog(state.autoUpdateLog);
+  state.decisionDigest = normalizeDecisionDigest(state.decisionDigest);
   state.performance = normalizeRecordMap(state.performance);
   state.futuresSettlementReminderLast = String(state.futuresSettlementReminderLast || "");
   state.podcast = mergePodcastDigest({ generatedAt: null, source: "Podcast RSS", shows: [] }, state.podcast || {});
@@ -16538,6 +16546,7 @@ function buildStatePayload() {
     idleAutoUpdateEnabled: state.idleAutoUpdateEnabled,
     idleAutoUpdateUserOptIn: state.idleAutoUpdateUserOptIn,
     autoUpdateLog: state.autoUpdateLog,
+    decisionDigest: state.decisionDigest,
     performance: state.performance,
     activeTab: state.activeTab,
     selectedCode: state.selectedCode,
@@ -16585,6 +16594,7 @@ function buildLocalStorageBackup(payload) {
     idleAutoUpdateEnabled: payload.idleAutoUpdateUserOptIn === true && payload.idleAutoUpdateEnabled === true,
     idleAutoUpdateUserOptIn: payload.idleAutoUpdateUserOptIn === true,
     autoUpdateLog: normalizeAutoUpdateLog(payload.autoUpdateLog),
+    decisionDigest: normalizeDecisionDigest(payload.decisionDigest),
     screenerColumnMode: ["compact", "standard", "full"].includes(payload.screenerColumnMode) ? payload.screenerColumnMode : "standard",
     screenerLiquidityFilter: ["all", "skipMicro", "skipSmall", "min500", "min1000"].includes(payload.screenerLiquidityFilter) ? payload.screenerLiquidityFilter : "all",
     activeTab: normalizeTabTarget(payload.activeTab),
@@ -20178,10 +20188,15 @@ async function retrySmartUpdateTask(label) {
 }
 
 async function quickUpdateQuotes() {
+  const decisionBaseline = state.decisionDigest?.baseline?.length
+    ? state.decisionDigest.baseline
+    : captureDecisionSnapshotRows();
   if (isPublishedWebRuntime()) {
     setBusy(true, "公開網站正在重新讀取 GitHub 延遲行情快照...");
     try {
       const cache = await updateMarketDashboard(true);
+      updateDecisionDigest(decisionBaseline);
+      await saveState();
       renderFuturesStrip();
       if (state.activeTab === "market") renderMarketDashboardTab({ preserveViewport: true });
       const sourceCount = [cache?.taiwan, cache?.taifexNight, ...(cache?.global || [])].filter(Boolean).length;
@@ -20277,6 +20292,7 @@ async function quickUpdateQuotes() {
   state.lastUpdated = new Date().toISOString();
   // 同步更新大盤、期貨與 ETF NAV（靜默模式，不中斷報價更新訊息）
   const backgroundSync = triggerQuickUpdateBackgroundSyncs();
+  updateDecisionDigest(decisionBaseline);
   await flushPendingKlineIdbWrites();
   await saveState();
   render();
@@ -21696,6 +21712,25 @@ function normalizeAutoUpdateLog(input) {
   };
 }
 
+function normalizeDecisionDigest(input) {
+  const raw = input && typeof input === "object" && !Array.isArray(input) ? input : {};
+  const cleanRows = (rows, limit) => (Array.isArray(rows) ? rows : [])
+    .filter((row) => row && typeof row === "object" && String(row.code || "").trim())
+    .slice(0, limit)
+    .map((row) => ({ ...row, code: String(row.code).trim().toUpperCase() }));
+  if (!raw.generatedAt && !raw.baseline?.length && !raw.items?.length) return null;
+  return {
+    version: raw.version || "decision-safety-v1",
+    generatedAt: raw.generatedAt || null,
+    baselineEstablished: raw.baselineEstablished === true,
+    totalChanges: Math.max(0, Number(raw.totalChanges) || 0),
+    materialChangeCount: Math.max(0, Number(raw.materialChangeCount) || 0),
+    summary: String(raw.summary || ""),
+    items: cleanRows(raw.items, 12),
+    baseline: cleanRows(raw.baseline, 80)
+  };
+}
+
 function resetAutoUpdateLog(status = "idle", mode = "idle") {
   state.autoUpdateLog = normalizeAutoUpdateLog({
     status,
@@ -21899,6 +21934,9 @@ function runManualFullUpdate() {
 
 async function runIdleAutoUpdate(options = {}) {
   if (_idleAutoUpdateRunning) return { status: "busy", completed: [], failed: [] };
+  const decisionBaseline = state.decisionDigest?.baseline?.length
+    ? state.decisionDigest.baseline
+    : captureDecisionSnapshotRows();
   stopIdleAutoUpdateTimer();
   _idleAutoUpdateRunning = true;
   _idleAutoUpdateCancelled = false;
@@ -21954,6 +21992,7 @@ async function runIdleAutoUpdate(options = {}) {
       const shouldContinue = await step(def);
       if (!shouldContinue) break;
     }
+    updateDecisionDigest(decisionBaseline);
     await saveState();
     render();
     if (_idleAutoUpdateCancelled) {
@@ -21993,7 +22032,7 @@ async function runIdleAutoUpdate(options = {}) {
     persistStateSilently("收盤後同步流程");
     renderHero();
   }
-  return { status: finalStatus, completed, failed };
+  return { status: finalStatus, completed, failed, digest: state.decisionDigest };
 }
 
 let _scheduledAfterCloseRequestId = "";
@@ -22032,6 +22071,9 @@ async function runScheduledAfterCloseSync(request) {
       requestId,
       ok,
       result: result?.status || "unknown",
+      digestSummary: result?.digest?.summary || "",
+      materialChangeCount: Number(result?.digest?.materialChangeCount) || 0,
+      digestItems: (result?.digest?.items || []).slice(0, 3).map((item) => String(item?.message || "")).filter(Boolean),
       error: ok ? "" : (result?.failed || []).join("；") || "收盤後同步未完成"
     });
     return ok;
@@ -40843,7 +40885,19 @@ function renderMarketCrashRiskPanel(riskInput = null) {
     ? risk.missing.slice(0, 4).map((item) => item.label).join("、") + (risk.missing.length > 4 ? "…" : "")
     : "核心資料已可計算";
   const override = risk.override || null;
-  const management = risk.management || buildMarketCrashRiskManagement(risk);
+  const scoreAllowed = !["不採信", "不採信舊快取"].includes(decision.label);
+  const management = scoreAllowed
+    ? (risk.management || buildMarketCrashRiskManagement(risk))
+    : {
+        mode: "資料鎖定",
+        headline: "先更新市場資料，不以舊快取調整部位。",
+        checklist: [
+          "核對各風險因子的 asOf 與來源。",
+          "完成收盤後同步後再重新計算。",
+          "更新前不使用舊分數、硬觸發或清單作執行依據。"
+        ]
+      };
+  const scoreText = scoreAllowed ? formatNumber(risk.score, 0) : "—";
   return `
     <div class="market-crash-risk-panel ${escapeHtml(risk.level.tone)}" data-market-crash-risk-panel>
       <div class="market-crash-risk-head">
@@ -40852,17 +40906,24 @@ function renderMarketCrashRiskPanel(riskInput = null) {
           <p>單一面板整合兩個時間尺度：大分數 = 一週內急殺共振（連續計分，隨輸入每日微動）；下方折疊「慢性過熱 / 回檔風險溫度計」看擁擠度。panic override 另外監控台指期夜盤、美股科技、外資空單、法人賣壓與期權避險。紅字是風險警示，不是漲跌顏色語意。</p>
         </div>
         <div class="market-crash-risk-score ${escapeHtml(risk.level.tone)}">
-          <strong>${formatNumber(risk.score, 0)}</strong>
-          <span>${escapeHtml(risk.level.label)}</span>
+          <strong>${escapeHtml(scoreText)}</strong>
+          <span>${escapeHtml(scoreAllowed ? risk.level.label : "資料鎖定")}</span>
         </div>
       </div>
       <div class="market-crash-risk-scoreline">
-        <span>慢性分數 ${formatNumber(risk.baseScore, 0)}</span>
-        ${override ? `<span class="danger">Panic override floor ${formatNumber(override.floor, 0)}</span>` : `<span>無硬觸發</span>`}
+        <span>慢性分數 ${scoreAllowed ? formatNumber(risk.baseScore, 0) : "—"}</span>
+        ${override && scoreAllowed ? `<span class="danger">Panic override floor ${formatNumber(override.floor, 0)}</span>` : `<span>${scoreAllowed ? "無硬觸發" : "硬觸發待更新"}</span>`}
         <span>覆蓋率 ${formatNumber(risk.coverage, 0)}%</span>
         <span class="${escapeHtml(decision.tone)}">採信狀態：${escapeHtml(decision.label)}</span>
       </div>
       ${(() => {
+        if (!scoreAllowed) {
+          return `
+      <div class="market-heat-actions" data-crash-risk-trend style="align-items:center;">
+        <span class="chip warn">趨勢分數已鎖定；僅保留各因子 asOf 供歷史核對</span>
+      </div>
+          `;
+        }
         const combined = crashRiskCombinedTrend(trend.history);
         const backfillCount = combined.filter((row) => row.source === "backfill").length;
         const todayKey = dateKeyInTaipei();
@@ -40894,13 +40955,13 @@ function renderMarketCrashRiskPanel(riskInput = null) {
           分數與${trend.delta.mode === "today-first" ? "今日首筆" : "昨日"}完全相同＝各因子輸入值沒有變化（通常是來源尚未發布新資料，例如假日 / 盤前）；請對照下方各因子的 asOf 日期，而不是雷達壞掉。
         </div>
       ` : ""}
-      <div class="market-crash-risk-alert">${escapeHtml(risk.level.headline)}</div>
-      <div class="market-crash-risk-action">${escapeHtml(risk.level.action)}</div>
+      <div class="market-crash-risk-alert">${escapeHtml(scoreAllowed ? risk.level.headline : decision.headline)}</div>
+      <div class="market-crash-risk-action">${escapeHtml(scoreAllowed ? risk.level.action : decision.action)}</div>
       <div class="note-box" data-crash-risk-decision style="margin-top:8px;margin-bottom:8px;font-size:0.78rem;color:var(--muted);">
         <strong class="${escapeHtml(decision.tone)}">雷達採信：${escapeHtml(decision.label)}</strong> ·
         ${escapeHtml(decision.headline)} ${escapeHtml(decision.action)}
       </div>
-      ${override ? `
+      ${override && scoreAllowed ? `
         <div class="market-crash-risk-override" data-panic-override>
           <div>
             <strong>硬觸發：${escapeHtml(override.strongest.label)}</strong>
@@ -40911,7 +40972,7 @@ function renderMarketCrashRiskPanel(riskInput = null) {
         </div>
       ` : ""}
       <div class="market-heat-meter" aria-label="急殺風險分數">
-        <div class="market-crash-risk-bar ${escapeHtml(risk.level.tone)}" style="width:${clamp(risk.score, 0, 100)}%;"></div>
+        <div class="market-crash-risk-bar ${escapeHtml(risk.level.tone)}" style="width:${scoreAllowed ? clamp(risk.score, 0, 100) : 0}%;"></div>
       </div>
       <div class="market-heat-actions">
         <span class="chip ${escapeHtml(freshness.tone)}">資料新鮮度：${escapeHtml(freshness.label)}</span>
@@ -40944,7 +41005,7 @@ function renderMarketCrashRiskPanel(riskInput = null) {
         `;
         }).join("")}
       </div>
-      ${override?.triggers?.length ? `
+      ${override?.triggers?.length && scoreAllowed ? `
         <div class="market-crash-risk-trigger-list">
           <span>硬觸發清單：</span>
           ${override.triggers.slice(0, 6).map((trigger) => `<b class="${escapeHtml(trigger.tone)}">${escapeHtml(trigger.label)} floor ${formatNumber(trigger.floor, 0)}</b>`).join("")}
@@ -40952,11 +41013,13 @@ function renderMarketCrashRiskPanel(riskInput = null) {
       ` : ""}
       <div class="market-crash-risk-drivers">
         <span>主要觸發：</span>
-        ${risk.drivers.length
+        ${!scoreAllowed
+          ? `<b>資料鎖定；更新後重算</b>`
+          : risk.drivers.length
           ? risk.drivers.map((factor) => `<b>${escapeHtml(factor.label)} ${formatNumber(factor.score, 1)}/${formatNumber(factor.max, 0)}</b>`).join("")
           : `<b>目前未觸發主要急殺因子</b>`}
       </div>
-      ${renderMarketHeatPanel()}
+      ${renderMarketHeatPanel({ locked: !scoreAllowed })}
       ${renderMarketCrashRiskKeyBearChecks()}
       ${renderTaiexSeasonalityDetails()}
       <div class="market-crash-risk-management" data-risk-management>
@@ -40989,8 +41052,9 @@ function renderMarketCrashRiskPanel(riskInput = null) {
 
 // v16.7 併入急殺雷達：過熱分數（慢性擁擠 / 回檔風險）與雷達（一週內急殺共振）同屬市場風險，
 // 依 canonical placement 原則合為單一面板——雷達為主體、過熱降為折疊溫度計，因子明細保留。
-function renderMarketHeatPanel() {
+function renderMarketHeatPanel(options = {}) {
   const heat = buildMarketHeatScore();
+  const locked = options.locked === true;
   const lastUpdate = heat.fetchedAt ? formatDateTime(heat.fetchedAt) : "待更新";
   const missingText = heat.missing.length
     ? heat.missing.slice(0, 4).map((item) => item.label).join("、") + (heat.missing.length > 4 ? "…" : "")
@@ -40998,10 +41062,10 @@ function renderMarketHeatPanel() {
   const topDrivers = heat.drivers.slice(0, 2).map((factor) => factor.label).join("、");
   return `
     <details class="market-heat-panel note-box" data-market-heat-inline style="margin-top:10px;">
-      <summary style="cursor:pointer;font-weight:850;">慢性過熱 / 回檔風險溫度計：${formatNumber(heat.score, 0)} / 100（${escapeHtml(heat.level.label)}）${topDrivers ? ` · 主要升溫：${escapeHtml(topDrivers)}` : ""}</summary>
+      <summary style="cursor:pointer;font-weight:850;">慢性過熱 / 回檔風險溫度計：${locked ? "—" : formatNumber(heat.score, 0)} / 100（${escapeHtml(locked ? "資料鎖定" : heat.level.label)}）${!locked && topDrivers ? ` · 主要升溫：${escapeHtml(topDrivers)}` : ""}</summary>
       <p style="margin:8px 0 6px;color:var(--muted);font-size:0.78rem;">慢性面（擁擠度 / 回檔空間）與上方急殺分數（一週內急跌共振）時間尺度不同：過熱高不代表馬上急殺，急殺分數低也可能仍在過熱區。研究 proxy、非買賣建議。</p>
       <div class="market-heat-meter" aria-label="市場過熱分數">
-        <div class="market-heat-bar ${escapeHtml(heat.level.tone)}" style="width:${clamp(heat.score, 0, 100)}%;"></div>
+        <div class="market-heat-bar ${escapeHtml(heat.level.tone)}" style="width:${locked ? 0 : clamp(heat.score, 0, 100)}%;"></div>
       </div>
       <div class="market-heat-actions">
         <span class="chip ${escapeHtml(heat.level.tone)}">${escapeHtml(heat.level.detail)}</span>
@@ -41234,6 +41298,43 @@ function renderDataHealthLayer(layer) {
   `;
 }
 
+function buildCoverageScopeSummary() {
+  const rows = state.decisionDigest?.baseline?.length
+    ? state.decisionDigest.baseline
+    : captureDecisionSnapshotRows();
+  const holdingsTotal = rows.length;
+  const holdingsFresh = rows.filter((row) => row.eligibility !== "blocked").length;
+  const decisionReady = rows.filter((row) => row.eligibility === "eligible").length;
+  const meta = state.afterCloseSnapshotMeta || {};
+  const freshCounts = ["quotes", "klines", "institutional", "margin"]
+    .map((key) => Number(meta.freshCounts?.[key]))
+    .filter(Number.isFinite);
+  const webTarget = Math.max(0, Number(meta.targetCount) || holdingsTotal);
+  const webFresh = freshCounts.length === 4 ? Math.min(...freshCounts) : 0;
+  return globalThis.TwStockDecisionSafety?.buildCoverageScopes({
+    runtime: isPublishedWebRuntime() ? "web" : "extension",
+    researchTotal: WATCHLIST.length,
+    webTarget,
+    webFresh,
+    holdingsTotal,
+    holdingsFresh,
+    decisionReady
+  }) || [];
+}
+
+function renderCoverageScopeCards() {
+  const scopes = buildCoverageScopeSummary();
+  return scopes.length ? `
+    <div class="coverage-scope-grid" data-coverage-scopes>
+      ${scopes.map((scope) => `
+        <article class="coverage-scope-card">
+          <span>${escapeHtml(scope.label)}</span>
+          <strong class="${escapeHtml(scope.tone || "flat")}">${escapeHtml(scope.value)}</strong>
+          <small>${escapeHtml(scope.detail)}</small>
+        </article>`).join("")}
+    </div>` : "";
+}
+
 function renderDataHealthPanel() {
   const health = buildDataHealthSummary();
   const staleText = health.staleLayers.length
@@ -41246,14 +41347,15 @@ function renderDataHealthPanel() {
     <div id="dataHealthPanel" class="data-health-panel">
       <div class="data-health-head">
         <div class="data-health-title">
-          <h3>資料健康總分</h3>
-          <p>依報價、日線、籌碼、ETF、月營收與大盤快取覆蓋率 / 日期計分；收盤後只需按一次同步，未到期資料會略過。</p>
+          <h3>全研究宇宙健康分（診斷）</h3>
+          <p>這個總分用整個研究宇宙作分母，不等於 Web 今日快照或你的持股覆蓋；下方會分開顯示各作用域。</p>
         </div>
         <div class="data-health-score ${health.tone}">
           <strong>${formatNumber(health.overall, 0)}</strong>
           <span>${escapeHtml(health.label)}</span>
         </div>
       </div>
+      ${renderCoverageScopeCards()}
       <div class="data-health-actions">
         <span class="chip ${statusToneClass(health.autoFreshness.tone)}">${escapeHtml(health.autoFreshness.label)}</span>
         <span class="chip ${statusToneClass(health.tone)}">${escapeHtml(staleText)}</span>
@@ -42056,6 +42158,7 @@ function renderMarketCommandCenter(riskInput = null, options = {}) {
   const risk = riskInput || buildMarketCrashRiskScore();
   const freshness = marketCrashRiskFreshness(risk);
   const decision = marketCrashRiskDecisionState(risk, freshness);
+  const decisionAllowed = !["不採信", "不採信舊快取"].includes(decision.label);
   const suppliedThemeRows = Array.isArray(options.themeRows) ? options.themeRows : null;
   const allThemeRows = suppliedThemeRows || marketCommandThemePulseRows();
   const themeRows = allThemeRows.slice(0, 4);
@@ -42084,7 +42187,7 @@ function renderMarketCommandCenter(riskInput = null, options = {}) {
       <div class="market-command-grid">
         <article class="rank-card market-command-card">
           <h3>1. 大盤風險</h3>
-          <div class="kv-row"><span>雷達分數</span><strong>${formatNumber(risk.score, 0)} · ${escapeHtml(risk.level.label)}</strong></div>
+          <div class="kv-row"><span>雷達分數</span><strong>${decisionAllowed ? `${formatNumber(risk.score, 0)} · ${escapeHtml(risk.level.label)}` : "— · 資料鎖定"}</strong></div>
           <div class="kv-row"><span>資料覆蓋</span><strong>${formatNumber(risk.coverage, 0)}%</strong></div>
           <p style="margin:8px 0 0;color:var(--muted);font-size:0.78rem;line-height:1.5;">${escapeHtml(decision.headline)} ${escapeHtml(decision.action)}</p>
           <div class="link-row" style="margin-top:8px;">
@@ -42093,12 +42196,12 @@ function renderMarketCommandCenter(riskInput = null, options = {}) {
         </article>
         <article class="rank-card market-command-card">
           <h3>2. 今日主線族群</h3>
-          <div class="rank-list">${renderMarketCommandThemeRows(themeRows)}</div>
+          <div class="rank-list">${renderMarketCommandThemeRows(decisionAllowed ? themeRows : [], "市場快照已過期；更新完成前不顯示今日主線排序。")}</div>
         </article>
         <article class="rank-card market-command-card">
           <h3>3. 目前族群</h3>
           <div class="kv-row"><span>族群</span><strong>${escapeHtml(selectedTheme)}</strong></div>
-          <div class="kv-row"><span>平均漲跌</span><strong class="${escapeHtml(themeTone)}">${selectedThemeRow?.avgChange !== null && selectedThemeRow?.avgChange !== undefined ? formatPct(selectedThemeRow.avgChange) : "待選族群"}</strong></div>
+          <div class="kv-row"><span>平均漲跌</span><strong class="${escapeHtml(decisionAllowed ? themeTone : "flat")}">${decisionAllowed ? (selectedThemeRow?.avgChange !== null && selectedThemeRow?.avgChange !== undefined ? formatPct(selectedThemeRow.avgChange) : "待選族群") : "資料鎖定"}</strong></div>
           <p style="margin:8px 0 0;color:var(--muted);font-size:0.78rem;line-height:1.5;">${escapeHtml(themeAction)}</p>
           <div class="link-row" style="margin-top:8px;">
             <button class="link-chip inline-action-chip" type="button" data-tab-target="overview">看單一族群</button>
@@ -43838,6 +43941,130 @@ function traderDeskCoverage(stock, technical, quote, valuation, rev, storeSlice 
   }));
 }
 
+function decisionEligibilityFor(stock, technical, quote, coverage) {
+  const safety = globalThis.TwStockDecisionSafety;
+  if (!safety?.buildEligibility) {
+    return {
+      status: "blocked",
+      label: "資料鎖定",
+      tone: "bad",
+      reason: "Decision safety 模組未載入",
+      allowDerived: false,
+      allowExecution: false,
+      coverageReady: Number(coverage?.ready) || 0,
+      coverageTotal: Number(coverage?.total) || 6
+    };
+  }
+  const freshness = quoteFreshnessInfo(quote);
+  const sourceConflict = [quote, technical?.latest]
+    .filter(Boolean)
+    .some((row) => row.sourceConflict === true || row.verificationStatus === "conflict" || row.confidence === "conflict");
+  return safety.buildEligibility({
+    quote: {
+      hasPrice: Boolean(quote && toNumber(quote.price) !== null),
+      freshnessLevel: freshness.level,
+      sourceConflict
+    },
+    technical: {
+      ready: technical?.ready === true,
+      ageDays: sourceDateAgeDays(technical?.latest?.date || ""),
+      sourceConflict
+    },
+    coverage,
+    sourceConflict
+  });
+}
+
+function decisionDigestStocks() {
+  const codes = uniqueList([
+    ...(Array.isArray(state.holdings) ? state.holdings.map((row) => row?.code) : []),
+    state.selectedCode
+  ].map((code) => String(code || "").trim()).filter(Boolean));
+  return codes.map((code) => STOCK_MAP.get(code)).filter(Boolean).slice(0, 80);
+}
+
+function captureDecisionSnapshotRows() {
+  return decisionDigestStocks().map((stock) => {
+    const quote = quoteFor(stock.code);
+    const valuation = valuationFor(stock.code);
+    const rev = revenueFor(stock.code);
+    const technical = calculateTechnical(stock.code);
+    const coverage = traderDeskCoverage(stock, technical, quote, valuation, rev);
+    const eligibility = decisionEligibilityFor(stock, technical, quote, coverage);
+    const tradePlan = buildTradePlan(stock, technical, latestValue(stock), quote, calculateRSMulti(stock.code), rev);
+    const execution = buildExecutionInfo(stock, tradePlan, null, technical, quote, eligibility);
+    return {
+      code: stock.code,
+      name: stock.name,
+      eligibility: eligibility.status,
+      eligibilityLabel: eligibility.label,
+      executionStatus: execution.status,
+      technicalState: technical?.tradingState?.label || technical?.playbook?.trendLabel || (technical?.ready ? "技術待判讀" : "日線待更新"),
+      confidence: eligibility.allowExecution ? "high" : eligibility.allowDerived ? "medium" : "low",
+      asOf: quote?.sourceDate || technical?.latest?.date || ""
+    };
+  });
+}
+
+function updateDecisionDigest(previousRows = null) {
+  const safety = globalThis.TwStockDecisionSafety;
+  if (!safety?.diffDecisionSnapshots) return null;
+  const previous = Array.isArray(previousRows)
+    ? previousRows
+    : (state.decisionDigest?.baseline?.length ? state.decisionDigest.baseline : captureDecisionSnapshotRows());
+  state.decisionDigest = normalizeDecisionDigest(safety.diffDecisionSnapshots(previous, captureDecisionSnapshotRows(), {
+    generatedAt: new Date().toISOString(),
+    limit: 12
+  }));
+  return state.decisionDigest;
+}
+
+function renderDecisionDigest() {
+  const container = $("decisionDigestPanel");
+  if (!container) return;
+  const digest = normalizeDecisionDigest(state.decisionDigest);
+  if (!digest) {
+    container.innerHTML = `
+      <section class="decision-digest-panel" data-decision-digest>
+        <div class="decision-digest-head"><div><h3>今日只看變更</h3><p>第一次收盤後同步或重新讀取 Web 快照會建立基準；之後只列決策資格、執行狀態、技術狀態與資料信心的變化。</p></div><span class="chip flat">等待基準</span></div>
+      </section>`;
+    return;
+  }
+  const items = Array.isArray(digest.items) ? digest.items : [];
+  container.innerHTML = `
+    <section class="decision-digest-panel" data-decision-digest>
+      <div class="decision-digest-head">
+        <div><h3>今日只看變更</h3><p>${escapeHtml(digest.summary)}${digest.generatedAt ? `｜${escapeHtml(formatDateTime(digest.generatedAt))}` : ""}</p></div>
+        <span class="chip ${digest.materialChangeCount ? "warn" : "up"}">重大 ${formatNumber(digest.materialChangeCount, 0)}｜全部 ${formatNumber(digest.totalChanges, 0)}</span>
+      </div>
+      ${items.length
+        ? `<ul class="decision-digest-list">${items.map((item) => `<li><strong>${escapeHtml(item.type === "eligibility" ? "決策資格" : item.type === "execution" ? "執行狀態" : item.type === "confidence" ? "資料信心" : "技術狀態")}</strong>｜${escapeHtml(item.message)}</li>`).join("")}</ul>`
+        : `<p class="decision-digest-empty">沒有需要重新閱讀整頁的決策變更。</p>`}
+    </section>`;
+}
+
+function renderTechnicalWorkspaceGate() {
+  const container = $("technicalSafetyGate");
+  if (!container) return;
+  const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0];
+  const quote = quoteFor(stock.code);
+  const technical = calculateTechnical(stock.code);
+  const coverage = traderDeskCoverage(stock, technical, quote, valuationFor(stock.code), revenueFor(stock.code));
+  const eligibility = decisionEligibilityFor(stock, technical, quote, coverage);
+  const selectors = globalThis.TwStockTechnicalWorkspaceSelectors;
+  const renderer = globalThis.TwStockTechnicalWorkspaceRenderer;
+  if (!selectors?.selectGateModel || !renderer?.renderGate) {
+    container.innerHTML = `<div class="empty">Technical workspace 安全邊界尚未載入。</div>`;
+    return;
+  }
+  container.innerHTML = renderer.renderGate(selectors.selectGateModel({
+    stock,
+    eligibility,
+    quoteAsOf: quote?.sourceDate || quote?.fetchedAt || "",
+    technicalAsOf: technical?.latest?.date || ""
+  }));
+}
+
 function renderTraderDesk() {
   const container = $("traderDeskContent");
   if (!container) return;
@@ -43883,9 +44110,10 @@ function renderTraderDesk() {
     dispositionRisk,
     scale
   });
-  const execution = buildExecutionInfo(stock, tradePlan, radar, technical, quote);
   const chip = stockChipStrengthContext(stock, technical);
   const coverage = traderDeskCoverage(stock, technical, quote, valuation, rev, storeSlice);
+  const eligibility = decisionEligibilityFor(stock, technical, quote, coverage);
+  const execution = buildExecutionInfo(stock, tradePlan, radar, technical, quote, eligibility);
   const technicalLabel = technical?.ready
     ? technical.tradingState?.label || technical.playbook?.trendLabel || technical.signal || "技術待判讀"
     : technical?.message || "日線待更新";
@@ -43919,6 +44147,7 @@ function renderTraderDesk() {
     holdingSummary: storeSlice.holdingSummary,
     quoteSource,
     quoteAvailable: Boolean(quote),
+    priceLabel: eligibility.allowDerived ? "現價 / 今日" : `歷史價格 / ${quote?.sourceDate || "日期待補"}`,
     priceText: formatNumber(price),
     quoteChangeTone: changeClass(quote?.pct),
     quoteChangeText: quote ? `${formatNumber(quote.change)} / ${formatPct(quote.pct)}` : "報價待更新",
@@ -43941,7 +44170,8 @@ function renderTraderDesk() {
     rrText: tradePlan.rr !== null ? `${tradePlan.rr.toFixed(2)}R` : "-",
     coverageText: `${coverage.ready}/${coverage.total}`,
     blockerText: execution.blocker || tradePlan.actionNote || missingText,
-    missingText
+    missingText,
+    eligibility
   });
 }
 
@@ -44029,6 +44259,7 @@ function renderActiveTab(tab = state.activeTab || "market") {
     if (state.activeTab === "risk") state.activeTab = "macro";
     if (active === "market") {
       renderSection("操盤首頁", renderTraderDesk, "traderDeskContent");
+      renderSection("今日只看變更", renderDecisionDigest, "decisionDigestPanel");
       renderSection("大盤總覽", renderMarketDashboardTab, "marketDashboardContent");
       // 大盤主內容採逐 frame 分段渲染；完成後才由 renderMarketDashboardTab 接續次要面板。
     } else if (active === "overview") {
@@ -44041,6 +44272,7 @@ function renderActiveTab(tab = state.activeTab || "market") {
     } else if (active === "revenue") {
       renderSection("個股營收", renderRevenueLinksTab, "revenueContent");
     } else if (active === "technical") {
+      renderSection("技術工作區安全閘門", renderTechnicalWorkspaceGate, "technicalSafetyGate");
       renderSection("籌碼分析", () => renderInstitutionalTab({ compact: true }), "institutionContent");
       renderSection("技術線圖", renderTechnicalChart, "technicalChart");
       renderSection("技術分析", renderTechnicalSummary, "technicalSummary");

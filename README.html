@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>台股追蹤 Taiwan Equity Tracker v19.1</title>
+  <title>台股追蹤 Taiwan Equity Tracker v19.2</title>
   <style>
     html {
       color: #1a1a1a;
@@ -234,7 +234,7 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">台股追蹤 Taiwan Equity Tracker v19.1</h1>
+<h1 class="title">台股追蹤 Taiwan Equity Tracker v19.2</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
@@ -242,6 +242,7 @@
 id="toc-台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
 Tracker</a>
 <ul>
+<li><a href="#v19.2-決策安全與每日差異摘要2026-09-02">v19.2 決策安全與每日差異摘要（2026-09-02）</a></li>
 <li><a href="#v19.1-盤後資料來源-schema-與回測執行模型2026-08-21"
 id="toc-v19.1-盤後資料來源-schema-與回測執行模型2026-08-21">v19.1
 盤後資料、來源 schema 與回測執行模型（2026-08-21）</a></li>
@@ -534,7 +535,7 @@ id="toc-podcast-更新維護者用">Podcast 更新（維護者用）</a></li>
 </nav>
 <h1 id="台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
 Tracker</h1>
-<p><strong>版本：v19.1</strong> ｜ <strong>日期：2026-08-21</strong> ｜
+<p><strong>版本：v19.2</strong> ｜ <strong>日期：2026-09-02</strong> ｜
 Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 <blockquote>
 <p>⚠️ <strong>資料正確性說明</strong>：本 extension
@@ -548,6 +549,18 @@ Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 概估，需以投信月報實際數值更新。最低稅負制 /
 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。</p>
 </blockquote>
+<hr />
+<!-- §1. v19.2 decision safety and daily digest -->
+<section id="v19.2-決策安全與每日差異摘要2026-09-02">
+<h2>v19.2 決策安全與每日差異摘要（2026-09-02）</h2>
+<ul>
+<li>新增共用 <code>decision_safety.js</code> 可信度閘門。報價或日線過期、日期不可核對、來源衝突時，作戰首頁會保留歷史價格與實際資料日期，但技術、籌碼、雷達、入場、停損、目標與 R:R 直接顯示為「—」；核心六層不足 5 層時只允許研究，不列為可執行。</li>
+<li>收盤後同步與公開 Web 的「重新讀取快照」會保存精簡決策基準，下一次只列決策資格、執行狀態、技術狀態與資料信心的變更。Extension 只有同步失敗或出現重大決策變更時才發通知，無重大變化不推送完成通知。</li>
+<li>資料健康頁將作用域拆開：研究宇宙是可搜尋／分類的完整股池；Web 今日快照只計 16 檔中性清單四個核心 domain 的最低 fresh count；Extension 只計個人持股／觀察清單；「決策可用」再套可信度與覆蓋門檻，避免用完整研究宇宙當成每日快照分母。</li>
+<li>技術籌碼頁新增 <code>technical_workspace_selectors.js</code> 與 <code>technical_workspace_renderer.js</code> 邊界，Extension 與 Web 共用同一個可信度狀態與鎖定文案；既有大型分析器仍採 strangler migration，不另建第二套 store。</li>
+<li>新增 deterministic decision-safety smoke，並把共用模組納入 Extension runtime、Pages allowlist、Service Worker required shell 與 project-subpath Web smoke。</li>
+</ul>
+</section>
 <hr />
 <!-- §1. v19.1 after-close data and backtest execution -->
 <section id="v19.1-盤後資料來源-schema-與回測執行模型2026-08-21">
@@ -678,7 +691,7 @@ App</h3>
 href="https://otakuzerg.github.io/twstock-tracker-web/">https://otakuzerg.github.io/twstock-tracker-web/</a></li>
 <li>公開成品倉庫：<a
 href="https://github.com/OtakuZerg/twstock-tracker-web">OtakuZerg/twstock-tracker-web</a>。原始碼倉庫維持
-private；公開倉庫只保存經過白名單建置與隱私掃描的 55 個成品、README
+private；公開倉庫只保存經過白名單建置與隱私掃描的 58 個成品、README
 雙輸出與自動化檔案。</li>
 <li>private 原始碼倉庫的 GitHub Actions 先建立並用 Chrome 驗證
 artifact；通過後使用只對公開成品倉庫有效的 deploy key
@@ -706,9 +719,9 @@ iPhone 主畫面</a>。本專案亦提供 Web App Manifest、Apple touch icon
 與離線 shell 快取。</p>
 <h4 id="部署隱私與功能邊界">部署、隱私與功能邊界</h4>
 <ul>
-<li>Pages build 採明確 allowlist，公開倉庫只接收 55 個必要成品 /
+<li>Pages build 採明確 allowlist，公開倉庫只接收 58 個必要成品 /
 自動化檔案；實際 Pages 上傳會排除 <code>.github/</code> 與
-<code>scripts/</code>，因此瀏覽器端只提供 53 個執行成品。<code>data/state*.json</code>
+<code>scripts/</code>，因此瀏覽器端只提供 56 個執行成品。<code>data/state*.json</code>
 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed
 不會放進公開 artifact。</li>
 <li>建置器會拒絕常見 token / private key、本機絕對路徑、owner
@@ -755,6 +768,11 @@ changelog，不代表同一頁存在多套互相競爭的研究建議。</p>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><strong>v19.2</strong></td>
+<td><strong>2026-09-02</strong></td>
+<td><strong>資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界</strong></td>
+</tr>
 <tr>
 <td>作戰首頁</td>
 <td>選取個股的現價、技術多空、籌碼強弱、執行結論、入場、停損、目標、R:R
@@ -810,7 +828,7 @@ Setup、R:R、RS、月營收、籌碼、事件與處置風險。</td>
 <li>Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions 產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web 延遲快照，而不包裝成逐筆即時；詳見 <a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax">GitHub Actions workflow syntax</a> 與 <a href="https://docs.github.com/en/actions/how-tos/troubleshoot-workflows">scheduled workflow troubleshooting</a>。</li>
 <li>本階段採 strangler migration：新 shell 與新核心模組先接管第一屏，既有分析器與 parser 暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。</li>
 <li>R6a–R6e2a 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 <code>app_files/features/trader_workspace.js</code>，由 61 個 deterministic cases 保護。報價、日線與估值由 <code>app_files/sources/market_data_normalizers.js</code> 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 由 <code>app_files/sources/chip_data_normalizers.js</code> 接管純解析（58 cases）；月營收與季報三率由 <code>app_files/sources/fundamental_data_normalizers.js</code> 接管（55 cases）；TWSE 大盤、VIX、美債殖利率、融資餘額、央行匯率、Fed RSS／SEP 與 FedWatch 由 <code>app_files/sources/macro_data_normalizers.js</code> 接管（67 cases）。四個來源模組都沿用既有 <code>source_adapters.js</code> 契約或其來源政策，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。作戰首頁的 selector 與安全 renderer 已分別由 35 cases 保護，並加入可橫向捲動的持股快切與 ETF／個股檔數摘要；這份清單只供快速切換與研究排序，不要求張數、均價或損益。私人 Extension seed 可保存個人持股，但公開 Pages build 會強制換成中性示範清單並清空成本、提醒與自訂研究。</li>
-<li>R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到 <code>app_files/store/discovery_workspace_selectors.js</code>，並把 hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到 <code>app_files/ui/discovery_workspace_renderer.js</code>。左側 50 分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3 日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的 badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web 共用相同模組，Service Worker cache 為 <code>v19.1-pwa-2</code>。</li>
+<li>R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到 <code>app_files/store/discovery_workspace_selectors.js</code>，並把 hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到 <code>app_files/ui/discovery_workspace_renderer.js</code>。左側 50 分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3 日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的 badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web 共用相同模組，Service Worker cache 為 <code>v19.2-pwa-1</code>。</li>
 </ul>
 </section>
 <h3 id="資料儲存與更新">資料儲存與更新</h3>
