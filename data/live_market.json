@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "delivery": {
     "mode": "bundled-fallback",
-    "generatedAt": "2026-09-02T05:36:23.559Z",
+    "generatedAt": "2026-09-02T05:58:10.369Z",
     "scheduleMinutes": 0,
     "freshSources": [],
     "note": "版本附帶的隱私清理備援快照；公開站部署後改由 GitHub Actions 定時產生延遲行情。"
@@ -11,7 +11,7 @@
     "errors": [],
     "delivery": {
       "mode": "bundled-fallback",
-      "generatedAt": "2026-09-02T05:36:23.559Z",
+      "generatedAt": "2026-09-02T05:58:10.369Z",
       "scheduleMinutes": 0,
       "freshSources": [],
       "note": "版本附帶的隱私清理備援快照；公開站部署後改由 GitHub Actions 定時產生延遲行情。"
@@ -19,14 +19,14 @@
   },
   "afterCloseSnapshot": {
     "schemaVersion": 2,
-    "generatedAt": "2026-09-02T05:36:23.559Z",
+    "generatedAt": "2026-09-02T05:58:10.369Z",
     "attemptedDate": null,
     "attemptCount": 0,
     "asOf": "2026-05-12",
     "targetCount": 16,
     "delivery": {
       "mode": "bundled-fallback",
-      "generatedAt": "2026-09-02T05:36:23.559Z",
+      "generatedAt": "2026-09-02T05:58:10.369Z",
       "schedule": "replaced by GitHub Actions after-close snapshot after deployment",
       "privacy": "public neutral holdings only; no cost basis, alerts, or private research"
     },
@@ -35,7 +35,7 @@
         "schemaVersion": 2,
         "id": "quotes",
         "asOf": "2026-05-12",
-        "fetchedAt": "2026-09-02T05:36:23.559Z",
+        "fetchedAt": "2026-09-02T05:58:10.369Z",
         "source": "TWSE / TPEx / bundled quote cache",
         "sourceTier": "bundled mixed provenance",
         "fallbackUsed": true,
@@ -273,7 +273,7 @@
         "schemaVersion": 2,
         "id": "klines",
         "asOf": "2026-05-12",
-        "fetchedAt": "2026-09-02T05:36:23.559Z",
+        "fetchedAt": "2026-09-02T05:58:10.369Z",
         "source": "TWSE / TPEx / Yahoo bundled daily-bar cache",
         "sourceTier": "bundled mixed provenance",
         "fallbackUsed": true,
@@ -14693,7 +14693,7 @@
         "schemaVersion": 2,
         "id": "institutional",
         "asOf": "2026-05-08",
-        "fetchedAt": "2026-09-02T05:36:23.559Z",
+        "fetchedAt": "2026-09-02T05:58:10.369Z",
         "source": "TWSE T86 / TPEx bundled institutional cache",
         "sourceTier": "bundled mixed provenance",
         "fallbackUsed": true,
@@ -15144,7 +15144,7 @@
         "schemaVersion": 2,
         "id": "margin",
         "asOf": null,
-        "fetchedAt": "2026-09-02T05:36:23.559Z",
+        "fetchedAt": "2026-09-02T05:58:10.369Z",
         "source": "TWSE / TPEx bundled margin cache",
         "sourceTier": "bundled mixed provenance",
         "fallbackUsed": true,
