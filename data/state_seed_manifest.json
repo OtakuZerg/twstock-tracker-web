@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
   "version": "20.0",
-  "generatedAt": "2026-09-13T08:29:41.202Z",
+  "generatedAt": "2026-09-13T09:35:36.342Z",
   "fallback": "data/state_core.json",
   "parts": [
     {
       "id": "bootstrap",
       "path": "data/state_bootstrap.json",
-      "sha256": "6ea9cdf9843bd3f8c8f6d816ee789250bd23be73ef0ba504466254440d0158e8",
+      "sha256": "7a11954b637f73dba70c64a9cba727e7c0ca7b357b48bf6600167d6c989e45cd",
       "bytes": 40463,
       "schemaVersion": 2
     },

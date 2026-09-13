@@ -4,7 +4,7 @@
   "releaseDate": "2026-09-13",
   "mode": "github-pages-pwa",
   "profile": "public-pages-hardened-v3",
-  "builtAt": "2026-09-13T08:29:41.202Z",
+  "builtAt": "2026-09-13T09:35:36.342Z",
   "sourceDataAsOf": {
     "state": "2026-05-12T16:00:29.175Z",
     "research": "2026-06-24T14:02:15+08:00",
@@ -14,25 +14,25 @@
     {
       "id": "market",
       "path": "data/live_market.json",
-      "sha256": "43809fcf3eea654fb61b2a141ac0ae21dfd7378e91821cd85aa11622783c8644",
+      "sha256": "7688467d15a39020f75f08683c36da93b5230ac3dbae0ce8e95a4add5f427d94",
       "asOf": null
     },
     {
       "id": "after-close",
       "path": "data/live_market.json",
-      "sha256": "43809fcf3eea654fb61b2a141ac0ae21dfd7378e91821cd85aa11622783c8644",
+      "sha256": "7688467d15a39020f75f08683c36da93b5230ac3dbae0ce8e95a4add5f427d94",
       "asOf": "2026-05-12"
     },
     {
       "id": "state-core",
       "path": "data/state_core.json",
-      "sha256": "4fe63edaa33e97f84b577b3a7459a71629830773d4b9b9a9e356d2218f5cefc0",
+      "sha256": "b417b1909816e7f3f8ee6d2671f25aa80dd41394054da3d0c72c01b79ab9b157",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
       "id": "state-bootstrap",
       "path": "data/state_bootstrap.json",
-      "sha256": "6ea9cdf9843bd3f8c8f6d816ee789250bd23be73ef0ba504466254440d0158e8",
+      "sha256": "7a11954b637f73dba70c64a9cba727e7c0ca7b357b48bf6600167d6c989e45cd",
       "asOf": "2026-05-12T16:00:29.175Z"
     },
     {
