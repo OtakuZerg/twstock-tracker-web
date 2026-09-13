@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>台股追蹤 Taiwan Equity Tracker v19.3</title>
+  <title>台股追蹤 v20.0｜操盤工作台與資料同步</title>
   <style>
     html {
       color: #1a1a1a;
@@ -231,10 +231,13 @@
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
+  <style>
+  :root{color-scheme:light;--ink:#213547;--muted:#516579;--accent:#175d76}*{box-sizing:border-box}html{scroll-behavior:smooth}body{font:16px/1.75 system-ui,-apple-system,"Noto Sans TC",sans-serif;max-width:1120px;margin:0 auto;padding:48px 32px;color:var(--ink);background:#f5f7f8}main,section{min-width:0}h1{font-size:2.1rem}h2{margin-top:3rem;border-bottom:2px solid #cfdae0;padding-bottom:.5rem}h3{margin-top:2rem}a{color:var(--accent);overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}#TOC{border:1px solid #cad7df;background:#fff;border-radius:12px;padding:24px;max-height:440px;overflow:auto}#TOC ul{padding-left:20px}blockquote{border-left:4px solid #ac842e;background:#fff9eb;margin:20px 0;padding:8px 20px}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;margin:24px 0}th,td{padding:10px 16px;text-align:left;border:1px solid #cbd5df}th{background:#e3edf1}pre,.code-block{background:#142a3b;color:#edf5fb;padding:20px;border-radius:8px;overflow-x:auto}pre code{background:transparent;color:inherit;padding:0}code{font: .88em ui-monospace,monospace;color:#1b5267;background:#e3edf1;padding:2px 5px}img{max-width:100%;height:auto}hr{border:0;border-top:1px solid #ccd7df;margin:36px 0}@media(max-width:640px){body{padding:24px 16px}h1{font-size:1.7rem}#TOC{max-height:300px;padding:12px}td,th{padding:8px}}
+  </style>
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">台股追蹤 Taiwan Equity Tracker v19.3</h1>
+<h1 class="title">台股追蹤 v20.0｜操盤工作台與資料同步</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
@@ -242,10 +245,15 @@
 id="toc-台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
 Tracker</a>
 <ul>
+<li><a href="#v20.0-操盤工作台與手機資料同步2026-09-13"
+id="toc-v20.0-操盤工作台與手機資料同步2026-09-13">v20.0
+操盤工作台與手機資料同步（2026-09-13）</a></li>
 <li><a href="#v19.3-安全貼上持股與私人清單遷移2026-09-02"
 id="toc-v19.3-安全貼上持股與私人清單遷移2026-09-02">v19.3
 安全貼上持股與私人清單遷移（2026-09-02）</a></li>
-<li><a href="#v19.2-決策安全與每日差異摘要2026-09-02">v19.2 決策安全與每日差異摘要（2026-09-02）</a></li>
+<li><a href="#v19.2-決策安全與每日差異摘要2026-09-02"
+id="toc-v19.2-決策安全與每日差異摘要2026-09-02">v19.2
+決策安全與每日差異摘要（2026-09-02）</a></li>
 <li><a href="#v19.1-盤後資料來源-schema-與回測執行模型2026-08-21"
 id="toc-v19.1-盤後資料來源-schema-與回測執行模型2026-08-21">v19.1
 盤後資料、來源 schema 與回測執行模型（2026-08-21）</a></li>
@@ -274,7 +282,10 @@ id="toc-更新本機版-extension">更新本機版 extension</a></li>
 id="toc-github-pages-iphoneipad-web-app">GitHub Pages / iPhone、iPad Web
 App</a></li>
 </ul></li>
-<li><a href="#功能總覽" id="toc-功能總覽">功能總覽</a>
+<li><a href="#功能總覽" id="toc-功能總覽">功能總覽</a></li>
+<li><a href="#v19.0-trader-first-全面重構第一階段2026-08-13"
+id="toc-v19.0-trader-first-全面重構第一階段2026-08-13">v19.0
+Trader-first 全面重構第一階段（2026-08-13）</a>
 <ul>
 <li><a href="#資料儲存與更新"
 id="toc-資料儲存與更新">資料儲存與更新</a></li>
@@ -282,12 +293,9 @@ id="toc-資料儲存與更新">資料儲存與更新</a></li>
 <li><a href="#左側主題分類0123"
 id="toc-左側主題分類0123">左側主題分類（01–23）</a></li>
 </ul></li>
-<li><a href="#v19.0-trader-first-全面重構第一階段2026-08-13"
-id="toc-v19.0-trader-first-全面重構第一階段2026-08-13">v19.0
-Trader-first 全面重構第一階段（2026-08-13）</a></li>
 <li><a href="#v18.0-pcbabfccl-原料供應鏈2026-07-19"
-id="toc-v18.0-pcbabfccl-原料供應鏈2026-07-19">v18.0
-PCB／ABF／CCL 原料供應鏈（2026-07-19）</a></li>
+id="toc-v18.0-pcbabfccl-原料供應鏈2026-07-19">v18.0 PCB／ABF／CCL
+原料供應鏈（2026-07-19）</a></li>
 <li><a href="#v17.9-收盤後同步與資料可靠度中心2026-07-18"
 id="toc-v17.9-收盤後同步與資料可靠度中心2026-07-18">v17.9
 收盤後同步與資料可靠度中心（2026-07-18）</a></li>
@@ -536,9 +544,9 @@ id="toc-podcast-更新維護者用">Podcast 更新（維護者用）</a></li>
 </ul></li>
 </ul>
 </nav>
-<h1 id="台股追蹤-taiwan-equity-tracker">台股追蹤 Taiwan Equity
-Tracker</h1>
-<p><strong>版本：v19.3</strong> ｜ <strong>日期：2026-09-02</strong> ｜
+<section id="台股追蹤-taiwan-equity-tracker" class="level1">
+<h1>台股追蹤 Taiwan Equity Tracker</h1>
+<p><strong>版本：v20.0</strong> ｜ <strong>日期：2026-09-13</strong> ｜
 Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 <blockquote>
 <p>⚠️ <strong>資料正確性說明</strong>：本 extension
@@ -553,51 +561,194 @@ Chrome Extension (Manifest V3) + GitHub Pages PWA</p>
 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。</p>
 </blockquote>
 <hr />
-<!-- §1. v19.3 safe holdings import and private migration -->
-<section id="v19.3-安全貼上持股與私人清單遷移2026-09-02">
+<section id="v20.0-操盤工作台與手機資料同步2026-09-13" class="level2">
+<h2>v20.0 操盤工作台與手機資料同步（2026-09-13）</h2>
+<p>首頁以數日到數週的波段研究流程重排，Extension 與手機 Web
+共用同一套介面，保留全部 13 個研究分頁。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>操盤時要回答的問題</th>
+<th>工作台呈現</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>市場環境如何？</td>
+<td>大盤方向、來源日期，以及市場／風險入口；過期資料不輸出確定結論。</td>
+</tr>
+<tr>
+<td>今天先看哪些持股？</td>
+<td>追蹤清單、缺報價／過期／日線不足的優先複核列，可直接進入技術籌碼。</td>
+</tr>
+<tr>
+<td>個股依據與計畫是什麼？</td>
+<td>價量、技術與籌碼、觸發／失效條件、目標與
+R:R；不符合採信條件時鎖定推導數值。</td>
+</tr>
+<tr>
+<td>手機資料可靠嗎？</td>
+<td>報價、日線、法人、資券、估值、月營收各自的日期、覆蓋範圍與缺口。</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>公開盤後行情與私人持股解耦：原本固定 16
+檔示範股的更新，擴為程式內建的 433
+檔公開台股研究目錄（不含停用報價標的），包括延伸供應鏈股池。公開示範持股仍是
+16 檔，不會上傳或公開使用者持股、成本、提醒或研究筆記。</li>
+<li>同源快照由四域擴為六域，新增 TWSE／TPEx 估值與 MOPS
+月營收。日線採緊湊傳輸格式，逐根保留日期與來源，並相容舊格式。公開目錄以外、自訂股號、上游未公告、ETF
+不適用資料仍可能缺漏，會明示而不補零。</li>
+<li>手機回到前景、恢復連線及開頁後會重新檢查公開快照，成功讀取後逐域合併；保留較新的本機資料，不把下載時間冒充資料日期。軟體設定最短重查間隔為
+5 分鐘，不代表上游每 5 分鐘更新或提供即時行情。</li>
+<li>私人持股與筆記沒有雲端帳號同步；跨裝置仍使用「匯出／匯入裝置資料」。行情自動更新與私人資料搬移是兩個獨立流程。</li>
+<li>修正快照更新後手機頂端資料身分列未重畫的問題，側欄 Web 日期改取行情
+<code>asOf</code>。原 inline shell CSS 獨立成共用可快取檔案，保持
+Extension／Web 相同載入順序。</li>
+<li>上游回應不完整時會拒絕解析；櫃買靜態 API 可用強 ETag、Content-Range
+與長度驗證分段重試，法人／資券另保留官方報表備援。TLS
+失敗不會略過憑證驗證，來源缺口仍會顯示。</li>
+<li>季報、集保、ETF
+持股與其他研究資料仍依原更新路徑或匯入快照，不能以六域行情成功推論全部資料同步。週末須核對最近交易日，而非單看今天是否抓取。</li>
+<li>官方查核入口：<a
+href="https://www.twse.com.tw/zh/trading/historical/mi-index.html">TWSE
+收盤</a>、<a href="https://www.tpex.org.tw/">TPEx</a>、<a
+href="https://mops.twse.com.tw/">MOPS</a>。Web 使用 GitHub Actions
+延遲快照；排程可能延遲，參見 <a
+href="https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule">GitHub
+schedule
+說明</a>。所有排序與數值均為研究工具，不是下單指示或報酬保證。</li>
+</ul>
+<p>以下各版紀錄保留其當時範圍；v19.x 的「16 檔行情」限制已由 v20.0
+公開研究目錄取代。</p>
+<hr />
+</section>
+<section id="v19.3-安全貼上持股與私人清單遷移2026-09-02" class="level2">
 <h2>v19.3 安全貼上持股與私人清單遷移（2026-09-02）</h2>
 <ul>
-<li>持股管理新增「整段貼上匯入持股」：可直接貼上包含公司名稱、<code>.TW / .TWO</code> 股號、報價、漲跌、成交量與時間的行情頁文字；<code>holdings-import-v1</code> 只抽取名稱與市場股號，保留原始順序並忽略重複項目。</li>
+<li>持股管理新增「整段貼上匯入持股」：可直接貼上包含公司名稱、<code>.TW / .TWO</code>
+股號、報價、漲跌、成交量與時間的行情頁文字；<code>holdings-import-v1</code>
+只抽取名稱與市場股號，保留原始順序並忽略重複項目。</li>
 <li>套用前會顯示解析檔數、新增、移除、名稱更新、市場後綴更新與忽略行數；使用者必須再次按下「確認套用」才會取代目前清單。若預覽後又修改文字，系統會強制重新產生差異，避免套用過期預覽。</li>
-<li>貼上內容中的價格、漲跌、成交量與時間不會寫入 canonical quote。行情仍由 TWSE／TPEx 官方來源與明示 fallback 更新，避免沒有來源日期的文字覆蓋可追溯市場資料。</li>
-<li>Extension 私人 seed 更新為使用者提供的 20 檔：移除 00935、3665，新增 2454。舊 21 檔只在清單與舊 preset 完全一致時自動遷移；自行修改過的清單不會被覆寫，仍可用貼上預覽手動更新。</li>
-<li>私人 migration 檔不在 Pages allowlist；公開 Web 仍只發布 16 檔中性示範清單。Extension 與 Web 共用相同 parser、差異預覽、escape 防護與手機單欄版面。</li>
-<li>新增 23-case parser／migration smoke、20 檔 private seed gate，以及 Extension／Web 的實際預覽與套用 browser gate；Service Worker required shell 更新為 <code>v19.3-pwa-1</code>。</li>
+<li>貼上內容中的價格、漲跌、成交量與時間不會寫入 canonical
+quote。行情仍由 TWSE／TPEx 官方來源與明示 fallback
+更新，避免沒有來源日期的文字覆蓋可追溯市場資料。</li>
+<li>Extension 私人 seed 更新為使用者提供的 20 檔：移除 00935、3665，新增
+2454。舊 21 檔只在清單與舊 preset
+完全一致時自動遷移；自行修改過的清單不會被覆寫，仍可用貼上預覽手動更新。</li>
+<li>私人 migration 檔不在 Pages allowlist；公開 Web 仍只發布 16
+檔中性示範清單。Extension 與 Web 共用相同 parser、差異預覽、escape
+防護與手機單欄版面。</li>
+<li>新增 23-case parser／migration smoke、20 檔 private seed gate，以及
+Extension／Web 的實際預覽與套用 browser gate；Service Worker required
+shell 更新為 <code>v19.3-pwa-1</code>。</li>
 </ul>
-</section>
 <hr />
-<!-- §1. v19.2 decision safety and daily digest -->
-<section id="v19.2-決策安全與每日差異摘要2026-09-02">
+</section>
+<section id="v19.2-決策安全與每日差異摘要2026-09-02" class="level2">
 <h2>v19.2 決策安全與每日差異摘要（2026-09-02）</h2>
 <ul>
-<li>新增共用 <code>decision_safety.js</code> 可信度閘門。報價或日線過期、日期不可核對、來源衝突時，作戰首頁會保留歷史價格與實際資料日期，但技術、籌碼、雷達、入場、停損、目標與 R:R 直接顯示為「—」；核心六層不足 5 層時只允許研究，不列為可執行。</li>
-<li>收盤後同步與公開 Web 的「重新讀取快照」會保存精簡決策基準，下一次只列決策資格、執行狀態、技術狀態與資料信心的變更。Extension 只有同步失敗或出現重大決策變更時才發通知，無重大變化不推送完成通知。</li>
-<li>資料健康頁將作用域拆開：研究宇宙是可搜尋／分類的完整股池；Web 今日快照只計 16 檔中性清單四個核心 domain 的最低 fresh count；Extension 只計個人持股／觀察清單；「決策可用」再套可信度與覆蓋門檻，避免用完整研究宇宙當成每日快照分母。</li>
-<li>技術籌碼頁新增 <code>technical_workspace_selectors.js</code> 與 <code>technical_workspace_renderer.js</code> 邊界，Extension 與 Web 共用同一個可信度狀態與鎖定文案；既有大型分析器仍採 strangler migration，不另建第二套 store。</li>
-<li>新增 deterministic decision-safety smoke，並把共用模組納入 Extension runtime、Pages allowlist、Service Worker required shell 與 project-subpath Web smoke。</li>
+<li>新增共用 <code>decision_safety.js</code>
+可信度閘門。報價或日線過期、日期不可核對、來源衝突時，作戰首頁會保留歷史價格與實際資料日期，但技術、籌碼、雷達、入場、停損、目標與
+R:R 直接顯示為「—」；核心六層不足 5 層時只允許研究，不列為可執行。</li>
+<li>收盤後同步與公開 Web
+的「重新讀取快照」會保存精簡決策基準，下一次只列決策資格、執行狀態、技術狀態與資料信心的變更。Extension
+只有同步失敗或出現重大決策變更時才發通知，無重大變化不推送完成通知。</li>
+<li>資料健康頁將作用域拆開：研究宇宙是可搜尋／分類的完整股池；Web
+今日快照只計 16 檔中性清單四個核心 domain 的最低 fresh count；Extension
+只計個人持股／觀察清單；「決策可用」再套可信度與覆蓋門檻，避免用完整研究宇宙當成每日快照分母。</li>
+<li>技術籌碼頁新增 <code>technical_workspace_selectors.js</code> 與
+<code>technical_workspace_renderer.js</code> 邊界，Extension 與 Web
+共用同一個可信度狀態與鎖定文案；既有大型分析器仍採 strangler
+migration，不另建第二套 store。</li>
+<li>新增 deterministic decision-safety smoke，並把共用模組納入 Extension
+runtime、Pages allowlist、Service Worker required shell 與
+project-subpath Web smoke。</li>
 </ul>
+<table style="width:6%;">
+<colgroup>
+<col style="width: 5%" />
+</colgroup>
+<tbody>
+<tr>
+<td><!-- §1. v19.2 mobile information parity and device snapshot --></td>
+</tr>
+<tr>
+<td>## v19.2 手機資訊對等與裝置快照（2026-08-29）</td>
+</tr>
+<tr>
+<td>- 完整保留 v19.1 的來源 schema v2、可追溯盤後快照、next-open 回測與
+R:R 安全閘門，再融合手機資料身分與跨裝置本機研究狀態搬移；不是回退到
+v18.x。 - 手機首屏新增固定可見的資料身分列，直接顯示目前是 Web
+本機資料或已匯入裝置快照、持股檔數、持股報價覆蓋與來源資料日期；不再把關鍵狀態全部藏在「主題
+/ 股池」。 - 新增「匯出裝置資料」與「匯入裝置資料」：桌機 Extension
+可輸出持股、成本、提醒、自訂研究、報價、日線、籌碼、月營收與季報三率等本機研究狀態，再由
+iPhone／iPad PWA 手動選檔匯入。傳輸是離線檔案流程，App
+不會把內容上傳至伺服器。 - 裝置快照採明確 schema，匯入時檢查 32 MiB
+大小上限、JSON
+型別、巢狀深度、危險鍵、持股清單與版本；真正覆寫目前瀏覽器本機狀態前會先顯示持股／報價／日線筆數並再次確認。
+- 公開 Pages artifact 仍強制使用中性示範持股，並清空裝置快照
+metadata、成本、提醒與自訂研究；「手機看到個人資料」只可能來自使用者在該瀏覽器手動匯入的本機檔案。
+- 修正 390px 窄螢幕的 section actions
+與期貨列：更新按鈕不再被擠成直排橢圓，說明與操作改為完整寬度排列；13
+個研究分頁仍保留於 safe-area 底部橫滑導覽。</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!-- §2. v19.1 after-close data and backtest model -->
+<section id="v19.1-after-close-data">
 </section>
-<hr />
-<!-- §1. v19.1 after-close data and backtest execution -->
-<section id="v19.1-盤後資料來源-schema-與回測執行模型2026-08-21">
+<section id="v19.1-盤後資料來源-schema-與回測執行模型2026-08-21"
+class="level2">
 <h2>v19.1 盤後資料、來源 schema 與回測執行模型（2026-08-21）</h2>
 <ul>
-<li>沿用既有 <code>source_catalog.js</code>、source adapters、normalizers 與 state shards，將 provenance contract 升級為 schema v2；舊 <code>state.json</code> 仍可讀，載入時只做相容的 in-memory migration，不另建第二套 state store。每筆決策資料統一保留 <code>source</code>、<code>sourceTier</code>、<code>asOf</code>、<code>fetchedAt</code>、<code>fallbackUsed</code> 與 <code>confidence</code>。</li>
-<li>既有 <code>build_market_snapshot.mjs</code> 擴充為隱私清理盤後快照：台北時間 15:00 後，公開 Web 的 16 檔中性示範清單會取得 TWSE／TPEx 官方收盤、6 個月日線、三大法人與資券；官方日收盤表若尚未換日，會重用既有 TWSE MIS 批次 normalizer 取得當日收盤並交叉核對。四域未同日完整時由既有 Actions 排程最多嘗試 4 次，完整或達上限即停止。公開檔不含私人持股、成本、提醒或自訂研究；盤前強制驗證仍以官方最近收盤日截斷 Yahoo 日線，避免把尚未收盤的當日 K 棒當成完整資料。</li>
-<li>Web 仍只抓 same-origin <code>data/live_market.json</code>，但載入後會把盤後資料合併回既有 <code>quotes / klines / institutional / margin</code>，直接重用同一套技術分析、Chip Score、作戰首頁與標的雷達，不新增平行 parser 或分析引擎。</li>
-<li>Playbook 回測升級為 <code>playbook-next-open-v2</code>：收盤訊號在下一交易日開盤成交、同一標的不允許重疊持倉、同根 K 棒同時碰停損與目標時採保守的停損優先，並納入每邊 10 bps 成本與 5 bps 滑價的可調研究假設。模型假設不等於實際券商費率或稅負；目前股池仍可能有存活者偏差與回測過度擬合，方法限制可對照 <a href="https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation">CFA Institute Backtesting &amp; Simulation</a> 與 <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2308659">Bailey et al. 的 backtest overfitting 論文</a>。</li>
-<li>作戰首頁與交易雷達的 R:R 閘門同步收緊：未定義目標價或 R:R 時只能標為資料不足／候選追蹤，不能顯示「可執行」或「攻擊觀察」。</li>
+<li>沿用既有 <code>source_catalog.js</code>、source
+adapters、normalizers 與 state shards，將 provenance contract 升級為
+schema v2；舊 <code>state.json</code> 仍可讀，載入時只做相容的 in-memory
+migration，不另建第二套 state store。每筆決策資料統一保留
+<code>source</code>、<code>sourceTier</code>、<code>asOf</code>、<code>fetchedAt</code>、<code>fallbackUsed</code>
+與 <code>confidence</code>。</li>
+<li>既有 <code>build_market_snapshot.mjs</code>
+擴充為隱私清理盤後快照：台北時間 15:00 後，公開 Web 的 16
+檔中性示範清單會取得 TWSE／TPEx 官方收盤、6
+個月日線、三大法人與資券；官方日收盤表若尚未換日，會重用既有 TWSE MIS
+批次 normalizer 取得當日收盤並交叉核對。四域未同日完整時由既有 Actions
+排程最多嘗試 4
+次，完整或達上限即停止。公開檔不含私人持股、成本、提醒或自訂研究；盤前強制驗證仍以官方最近收盤日截斷
+Yahoo 日線，避免把尚未收盤的當日 K 棒當成完整資料。</li>
+<li>Web 仍只抓 same-origin
+<code>data/live_market.json</code>，但載入後會把盤後資料合併回既有
+<code>quotes / klines / institutional / margin</code>，直接重用同一套技術分析、Chip
+Score、作戰首頁與標的雷達，不新增平行 parser 或分析引擎。</li>
+<li>Playbook 回測升級為
+<code>playbook-next-open-v2</code>：收盤訊號在下一交易日開盤成交、同一標的不允許重疊持倉、同根
+K 棒同時碰停損與目標時採保守的停損優先，並納入每邊 10 bps 成本與 5 bps
+滑價的可調研究假設。模型假設不等於實際券商費率或稅負；目前股池仍可能有存活者偏差與回測過度擬合，方法限制可對照
+<a
+href="https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation">CFA
+Institute Backtesting &amp; Simulation</a> 與 <a
+href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2308659">Bailey
+et al. 的 backtest overfitting 論文</a>。</li>
+<li>作戰首頁與交易雷達的 R:R 閘門同步收緊：未定義目標價或 R:R
+時只能標為資料不足／候選追蹤，不能顯示「可執行」或「攻擊觀察」。</li>
 </ul>
 </section>
 <hr />
-<!-- §1. v18.2.1 request-limit hotfix -->
-<section id="v18.2.1-資料請求上限熱修2026-07-30">
+</section>
+<section id="v18.2.1-資料請求上限熱修2026-07-30" class="level2">
 <h2>v18.2.1 資料請求上限熱修（2026-07-30）</h2>
 <ul>
-<li>修正中央 Request Broker 將未指定的 <code>null</code>
-傳輸選項轉成 <code>0</code>，進而把一般回應誤限縮為 <code>1024
-bytes</code> 的問題；Yahoo、TWSE 與 TAIFEX
-不再因正常大小的回應同時失敗。</li>
+<li>修正中央 Request Broker 將未指定的 <code>null</code> 傳輸選項轉成
+<code>0</code>，進而把一般回應誤限縮為 <code>1024 bytes</code>
+的問題；Yahoo、TWSE 與 TAIFEX 不再因正常大小的回應同時失敗。</li>
 <li>恢復既定安全預設：回應上限 8 MiB、timeout 12 秒、最大重試等待 15
 秒，以及各來源預設並行數；呼叫端明確指定較低上限時仍會照常攔截。</li>
 <li>新增 deterministic regression，涵蓋大於 1 KiB 的正常
@@ -607,30 +758,31 @@ TAIFEX 夜盤且無來源錯誤。</li>
 <li>公開 Web App
 的「重新讀取快照」會立即重畫大盤與期貨摘要；重畫期間保留原面板高度與捲動位置，避免手機畫面停在舊資料或突然跳動。</li>
 </ul>
-</section>
 <hr />
-<h2 id="v18.2-行動優先效能與手機-web-app-改造2026-07-28">v18.2
-行動優先效能與手機 Web App 改造（2026-07-28）</h2>
+</section>
+<section id="v18.2-行動優先效能與手機-web-app-改造2026-07-28"
+class="level2">
+<h2>v18.2 行動優先效能與手機 Web App 改造（2026-07-28）</h2>
 <ul>
 <li>大盤第一屏由四格「盤前作戰中樞」改為三段「今日市場導航」：大盤風險、今日主線族群、目前族群；依使用者需求移除第
 4 格「目前個股」。</li>
-<li>首頁不再計算或重掛單股技術、熱度、籌碼與營收。單股資料只在「個股研究」或「技術分析 &amp;
-籌碼」首次使用時載入，避免大盤頁替未觀看內容做重工。</li>
+<li>首頁不再計算或重掛單股技術、熱度、籌碼與營收。單股資料只在「個股研究」或「技術分析
+&amp; 籌碼」首次使用時載入，避免大盤頁替未觀看內容做重工。</li>
 <li>今日主線先使用已載入報價計算族群平均漲跌、廣度與覆蓋；完整產業
 Regime、營收與籌碼仍保留在按需載入的詳細面板，不改交易研究口徑。</li>
-<li>手機版 13 個研究分頁改為 safe-area
-底部橫滑導覽；期貨卡改橫滑，手機 sticky bar 停用 blur
-與分頁進場動畫，並保留 44px 以上觸控區。</li>
+<li>手機版 13 個研究分頁改為 safe-area 底部橫滑導覽；期貨卡改橫滑，手機
+sticky bar 停用 blur 與分頁進場動畫，並保留 44px 以上觸控區。</li>
 <li>PWA cache
-分成啟動必要、小型背景暖快取與大型按需三層。technical、主動 ETF、
-legacy state 與大型安裝圖像仍可離線快取，但不再於開頁後主動下載；final
-optional warm 約 0.39 MiB，Save-Data 或 2G 類連線會完全略過。</li>
+分成啟動必要、小型背景暖快取與大型按需三層。technical、主動 ETF、legacy
+state 與大型安裝圖像仍可離線快取，但不再於開頁後主動下載；final optional
+warm 約 0.39 MiB，Save-Data 或 2G 類連線會完全略過。</li>
 <li>卡片選股與跨頁前往改為單次 full render；technical shard
 載入時會顯示頁內狀態，完成後同一工作階段不會重複 hydrate。</li>
 </ul>
 <hr />
-<h2 id="v18.1-連線可靠度與快照治理2026-07-28">v18.1
-連線可靠度與快照治理（2026-07-28）</h2>
+</section>
+<section id="v18.1-連線可靠度與快照治理2026-07-28" class="level2">
+<h2>v18.1 連線可靠度與快照治理（2026-07-28）</h2>
 <ul>
 <li>Extension 與 Web 共用中央 Request Broker：來源
 timeout、single-flight、併發限制、取消、回應大小上限、bounded
@@ -652,19 +804,23 @@ breaker，並可單獨重試失敗的背景任務。</li>
 adapter policy 與 deterministic schema／0-row gates。</li>
 </ul>
 <hr />
-<h2 id="安裝步驟本機載入">安裝步驟（本機載入）</h2>
+</section>
+<section id="安裝步驟本機載入" class="level2">
+<h2>安裝步驟（本機載入）</h2>
 <blockquote>
 <p>適合家人與自己使用，無需上架 Chrome Web Store。</p>
 </blockquote>
-<h3 id="第一步下載專案">第一步：下載專案</h3>
+<section id="第一步下載專案" class="level3">
+<h3>第一步：下載專案</h3>
 <ol type="1">
 <li>點選本頁右上角綠色 <strong>Code</strong> 按鈕 → <strong>Download
 ZIP</strong></li>
 <li>解壓縮到你習慣的資料夾（例如桌面的 <code>twStock_tracker</code>
 資料夾）</li>
 </ol>
-<h3 id="第二步在-chrome-載入擴充功能">第二步：在 Chrome
-載入擴充功能</h3>
+</section>
+<section id="第二步在-chrome-載入擴充功能" class="level3">
+<h3>第二步：在 Chrome 載入擴充功能</h3>
 <ol type="1">
 <li>開啟 Chrome，網址列輸入：<code>chrome://extensions</code></li>
 <li>右上角開啟 <strong>開發人員模式</strong>（Developer mode）</li>
@@ -673,7 +829,9 @@ ZIP</strong></li>
 <code>manifest.json</code>）</li>
 <li>擴充功能列出現「台股追蹤」即代表安裝成功</li>
 </ol>
-<h3 id="第三步開啟使用">第三步：開啟使用</h3>
+</section>
+<section id="第三步開啟使用" class="level3">
+<h3>第三步：開啟使用</h3>
 <ul>
 <li>點選 Chrome 右上角擴充功能圖示 → 點選「台股追蹤」</li>
 <li>或將擴充功能釘選到工具列，之後直接點擊開啟</li>
@@ -682,7 +840,9 @@ ZIP</strong></li>
 <p><strong>Edge 用戶</strong>：步驟相同，網址改為
 <code>edge://extensions</code>。</p>
 </blockquote>
-<h3 id="更新本機版-extension">更新本機版 extension</h3>
+</section>
+<section id="更新本機版-extension" class="level3">
+<h3>更新本機版 extension</h3>
 <p>本專案是「載入未封裝項目」，平常更新程式後不需要移除重載。</p>
 <ol type="1">
 <li>開啟 <code>chrome://extensions</code></li>
@@ -700,8 +860,9 @@ ZIP</strong></li>
 <li>若換了資料夾路徑，例如從舊 ZIP 解壓到新資料夾，Chrome
 會把它視為另一個本機 extension；請固定載入同一個專案資料夾。</li>
 </ul>
-<h3 id="github-pages-iphoneipad-web-app">GitHub Pages / iPhone、iPad Web
-App</h3>
+</section>
+<section id="github-pages-iphoneipad-web-app" class="level3">
+<h3>GitHub Pages / iPhone、iPad Web App</h3>
 <ul>
 <li>正式網站入口：<a
 href="https://otakuzerg.github.io/twstock-tracker-web/">https://otakuzerg.github.io/twstock-tracker-web/</a></li>
@@ -719,9 +880,14 @@ extension，該版本仍需同步專案資料夾並在 <code>chrome://extensions
 按「重新載入」。</li>
 <li>網頁版使用瀏覽器的 IndexedDB / localStorage 儲存持股與設定；Chrome
 extension 與網站資料彼此獨立，不會自動同步。</li>
+<li>若要把桌機研究狀態搬到手機：先在 Extension
+的「資料設定」按「匯出裝置資料」，用 AirDrop／iCloud Drive／檔案 App
+移到手機，再於 PWA
+首屏按「匯入桌機裝置快照」。匯入只寫入該瀏覽器本機；快照含持股、成本與提醒，請勿放在公開連結或共用裝置。</li>
 <li>網站封面與主畫面圖示使用「精算鳥：長期投資，穩健致富」圖像。</li>
 </ul>
-<h4 id="加到-iphone-ipad-主畫面">加到 iPhone / iPad 主畫面</h4>
+<section id="加到-iphone-ipad-主畫面" class="level4">
+<h4>加到 iPhone / iPad 主畫面</h4>
 <ol type="1">
 <li>用 <strong>Safari</strong> 開啟上方網站。</li>
 <li>點 Safari 的 <strong>分享</strong> 按鈕。</li>
@@ -733,11 +899,14 @@ App 打開</strong>。</li>
 href="https://support.apple.com/en-gb/guide/iphone/iphea86e5236/ios">將網站加入
 iPhone 主畫面</a>。本專案亦提供 Web App Manifest、Apple touch icon
 與離線 shell 快取。</p>
-<h4 id="部署隱私與功能邊界">部署、隱私與功能邊界</h4>
+</section>
+<section id="部署隱私與功能邊界" class="level4">
+<h4>部署、隱私與功能邊界</h4>
 <ul>
 <li>Pages build 採明確 allowlist，公開倉庫只接收 58 個必要成品 /
 自動化檔案；實際 Pages 上傳會排除 <code>.github/</code> 與
-<code>scripts/</code>，因此瀏覽器端只提供 56 個執行成品。<code>data/state*.json</code>
+<code>scripts/</code>，因此瀏覽器端只提供 56
+個執行成品。<code>data/state*.json</code>
 會在建置時改成中性示範持股並清除成本、提醒及個人設定，原始私人 seed
 不會放進公開 artifact。</li>
 <li>建置器會拒絕常見 token / private key、本機絕對路徑、owner
@@ -769,7 +938,11 @@ href="docs/security_best_practices_report.md">資安檢視報告</a>（<a
 href="docs/security_best_practices_report.html">HTML</a>）。</li>
 </ul>
 <hr />
-<h2 id="功能總覽">功能總覽</h2>
+</section>
+</section>
+</section>
+<section id="功能總覽" class="level2">
+<h2>功能總覽</h2>
 <p>目前介面只使用一套「現行整合方法」。版本號只用於程式發版與下方
 changelog，不代表同一頁存在多套互相競爭的研究建議。</p>
 <table>
@@ -829,20 +1002,65 @@ Setup、R:R、RS、月營收、籌碼、事件與處置風險。</td>
 </tr>
 </tbody>
 </table>
-<section id="v19.0-trader-first-全面重構第一階段2026-08-13">
+</section>
+<section id="v19.0-trader-first-全面重構第一階段2026-08-13"
+class="level2">
 <h2>v19.0 Trader-first 全面重構第一階段（2026-08-13）</h2>
 <ul>
-<li>首頁改為操盤手順序：先看單一標的的價格、技術多空、籌碼強弱、執行狀態，再看入場、停損、目標、R:R 與資料缺口。這些訊號只作研究排序與風險提示，不是獲利保證或自動下單。</li>
-<li>操盤首頁保留在第一順位，但 13 個研究分頁全部直接顯示：作戰首頁、主題總覽、標的雷達、個股決策、個股營收、技術籌碼、標的找尋、處置股、除權息、催化劑與新聞、總體經濟與風險、Podcast、資料健康。桌機頂部分頁列與手機 safe-area 底部 dock 都可橫向捲動，不再把八個功能藏進「更多研究」。</li>
-<li>新增 <code>app_files/core/source_catalog.js</code>，將報價、日線、估值、基本面、法人、資券、外資持股、TDCC、衍生品、公司事件、總經、產業研究及新聞／Podcast 分成 13 個決策領域，列出 canonical source、fallback、TTL、Extension／Web 能力與缺值規則。</li>
-<li>Extension 新增台北時間 15:00 盤後同步排程，讓收盤與盤後資料一起進入研究流程。Chrome alarms 可安排指定時間，但裝置休眠時不會被喚醒，錯過的 alarm 會在喚醒後執行，因此畫面會保留排程／完成狀態，而不宣稱準時到秒；詳見 <a href="https://developer.chrome.com/docs/extensions/reference/api/alarms">Chrome alarms 官方文件</a>。</li>
-<li>Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions 產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web 延遲快照，而不包裝成逐筆即時；詳見 <a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax">GitHub Actions workflow syntax</a> 與 <a href="https://docs.github.com/en/actions/how-tos/troubleshoot-workflows">scheduled workflow troubleshooting</a>。</li>
-<li>本階段採 strangler migration：新 shell 與新核心模組先接管第一屏，既有分析器與 parser 暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。</li>
-<li>R6a–R6e2a 已把資料完整度、技術多空、R:R、Setup 分數、交易動作、執行狀態與籌碼強弱摘要移到 <code>app_files/features/trader_workspace.js</code>，由 61 個 deterministic cases 保護。報價、日線與估值由 <code>app_files/sources/market_data_normalizers.js</code> 正規化（42 cases）；法人、資券、TDCC 與 TAIFEX 由 <code>app_files/sources/chip_data_normalizers.js</code> 接管純解析（58 cases）；月營收與季報三率由 <code>app_files/sources/fundamental_data_normalizers.js</code> 接管（55 cases）；TWSE 大盤、VIX、美債殖利率、融資餘額、央行匯率、Fed RSS／SEP 與 FedWatch 由 <code>app_files/sources/macro_data_normalizers.js</code> 接管（67 cases）。四個來源模組都沿用既有 <code>source_adapters.js</code> 契約或其來源政策，會攔截 0 筆、無效 JSON、schema drift 與錯誤 payload；缺值固定顯示為缺資料，不會視為中性或低風險。作戰首頁的 selector 與安全 renderer 已分別由 35 cases 保護，並加入可橫向捲動的持股快切與 ETF／個股檔數摘要；這份清單只供快速切換與研究排序，不要求張數、均價或損益。私人 Extension seed 可保存個人持股，但公開 Pages build 會強制換成中性示範清單並清空成本、提醒與自訂研究。</li>
-<li>R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到 <code>app_files/store/discovery_workspace_selectors.js</code>，並把 hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到 <code>app_files/ui/discovery_workspace_renderer.js</code>。左側 50 分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3 日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的 badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web 共用相同模組，Service Worker cache 為 <code>v19.2-pwa-1</code>。</li>
+<li>首頁改為操盤手順序：先看單一標的的價格、技術多空、籌碼強弱、執行狀態，再看入場、停損、目標、R:R
+與資料缺口。這些訊號只作研究排序與風險提示，不是獲利保證或自動下單。</li>
+<li>操盤首頁保留在第一順位，但 13
+個研究分頁全部直接顯示：作戰首頁、主題總覽、標的雷達、個股決策、個股營收、技術籌碼、標的找尋、處置股、除權息、催化劑與新聞、總體經濟與風險、Podcast、資料健康。桌機頂部分頁列與手機
+safe-area 底部 dock 都可橫向捲動，不再把八個功能藏進「更多研究」。</li>
+<li>新增
+<code>app_files/core/source_catalog.js</code>，將報價、日線、估值、基本面、法人、資券、外資持股、TDCC、衍生品、公司事件、總經、產業研究及新聞／Podcast
+分成 13 個決策領域，列出 canonical source、fallback、TTL、Extension／Web
+能力與缺值規則。</li>
+<li>Extension 新增台北時間 15:00
+盤後同步排程，讓收盤與盤後資料一起進入研究流程。Chrome alarms
+可安排指定時間，但裝置休眠時不會被喚醒，錯過的 alarm
+會在喚醒後執行，因此畫面會保留排程／完成狀態，而不宣稱準時到秒；詳見 <a
+href="https://developer.chrome.com/docs/extensions/reference/api/alarms">Chrome
+alarms 官方文件</a>。</li>
+<li>Web App 維持 same-origin snapshot：跨站抓取由 GitHub Actions
+產生延遲快照。GitHub 說明排程可能在高負載時延遲，所以正式畫面會標示 Web
+延遲快照，而不包裝成逐筆即時；詳見 <a
+href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax">GitHub
+Actions workflow syntax</a> 與 <a
+href="https://docs.github.com/en/actions/how-tos/troubleshoot-workflows">scheduled
+workflow troubleshooting</a>。</li>
+<li>本階段採 strangler migration：新 shell
+與新核心模組先接管第一屏，既有分析器與 parser
+暫時沿用；等新模組完成對等測試並取得刪除確認後，才拆除舊入口或檔案。</li>
+<li>R6a–R6e2a 已把資料完整度、技術多空、R:R、Setup
+分數、交易動作、執行狀態與籌碼強弱摘要移到
+<code>app_files/features/trader_workspace.js</code>，由 61 個
+deterministic cases 保護。報價、日線與估值由
+<code>app_files/sources/market_data_normalizers.js</code> 正規化（42
+cases）；法人、資券、TDCC 與 TAIFEX 由
+<code>app_files/sources/chip_data_normalizers.js</code> 接管純解析（58
+cases）；月營收與季報三率由
+<code>app_files/sources/fundamental_data_normalizers.js</code> 接管（55
+cases）；TWSE 大盤、VIX、美債殖利率、融資餘額、央行匯率、Fed RSS／SEP 與
+FedWatch 由 <code>app_files/sources/macro_data_normalizers.js</code>
+接管（67 cases）。四個來源模組都沿用既有 <code>source_adapters.js</code>
+契約或其來源政策，會攔截 0 筆、無效 JSON、schema drift 與錯誤
+payload；缺值固定顯示為缺資料，不會視為中性或低風險。作戰首頁的 selector
+與安全 renderer 已分別由 35 cases 保護，並加入可橫向捲動的持股快切與
+ETF／個股檔數摘要；這份清單只供快速切換與研究排序，不要求張數、均價或損益。私人
+Extension seed 可保存個人持股，但公開 Pages build
+會強制換成中性示範清單並清空成本、提醒與自訂研究。</li>
+<li>R6e2b 已把「標的找尋」的候選分組／排序與外資連買選擇器移到
+<code>app_files/store/discovery_workspace_selectors.js</code>，並把
+hero、四層篩選說明、摘要／詳表 gate 與左側／右側／避開三張表移到
+<code>app_files/ui/discovery_workspace_renderer.js</code>。左側 50
+分、右側 55 分、高風險 24 點、表格 5／12 檔與外資連買至少 3
+日等既有口徑不變；selector 28 cases、renderer 38 cases，以及 390px 的
+badge／按鈕不可逐字直排或相交 geometry gate 共同保護。Extension 與 Web
+共用相同模組，Service Worker cache 為 <code>v19.2-pwa-1</code>。</li>
 </ul>
-</section>
-<h3 id="資料儲存與更新">資料儲存與更新</h3>
+<section id="資料儲存與更新" class="level3">
+<h3>資料儲存與更新</h3>
 <ul>
 <li><code>data/state_core.json</code>：新安裝初始畫面核心
 seed，不在每次啟動解析完整歷史。</li>
@@ -851,7 +1069,7 @@ seed，不在每次啟動解析完整歷史。</li>
 <li><code>data/research_data.json</code>：月營收歷史、季報三率、現行方法與
 cache policy 的單一長期資料基線。</li>
 <li><code>data/live_market.json</code>：公開 PWA
-的大盤與中性持股盤後延遲快照；由固定來源 GitHub Actions
+的大盤與隱私清理盤後延遲快照；由固定來源 GitHub Actions
 排程產生，包含來源、資料時間、fallback 與抓取紀錄。Extension
 不依賴此檔，仍保留原生背景抓取。</li>
 <li>K 線、量化校準與業績長期資料優先放 IndexedDB；設定
@@ -931,7 +1149,9 @@ VIXTWN 與永豐 VIXTWN
 <summary>
 <strong>歷史版本功能脈絡</strong>（僅供追溯，非多套現行建議）
 </summary>
-<h3 id="主功能分頁">主功能分頁</h3>
+</section>
+<section id="主功能分頁" class="level3">
+<h3>主功能分頁</h3>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -1091,7 +1311,8 @@ RSS；Podcast、新聞、SBL
 </tr>
 </tbody>
 </table>
-<h4 id="鍵盤快捷鍵">鍵盤快捷鍵</h4>
+<section id="鍵盤快捷鍵" class="level4">
+<h4>鍵盤快捷鍵</h4>
 <ul>
 <li><code>Cmd/Ctrl + 1</code> 大盤總覽</li>
 <li><code>Cmd/Ctrl + 2</code> 主題總覽</li>
@@ -1105,7 +1326,10 @@ RSS；Podcast、新聞、SBL
 <li><code>Cmd/Ctrl + 0</code> 說明 &amp; 版本日誌</li>
 </ul>
 <p>按住 <code>Cmd/Ctrl</code> 會在分頁列上顯示快捷鍵數字。</p>
-<h3 id="左側主題分類0123">左側主題分類（01–23）</h3>
+</section>
+</section>
+<section id="左側主題分類0123" class="level3">
+<h3>左側主題分類（01–23）</h3>
 <ul>
 <li>v15.2 起新增 AI factory 研究標籤：核心10、Energy +
 Infrastructure、AI factory 零組件重估鏈、台積電外溢鏈、Models +
@@ -1170,8 +1394,10 @@ ETF、電信與防守型配息個股；<code>景氣高息觀察</code>
 </ul>
 </details>
 <hr />
-<h2 id="v18.0-pcbabfccl-原料供應鏈2026-07-19">v18.0 PCB／ABF／CCL
-原料供應鏈（2026-07-19）</h2>
+</section>
+</section>
+<section id="v18.0-pcbabfccl-原料供應鏈2026-07-19" class="level2">
+<h2>v18.0 PCB／ABF／CCL 原料供應鏈（2026-07-19）</h2>
 <ul>
 <li><code>PCB</code> 主題新增 19 檔原料與需求驗證名單，依「玻纖紗／布 →
 銅箔＋高速樹脂／添加劑 → CCL → ABF
@@ -1196,8 +1422,9 @@ href="https://www.qualipoly.com/zh-tw/product.html">國精化產品頁</a>。規
 與 Web App 共用同一面板；Web 仍遵守
 <code>same-origin-snapshot-only</code>，不額外跨站抓取。</li>
 </ul>
-<h2 id="v17.9-收盤後同步與資料可靠度中心2026-07-18">v17.9
-收盤後同步與資料可靠度中心（2026-07-18）</h2>
+</section>
+<section id="v17.9-收盤後同步與資料可靠度中心2026-07-18" class="level2">
+<h2>v17.9 收盤後同步與資料可靠度中心（2026-07-18）</h2>
 <ul>
 <li>使用者主要情境改為「收盤後研究」：開啟 App
 只讀本機快取，停用開頁雷達跨站更新、盤中 5／10／15
@@ -1221,8 +1448,9 @@ exponential backoff + jitter，避免失敗來源形成重試風暴。</li>
 13
 個分頁全部維持直接可見；資料健康頁先顯示覆蓋率與失敗摘要，來源明細、效能診斷、版本日誌與來源表再按需展開。</li>
 </ul>
-<h2 id="v17.8-aws-供應鏈與來源分層2026-07-18">v17.8 AWS
-供應鏈與來源分層（2026-07-18）</h2>
+</section>
+<section id="v17.8-aws-供應鏈與來源分層2026-07-18" class="level2">
+<h2>v17.8 AWS 供應鏈與來源分層（2026-07-18）</h2>
 <ul>
 <li>新增獨立 <code>AWS 供應鏈</code> 主題，依晶片／ASIC、ODM／AI
 伺服器、電源、網通、散熱、PCB、CCL／PCB、機構件與 BBU 九個環節整理 11
@@ -1244,8 +1472,9 @@ Actions 延遲快照；Extension 才能依 host permissions
 跨站更新。兩者能力不同，不能把 Web 的跨站限制誤判成單一 parser
 故障。</li>
 </ul>
-<h2 id="v17.7-顯示與執行效能優化2026-07-17">v17.7
-顯示與執行效能優化（2026-07-17）</h2>
+</section>
+<section id="v17.7-顯示與執行效能優化2026-07-17" class="level2">
+<h2>v17.7 顯示與執行效能優化（2026-07-17）</h2>
 <ul>
 <li>Extension 與 GitHub Pages Web App
 共用的設備股卡改成「關鍵數字先看、說明按需展開」：六檔卡片保留股價／累計營收／EPS
@@ -1264,8 +1493,9 @@ visibility、快取命中與營收分段狀態 gates。</li>
 1,627ms（預算 2,500ms），六檔設備股、全分頁、手機導覽、外部連結、PWA
 同來源快照與既有資料品質 gates 均為 <code>ok:true</code>。</li>
 </ul>
-<h2 id="v17.6-股價-基本面脫鉤檢查2026-07-17">v17.6 股價 ×
-基本面脫鉤檢查（2026-07-17）</h2>
+</section>
+<section id="v17.6-股價-基本面脫鉤檢查2026-07-17" class="level2">
+<h2>v17.6 股價 × 基本面脫鉤檢查（2026-07-17）</h2>
 <ul>
 <li>設備股卡與一般「公司體質快篩」新增同期間的股價／基本面比較。累計營收以同月份集合計算；股價採前一年底到最新累計營收月份月底，避免拿不同期間硬比。</li>
 <li>警示規則不把單一數字當結論：股價漲幅至少
@@ -1290,8 +1520,10 @@ href="https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=20260601&amp;st
 <li>警示會要求回查 EPS
 是否上修、毛利率／營益率、訂單、產能與比較基期；這是估值與市場預期的風險提示，不等同基本面造假、確定賣出訊號或投資建議。手機版維持單欄卡片、可讀的三欄數字與安全官方來源連結。</li>
 </ul>
-<h2 id="v17.5-台積法說後設備股研究-手機-pwa2026-07-17">v17.5
-台積法說後設備股研究 / 手機 PWA（2026-07-17）</h2>
+</section>
+<section id="v17.5-台積法說後設備股研究-手機-pwa2026-07-17"
+class="level2">
+<h2>v17.5 台積法說後設備股研究 / 手機 PWA（2026-07-17）</h2>
 <ul>
 <li>「台積電相關」主題新增法說後設備股研究卡：京鼎 3413、帆宣 6196、萬潤
 6187、鴻勁 7769、中砂 1560、昇陽半導體
@@ -1323,8 +1555,10 @@ mobile collapse gate；除權息 fixture
 改用動態未來日期，避免測試日期過後出現假失敗。32-file Pages artifact
 與完整 project-subpath smoke 均通過。</li>
 </ul>
-<h2 id="v17.4-web-快照邊界-chrome-cors-修正2026-07-14">v17.4 Web
-快照邊界 / Chrome CORS 修正（2026-07-14）</h2>
+</section>
+<section id="v17.4-web-快照邊界-chrome-cors-修正2026-07-14"
+class="level2">
+<h2>v17.4 Web 快照邊界 / Chrome CORS 修正（2026-07-14）</h2>
 <ul>
 <li>實際在 GitHub Pages 用 Chrome
 長時間驗證時，發現畫面雖能讀到快照，仍會啟動 extension 專用的
@@ -1345,9 +1579,12 @@ worker 與跨站更新功能；Web runtime 的限制不會停用 extension
 政策、啟動期間零跨站資料嘗試、網頁控制項狀態與同來源快照可讀，避免 CORS
 重試風暴復發。</li>
 </ul>
-<h2
-id="v17.3-github-pages-延遲快照-安全外部連結-自動發布2026-07-13">v17.3
-GitHub Pages 延遲快照 / 安全外部連結 / 自動發布（2026-07-13）</h2>
+</section>
+<section
+id="v17.3-github-pages-延遲快照-安全外部連結-自動發布2026-07-13"
+class="level2">
+<h2>v17.3 GitHub Pages 延遲快照 / 安全外部連結 /
+自動發布（2026-07-13）</h2>
 <ul>
 <li>公開網站的大盤行情改讀同來源
 <code>data/live_market.json</code>，不再從 iPhone / iPad / Chrome
@@ -1371,8 +1608,11 @@ artifact；公開倉庫使用最小 <code>pages: write</code> /
 延遲，網站清楚標示「非逐筆即時行情」、快照產生時間與行情更新時間；交易判讀仍需開官方
 / 第二來源交叉核對。</li>
 </ul>
-<h2 id="v17.2-大盤作戰中樞-雷達採信層-youtube-線型框架2026-07-09">v17.2
-大盤作戰中樞 / 雷達採信層 / YouTube 線型框架（2026-07-09）</h2>
+</section>
+<section id="v17.2-大盤作戰中樞-雷達採信層-youtube-線型框架2026-07-09"
+class="level2">
+<h2>v17.2 大盤作戰中樞 / 雷達採信層 / YouTube
+線型框架（2026-07-09）</h2>
 <ul>
 <li>盤前作戰中樞：大盤第一屏改成四步驟摘要——大盤風險、今日主線族群、目前族群、目前個股；點主線族群可切主題，點「個股研究
 / 線型籌碼」可回單檔，讓大盤 → 族群 → 個股的切換邏輯固定。</li>
@@ -1390,8 +1630,10 @@ framework-only，需指定影片逐字稿與官方 /
 頂層 version 同步為 <code>17.2</code>，避免內建 seed
 顯示舊版造成混淆。</li>
 </ul>
-<h2 id="v17.1-30-年增門檻-利空判斷框架-持股調整2026-07-07">v17.1 30%
-年增門檻 / 利空判斷框架 / 持股調整（2026-07-07）</h2>
+</section>
+<section id="v17.1-30-年增門檻-利空判斷框架-持股調整2026-07-07"
+class="level2">
+<h2>v17.1 30% 年增門檻 / 利空判斷框架 / 持股調整（2026-07-07）</h2>
 <ul>
 <li>持股調整（使用者指定）：持股 seed 改為指定 16 檔——金寶 2312、華通
 2313、台積電 2330、南亞科 2408、大立光 3008、欣興 3037、穩懋 3105、健策
@@ -1424,8 +1666,11 @@ ETF 專屬斷言）、30% 門檻卡與營收「有沒有成長」gate（fixture 
 待與你確認定義（股價可望破萬的高價候選？名單來源？）後再入觀察名單（見
 TODO v17.1）。</li>
 </ul>
-<h2 id="v17.0-大改版資訊分層大盤-今日族群-單一族群-個股2026-07-07">v17.0
-大改版：資訊分層（大盤 / 今日族群 / 單一族群 / 個股）（2026-07-07）</h2>
+</section>
+<section id="v17.0-大改版資訊分層大盤-今日族群-單一族群-個股2026-07-07"
+class="level2">
+<h2>v17.0 大改版：資訊分層（大盤 / 今日族群 / 單一族群 /
+個股）（2026-07-07）</h2>
 <ul>
 <li>使用者回饋：extension 把個股、族群、大盤的東西混在一起，很亂。v17
 把資訊依「由大到小」分層，打開先看大盤 → 今日族群 → 單一族群 → 個股：
@@ -1455,7 +1700,9 @@ themeSummary / themeRegime
 overview 半段（已集中大盤）；持股作戰室與產業趨勢雷達 gate
 改指向大盤總覽。</li>
 </ul>
-<h2 id="v16.10-優化2026-07-06">v16.10 優化（2026-07-06）</h2>
+</section>
+<section id="v16.10-優化2026-07-06" class="level2">
+<h2>v16.10 優化（2026-07-06）</h2>
 <ul>
 <li>合理本益比價位估算（使用者問：怎麼評估合理 PE
 落在哪個價位？要用河流圖嗎）：個股營收「公司體質快篩」新增「合理價估算（EPS
@@ -1485,7 +1732,9 @@ gate、先探族群標籤（bbuTrio /
 memoryOsat）與主題歸類（4931→thermal、8131→memory）、新股
 universe。</li>
 </ul>
-<h2 id="v16.9-優化2026-07-06">v16.9 優化（2026-07-06）</h2>
+</section>
+<section id="v16.9-優化2026-07-06" class="level2">
+<h2>v16.9 優化（2026-07-06）</h2>
 <ul>
 <li>除權息日曆全市場（使用者回饋：除權息檔數太少、只抓股池無法找新標的）：TWSE
 / TPEx 官方預告 parser
@@ -1517,7 +1766,9 @@ PE / 近四季殖利率 / 累計營收年增）、獲利三率（毛利 / 營益
 tracked=false + ★ + 範圍切換隱藏）、<code>sanitizeSecurityName</code>
 消毒 fixture、公司體質快篩卡 gate、新股池 universe 檢查。</li>
 </ul>
-<h2 id="v16.8-優化2026-07-05">v16.8 優化（2026-07-05）</h2>
+</section>
+<section id="v16.8-優化2026-07-05" class="level2">
+<h2>v16.8 優化（2026-07-05）</h2>
 <ul>
 <li>更新入口整併（使用者回饋：一下完整更新一下快速更新一下雷達更新，太亂）：
 <ul>
@@ -1536,7 +1787,9 @@ ETF 持股）；兩顆按鈕 tooltip 重寫，分工明確。</li>
 <li>Smoke coverage：智慧更新 gate（按鈕文字 / tooltip、任務清單涵蓋 11
 個來源、每個任務具 ttl / timestamp / run）。</li>
 </ul>
-<h2 id="v16.7-優化2026-07-04">v16.7 優化（2026-07-04）</h2>
+</section>
+<section id="v16.7-優化2026-07-04" class="level2">
+<h2>v16.7 優化（2026-07-04）</h2>
 <ul>
 <li>營收 5 年比較（使用者需求：要跟過去 5 年比 YoY / MoM / 季增 /
 年增，寫出趨勢）：
@@ -1584,7 +1837,9 @@ TAIEX 日線（6 個月）、追蹤池日線與 VIX 120 天序列<strong>逐日�
 +1.5、今日首筆 fallback）、合一結構
 gate（雷達內含溫度計、全頁僅一個過熱面板）。</li>
 </ul>
-<h2 id="v16.6-優化2026-07-04">v16.6 優化（2026-07-04）</h2>
+</section>
+<section id="v16.6-優化2026-07-04" class="level2">
+<h2>v16.6 優化（2026-07-04）</h2>
 <ul>
 <li>記憶體報價趨勢強化（使用者需求：記憶體重點是趨勢）：
 <ul>
@@ -1622,7 +1877,9 @@ proxy（使用者需求：供應鏈拉貨期）：新增全主題面板（台積
 列明細、長條 SVG）、拉貨動能 fixture（記憶體主題 4 檔樣本、轉正比率
 75%）、schema normalize 舊快取防禦斷言。</li>
 </ul>
-<h2 id="v16.5-優化2026-07-04">v16.5 優化（2026-07-04）</h2>
+</section>
+<section id="v16.5-優化2026-07-04" class="level2">
+<h2>v16.5 優化（2026-07-04）</h2>
 <ul>
 <li>資訊減噪「摘要優先、詳表按需」補完三分頁（延續 v15.7–v16.0 模式）：
 <ul>
@@ -1661,7 +1918,9 @@ textLength 預算：催化劑 1200 / 總經 12000 / 標的找尋 16000）、cano
 placement audit；標的找尋 gate 改為「載入完整詳表」後斷言勝率 proxy
 面板與歷史校準。</li>
 </ul>
-<h2 id="v16.4-優化2026-07-03">v16.4 優化（2026-07-03）</h2>
+</section>
+<section id="v16.4-優化2026-07-03" class="level2">
+<h2>v16.4 優化（2026-07-03）</h2>
 <ul>
 <li>除息行為分析新增「填息 proxy」：逐次除息事件計算「除息日起第 N
 個交易日收盤 ≥ 除息前收盤」（Yahoo 未還原收盤、Tier 2；掃描上限 60
@@ -1687,7 +1946,9 @@ Goodinfo 股利政策連結交叉核對，不一致以待複核處理。</li>
 年均殖利率斷言、legacy 舊 schema record gate、DOM gate 檢查「填息 /
 息前20日」表頭與口徑註解。</li>
 </ul>
-<h2 id="v16.3-優化2026-07-02">v16.3 優化（2026-07-02）</h2>
+</section>
+<section id="v16.3-優化2026-07-02" class="level2">
+<h2>v16.3 優化（2026-07-02）</h2>
 <ul>
 <li>新增「個股營收」分頁（頂部導覽、個股研究旁）：輸入股號或點目前持股，一秒前往月營收
 / 三率 / EPS / 股利外部頁面。連結涵蓋 MOPS 官方、財報狗、玩股網
@@ -1746,7 +2007,9 @@ proxy 研究排序；明示不是買進訊號，並附 TWSE T86 / TPEx
 fixture（年配開高傾向含「買黑不買紅」提示、上櫃單樣本開低傾向含「待複核」與樣本不足）、雷達關鍵利空檢查與月份季節性
 gate、外資連續買超 synthetic fixture（4 日連買 540 張）。</li>
 </ul>
-<h2 id="v16.2-優化2026-07-01">v16.2 優化（2026-07-01）</h2>
+</section>
+<section id="v16.2-優化2026-07-01" class="level2">
+<h2>v16.2 優化（2026-07-01）</h2>
 <ul>
 <li>台灣用語整理：目前使用者可見文案統一使用「更新、初始畫面、儲存、資料、前往、完整更新」等台灣慣用詞；已移除不合台灣慣用的舊詞。</li>
 <li>夜盤連結修正：來源
@@ -1768,7 +2031,9 @@ WantGoo WTXP 點擊時會直接開新分頁；全頁 <code>&lt;a&gt;</code>
 <li>Smoke coverage：新增 TXF inline link 點擊會走外部連結 handler 的
 gate，並把雷達文案 gate 改為「雷達自動更新」。</li>
 </ul>
-<h2 id="v16.1-優化2026-06-30">v16.1 優化（2026-06-30）</h2>
+</section>
+<section id="v16.1-優化2026-06-30" class="level2">
+<h2>v16.1 優化（2026-06-30）</h2>
 <ul>
 <li>急殺雷達重做更新邏輯：大盤總覽開啟時會自動用 TTL 輕量抓「大盤 / 夜盤
 / 美股、TAIFEX 期貨 / P-C、總經 / VIX / 融資、三大法人前
@@ -1782,7 +2047,9 @@ chip，位置在台股大盤卡下方、道瓊工業指數左邊那張卡片內�
 <li>Smoke coverage：新增 TXF inline card
 links、急殺雷達自動更新狀態與重新抓取按鈕 gate。</li>
 </ul>
-<h2 id="v16.0-優化2026-06-30">v16.0 優化（2026-06-30）</h2>
+</section>
+<section id="v16.0-優化2026-06-30" class="level2">
+<h2>v16.0 優化（2026-06-30）</h2>
 <ul>
 <li>初始畫面加速：啟動時不再等待
 <code>research_data.json</code>、同步資料夾與 IndexedDB
@@ -1812,7 +2079,9 @@ gate 存在，再點擊載入並驗證 24 檔月營收 / 三率診斷仍完整�
 固定檢查 CMoney TXF1 / WantGoo WTXP 深連位於 market
 card，不在頂部期貨列；除權息 gate 增加同日多檔 overflow 檢查。</li>
 </ul>
-<h2 id="v15.9-優化2026-06-28">v15.9 優化（2026-06-28）</h2>
+</section>
+<section id="v15.9-優化2026-06-28" class="level2">
+<h2>v15.9 優化（2026-06-28）</h2>
 <ul>
 <li>TXF 夜盤連結修正：台指期夜盤超連結改指向 TAIFEX 官方
 <code>AfterHoursSession/EquityIndices/FuturesDomestic</code>
@@ -1833,7 +2102,9 @@ http/https、會去重並加上 smoke 可檢查的
 Tide、<code>daily_brief.json</code>、<code>daily_digest.json</code>、TWSE
 與 TPEx 連結。</li>
 </ul>
-<h2 id="v15.8-優化2026-06-28">v15.8 優化（2026-06-28）</h2>
+</section>
+<section id="v15.8-優化2026-06-28" class="level2">
+<h2>v15.8 優化（2026-06-28）</h2>
 <ul>
 <li>籌碼卡再合併：technical tab
 初始畫面移除「個股籌碼強弱」卡，保留單一「技術 ×
@@ -1851,7 +2122,9 @@ compact summary；大盤總覽與手動「更新 Tide」仍保留完整更新。
 technical tab
 有載入按鈕、沒有預設渲染個股籌碼強弱卡，也沒有三大法人多週期完整表。</li>
 </ul>
-<h2 id="v15.7-優化2026-06-28">v15.7 優化（2026-06-28）</h2>
+</section>
+<section id="v15.7-優化2026-06-28" class="level2">
+<h2>v15.7 優化（2026-06-28）</h2>
 <ul>
 <li>技術 / 籌碼切頁加速：<code>renderInstitutionalTab()</code> 新增
 compact mode，technical tab
@@ -1869,7 +2142,9 @@ compact mode，technical tab
 technical tab
 有「籌碼明細已收斂」提示，且不載入三大法人多週期完整表。</li>
 </ul>
-<h2 id="v15.6-優化2026-06-28">v15.6 優化（2026-06-28）</h2>
+</section>
+<section id="v15.6-優化2026-06-28" class="level2">
+<h2>v15.6 優化（2026-06-28）</h2>
 <ul>
 <li>Tide 情緒快照：延伸 v15.5 Tide 整合，新增
 <code>daily_digest.json</code> parser，讀取 panic
@@ -1885,7 +2160,9 @@ Heat Score；UI 標示待複核，並保留 Tide、TWSE T86 與 TPEx
 UI，確認 panic index、避風港、異常買賣與 <code>daily_digest.json</code>
 連結存在。</li>
 </ul>
-<h2 id="v15.5-優化2026-06-27">v15.5 優化（2026-06-27）</h2>
+</section>
+<section id="v15.5-優化2026-06-27" class="level2">
+<h2>v15.5 優化（2026-06-27）</h2>
 <ul>
 <li>Tide 網頁解析整合：新增「Tide 板塊資金潮汐」面板，讀取 Tide 公開
 JSON 的板塊法人資金流向、每日摘要與 asOf / fetchedAt。</li>
@@ -1899,7 +2176,9 @@ proxy，不作官方結論；面板提供 Tide 原站、TWSE T86 與 TPEx
 <li>Smoke coverage：web smoke 新增 synthetic Tide parser / UI
 gate，確認板塊排序、待複核文案與來源連結存在。</li>
 </ul>
-<h2 id="v15.4-優化2026-06-25">v15.4 優化（2026-06-25）</h2>
+</section>
+<section id="v15.4-優化2026-06-25" class="level2">
+<h2>v15.4 優化（2026-06-25）</h2>
 <ul>
 <li>除權息日曆：新增獨立分頁，以 TWSE TWT48U 與 TPEx
 <code>tpex_exright_prepost</code> 顯示追蹤股 / ETF
@@ -1913,7 +2192,9 @@ DDR4 / DDR5 公開報價。</li>
 <li>TXF 直連：期貨水位列新增「台指期夜盤 TXF」超連結，直接開啟 TAIFEX
 官方即時行情。</li>
 </ul>
-<h2 id="v15.3-優化2026-06-24">v15.3 優化（2026-06-24）</h2>
+</section>
+<section id="v15.3-優化2026-06-24" class="level2">
+<h2>v15.3 優化（2026-06-24）</h2>
 <ul>
 <li>現行方法收斂：量化篩選、個股研究、技術與籌碼畫面移除 v8.x–v13.x
 並列標題，版本差異只保留在 changelog。</li>
@@ -1928,7 +2209,9 @@ cache policy。</li>
 <li>資料狀態透明化：持股作戰室明示月營收為官方資料自動解析、季報三率為
 CSV 匯入，並顯示基線 / IndexedDB / data 同步狀態。</li>
 </ul>
-<h2 id="v15.2-優化2026-06-22">v15.2 優化（2026-06-22）</h2>
+</section>
+<section id="v15.2-優化2026-06-22" class="level2">
+<h2>v15.2 優化（2026-06-22）</h2>
 <ul>
 <li>AI factory 研究地圖：新增核心10、Energy + Infrastructure、AI factory
 零組件重估鏈、台積電外溢鏈、Models + Applications、下一波三層與未發酵 10
@@ -1946,7 +2229,9 @@ metadata：凡甲、AES-KY、迎廣、南俊國際、安碁資訊、叡揚、敦
 labels、優先級代表股、未發酵方向、MOSFET 排序、HVDC / Driver IC / PMIC
 邊界與新股 metadata 檢查。</li>
 </ul>
-<h2 id="v15.1-優化2026-06-21">v15.1 優化（2026-06-21）</h2>
+</section>
+<section id="v15.1-優化2026-06-21" class="level2">
+<h2>v15.1 優化（2026-06-21）</h2>
 <ul>
 <li>季財報三率資料層：新增 <code>financialRatioMeta</code> 與三率 CSV
 parser，可吃「公司代號、期間、營業收入、營業毛利、營業利益、本期淨利」或已計算的毛利率
@@ -1962,7 +2247,9 @@ BIS、逾放比、覆蓋率、淨利差、承保損益與 ROE / PBR；ETF
 fixture，驗證 6669
 兩季資料可判成「三率三升」，並檢查三率診斷表列數與匯入入口。</li>
 </ul>
-<h2 id="v15.0-優化2026-06-21">v15.0 優化（2026-06-21）</h2>
+</section>
+<section id="v15.0-優化2026-06-21" class="level2">
+<h2>v15.0 優化（2026-06-21）</h2>
 <ul>
 <li>持股月營收缺口診斷：持股作戰室新增「月營收缺口診斷」表，逐檔列出已取得、缺月營收、尚未更新、ETF
 / 不適用，並顯示月份、當月營收、YoY / MoM、來源與原因 / 下一步。</li>
@@ -1976,7 +2263,9 @@ gate，檢查「月營收缺口診斷」、逐檔列數、ETF 不適用、MOPS
 <code>chrome://extensions</code> 重新載入後確認
 v15.0、持股診斷表、月營收更新與 6669 持股流程。</li>
 </ul>
-<h2 id="v14.9-優化2026-06-20">v14.9 優化（2026-06-20）</h2>
+</section>
+<section id="v14.9-優化2026-06-20" class="level2">
+<h2>v14.9 優化（2026-06-20）</h2>
 <ul>
 <li>月營收來源修正：月營收改以 MOPS 官方 open data
 <code>t187ap05_L.csv</code> / <code>t187ap05_O.csv</code> 為 canonical
@@ -1993,7 +2282,9 @@ time、法人報告片段與產業報告搜尋。</li>
 <li>Smoke coverage：新增 MOPS 月營收 CSV parser fixture、6669 UI 加入 /
 切換持股流程與 MOPS 來源文字檢查。</li>
 </ul>
-<h2 id="v14.8-優化2026-06-20">v14.8 優化（2026-06-20）</h2>
+</section>
+<section id="v14.8-優化2026-06-20" class="level2">
+<h2>v14.8 優化（2026-06-20）</h2>
 <ul>
 <li>持股營收動能：持股作戰室新增「持股營收動能」卡，優先顯示目前持股的月營收
 YoY / MoM、連三月改善或轉弱與缺資料狀態。</li>
@@ -2004,7 +2295,9 @@ YoY / MoM、連三月改善或轉弱與缺資料狀態。</li>
 標示「三率待補」，不以月營收替代三率結論。</li>
 <li>Smoke coverage：持股作戰室 smoke 新增營收卡與三率邊界檢查。</li>
 </ul>
-<h2 id="v14.7-優化2026-06-19">v14.7 優化（2026-06-19）</h2>
+</section>
+<section id="v14.7-優化2026-06-19" class="level2">
+<h2>v14.7 優化（2026-06-19）</h2>
 <ul>
 <li>金融股獨立股池：左側新增「金融股」主題，位置放在「防守現金流」上方，收錄富邦金、國泰金、中信金、兆豐金、玉山金、第一金、合庫金、元大金、臺企銀、新產。</li>
 <li>好老闆邊界修正：金融股不再出現在「好老闆」候選分組與候選
@@ -2017,7 +2310,9 @@ ETF、電信與防守型配息個股；金融股若作存股研究，改由獨�
 不含金融股、金融股不混入防守現金流或退休核心、左側序號為「15.
 金融股」「16. 防守現金流」。</li>
 </ul>
-<h2 id="v14.6-優化2026-06-18">v14.6 優化（2026-06-18）</h2>
+</section>
+<section id="v14.6-優化2026-06-18" class="level2">
+<h2>v14.6 優化（2026-06-18）</h2>
 <ul>
 <li>候選分組：好老闆候選池曾新增分組摘要，將原本科技 / 工業 /
 製造候選與新金融股候選分開看；v14.7 起金融股已拆為獨立股池。</li>
@@ -2029,7 +2324,9 @@ CSV：候選匯出新增「候選分組」欄位，方便匯出後單獨篩金�
 <li>Smoke coverage：good boss gate 擴充檢查候選分組、金融股、RBC / BIS
 文案與十檔金融候選代碼。</li>
 </ul>
-<h2 id="v14.5-優化2026-06-18">v14.5 優化（2026-06-18）</h2>
+</section>
+<section id="v14.5-優化2026-06-18" class="level2">
+<h2>v14.5 優化（2026-06-18）</h2>
 <ul>
 <li>候選擴充池：好老闆面板新增待複核候選清單，收錄聯發科、聯詠、亞德客-KY、旭隼、信邦、儒鴻、精測、華碩、和碩。</li>
 <li>候選邊界：候選不列入核心好老闆股池；每檔都標示待複核候選、候選型態、為何候選、主要風險、來源註記與官方核對入口。</li>
@@ -2040,7 +2337,9 @@ CSV」，輸出候選狀態、複核優先分、風險等級、複核項目、�
 <li>Smoke coverage：good boss gate
 擴充檢查候選擴充池、待複核候選、匯出候選 CSV 與九檔候選代碼。</li>
 </ul>
-<h2 id="v14.4-優化2026-06-18">v14.4 優化（2026-06-18）</h2>
+</section>
+<section id="v14.4-優化2026-06-18" class="level2">
+<h2>v14.4 優化（2026-06-18）</h2>
 <ul>
 <li>經營品質矩陣：好老闆面板新增文化、接班、資本配置、技術壁壘、坦率度五軸研究分。</li>
 <li>複核優先級：結合風險等級、資料覆蓋、fallback
@@ -2052,7 +2351,9 @@ CSV」，輸出研究分、五軸檢核、資料覆蓋、複核項目、下一�
 <li>Smoke coverage：good boss gate
 擴充檢查經營品質矩陣、匯出按鈕、研究分、複核優先與 CSV 相關文案。</li>
 </ul>
-<h2 id="v14.3-優化2026-06-17">v14.3 優化（2026-06-17）</h2>
+</section>
+<section id="v14.3-優化2026-06-17" class="level2">
+<h2>v14.3 優化（2026-06-17）</h2>
 <ul>
 <li>好老闆主題：左側新增「好老闆」，收錄台積電、大立光、致新、台達電、研華、川湖。</li>
 <li>專屬研究表：選取好老闆主題時，主題總覽新增「好老闆研究框架」表格，顯示治理型態、為何列入、主要風險與核對入口。</li>
@@ -2065,7 +2366,9 @@ EPS、配息、公司治理評鑑等數字只作研究註記，UI 明確要求�
 filter、股池管理選項、好老闆 panel、六檔股票、MOPS
 核對入口與卡片清單都有渲染。</li>
 </ul>
-<h2 id="v14.2-優化2026-06-17">v14.2 優化（2026-06-17）</h2>
+</section>
+<section id="v14.2-優化2026-06-17" class="level2">
+<h2>v14.2 優化（2026-06-17）</h2>
 <ul>
 <li>盤前主線行動佇列：產業趨勢雷達新增 action queue，依
 regime、score、confidence、缺資料與持股曝險產生主線候選、升溫觀察、持股風控、不追價、降權觀察與補資料排序。</li>
@@ -2076,7 +2379,9 @@ CSV」，輸出行動分類、優先分、Regime、輪動、confidence、持股�
 <li>Smoke coverage：web smoke 擴充 theme regime radar
 gate，檢查盤前主線行動佇列、匯出主線 CSV 與 action rows 渲染。</li>
 </ul>
-<h2 id="v14.1-優化2026-06-17">v14.1 優化（2026-06-17）</h2>
+</section>
+<section id="v14.1-優化2026-06-17" class="level2">
+<h2>v14.1 優化（2026-06-17）</h2>
 <ul>
 <li>產業趨勢雷達：主題總覽在類股概況下方新增 regime
 面板，整合報價廣度、日線 MA20 / MA60、RS、月營收中位 YoY、Chip
@@ -2092,7 +2397,9 @@ scoring 從 <code>main.js</code> 拆出為可重用純彙總模組。</li>
 gate，確認產業趨勢雷達、Top
 6、Regime、輪動型態、資料信心、領漲候選與弱勢待修復都有渲染。</li>
 </ul>
-<h2 id="v14.0-優化2026-06-16">v14.0 優化（2026-06-16）</h2>
+</section>
+<section id="v14.0-優化2026-06-16" class="level2">
+<h2>v14.0 優化（2026-06-16）</h2>
 <ul>
 <li>批次補資料佇列：補資料優先清單上方新增操作入口，依目前 worklist
 自動彙整補報價、補日線、補月營收、補估值、補籌碼與分類待複核項目。</li>
@@ -2105,7 +2412,9 @@ gate，確認產業趨勢雷達、Top
 新增批次補資料佇列與補報價 / 補日線 /
 補月營收按鈕檢查；驗證不點擊更新按鈕，避免 smoke 觸發網路抓取。</li>
 </ul>
-<h2 id="v13.9-優化2026-06-16">v13.9 優化（2026-06-16）</h2>
+</section>
+<section id="v13.9-優化2026-06-16" class="level2">
+<h2>v13.9 優化（2026-06-16）</h2>
 <ul>
 <li>補資料優先清單：分類稽核表上方新增 worklist，依分類待複核、缺報價 /
 日線 / 月營收 / 估值 / 法人 / 融資券、fallback 與 low confidence
@@ -2117,7 +2426,9 @@ CSV」，輸出優先級、優先分、缺口、下一步與官方核對入口�
 <li>Smoke coverage：classification audit UI gate
 同步檢查補資料清單、主要缺口、下一步與 worklist 匯出按鈕。</li>
 </ul>
-<h2 id="v13.8-優化2026-06-15">v13.8 優化（2026-06-15）</h2>
+</section>
+<section id="v13.8-優化2026-06-15" class="level2">
+<h2>v13.8 優化（2026-06-15）</h2>
 <ul>
 <li>主題分類稽核表：主題總覽新增 Goodinfo-style 分類稽核，逐檔標示核心 /
 延伸 / 待複核、主題子分類、分類理由、資料覆蓋與 confidence。</li>
@@ -2128,7 +2439,9 @@ CSV」，輸出優先級、優先分、缺口、下一步與官方核對入口�
 <li>Smoke coverage：web smoke 新增 DOM gate，檢查分類稽核表、MOPS /
 官方核對入口與匯出按鈕存在。</li>
 </ul>
-<h2 id="v13.7-優化2026-06-15">v13.7 優化（2026-06-15）</h2>
+</section>
+<section id="v13.7-優化2026-06-15" class="level2">
+<h2>v13.7 優化（2026-06-15）</h2>
 <ul>
 <li>YouTube 心得資料層：新增
 <code>data/youtube_market_lessons.json</code>，Podcast 頁優先讀取此
@@ -2144,7 +2457,9 @@ confidence、transcriptStatus 與建議交叉比對項。</li>
 <li>Smoke coverage：web smoke 持續檢查 YouTube panel，並要求資料層 /
 pipeline / 交叉比對文案存在。</li>
 </ul>
-<h2 id="v13.6-優化2026-06-14">v13.6 優化（2026-06-14）</h2>
+</section>
+<section id="v13.6-優化2026-06-14" class="level2">
+<h2>v13.6 優化（2026-06-14）</h2>
 <ul>
 <li>YouTube 股市心得來源卡：Podcast 頁新增使用者指定影片區，收錄 Gooaye
 股癌 EP670 / EP669、李兆華River 週報 ep259 與 Gooaye channel 入口。</li>
@@ -2158,7 +2473,9 @@ pipeline / 交叉比對文案存在。</li>
 <li>Smoke coverage：web smoke 新增 Podcast YouTube panel gate，檢查
 Gooaye、EP670、EP669、43000、待轉錄、metadata 與交叉比對文案。</li>
 </ul>
-<h2 id="v13.5-優化2026-06-14">v13.5 優化（2026-06-14）</h2>
+</section>
+<section id="v13.5-優化2026-06-14" class="level2">
+<h2>v13.5 優化（2026-06-14）</h2>
 <ul>
 <li>總經來源稽核：總經頁頂部新增 source audit panel，集中列出會影響
 Market Heat、Fed regime
@@ -2172,7 +2489,9 @@ Treasury、Cboe、CBC、TWSE）與市場預期來源（CME FedWatch）分開顯�
 <li>Smoke coverage：Fed policy synthetic gate 同步檢查總經來源稽核
 panel，確認 CME FedWatch fallback 會出現在稽核表。</li>
 </ul>
-<h2 id="v13.4-優化2026-06-14">v13.4 優化（2026-06-14）</h2>
+</section>
+<section id="v13.4-優化2026-06-14" class="level2">
+<h2>v13.4 優化（2026-06-14）</h2>
 <ul>
 <li>CME FedWatch fallback：CME 即時端點失敗時，若 7
 天內有最近一次成功解析的 FedWatch
@@ -2189,7 +2508,9 @@ CME；若沒有可用快取，仍列為缺資料而不是低風險。</li>
 檢查，驗證總經頁顯示「政策落差趨勢」「市場相對 Fed 更鴿」與 CME
 快取狀態。</li>
 </ul>
-<h2 id="v13.3-優化2026-06-14">v13.3 優化（2026-06-14）</h2>
+</section>
+<section id="v13.3-優化2026-06-14" class="level2">
+<h2>v13.3 優化（2026-06-14）</h2>
 <ul>
 <li>FedWatch × 點陣圖：總經頁新增 Fed policy path 面板，分開顯示 CME
 FedWatch 市場預期、Fed SEP / dot plot
@@ -2207,7 +2528,9 @@ SEP。</li>
 synthetic Fed policy regime gate，驗證總經頁 FedWatch × 點陣圖面板與
 Market Heat 的 Fed 政策落差因子。</li>
 </ul>
-<h2 id="v13.2-優化2026-06-09">v13.2 優化（2026-06-09）</h2>
+</section>
+<section id="v13.2-優化2026-06-09" class="level2">
+<h2>v13.2 優化（2026-06-09）</h2>
 <ul>
 <li>左側分類重整：參考 Goodinfo 的類股 /
 概念股掃描邏輯，把分類從單純主題清單推進到可掃描、可待複核的多層股池。</li>
@@ -2223,7 +2546,9 @@ Market Heat 的 Fed 政策落差因子。</li>
 classification audit，驗證重電、景氣高息、防守現金流、PCB / 記憶體 / CPO
 擴充與被動元件降噪。</li>
 </ul>
-<h2 id="v13.1-優化2026-06-09">v13.1 優化（2026-06-09）</h2>
+</section>
+<section id="v13.1-優化2026-06-09" class="level2">
+<h2>v13.1 優化（2026-06-09）</h2>
 <ul>
 <li>K 線 / 漲跌停定義：技術頁新增台股普通交易 10%
 漲跌幅與升降單位試算，說明以當日開盤競價基準 / 參考價格為核心；142
@@ -2239,7 +2564,9 @@ data，不新增啟動網路抓取流程。</li>
 technical education gate，檢查 K 線 / 漲跌停卡、量能 Regime
 卡、個股籌碼強弱卡，以及 142 元試算函式回傳 156 / 128。</li>
 </ul>
-<h2 id="v13.0-優化2026-06-07">v13.0 優化（2026-06-07）</h2>
+</section>
+<section id="v13.0-優化2026-06-07" class="level2">
+<h2>v13.0 優化（2026-06-07）</h2>
 <ul>
 <li>版面載入加速：將原本內嵌在 <code>main.html</code> 的大型版本日誌抽到
 <code>app_files/changelog.html</code>，只在開啟「說明 &amp; 版本日誌」時
@@ -2258,7 +2585,9 @@ gate，並驗證 changelog lazy load、v13.0
 unpacked extension 後人工比對 IndexedDB / <code>chrome.storage</code>
 快取。</li>
 </ul>
-<h2 id="v12.9-優化2026-06-07">v12.9 優化（2026-06-07）</h2>
+</section>
+<section id="v12.9-優化2026-06-07" class="level2">
+<h2>v12.9 優化（2026-06-07）</h2>
 <ul>
 <li>全頁重複稽核：<code>scripts/web_context_smoke.mjs</code>
 會掃主要分頁的標題與 label，排除表格 / 重複卡片 /
@@ -2274,7 +2603,9 @@ helper 從 <code>main.js</code> 拆出；本版不改資料抓取流程。</li>
 smoke 仍受目前 <code>x86_64 / osx-64</code> Rosetta 環境限制，最後仍需在
 Chrome UI 重新載入 unpacked extension 後人工比對。</li>
 </ul>
-<h2 id="v12.8-優化2026-06-07">v12.8 優化（2026-06-07）</h2>
+</section>
+<section id="v12.8-優化2026-06-07" class="level2">
+<h2>v12.8 優化（2026-06-07）</h2>
 <ul>
 <li>籌碼重複提示收斂：技術 ×
 籌碼決策摘要主卡只保留一列「籌碼心態」，大戶 / 散戶 / 連買賣 / 投信認養
@@ -2288,7 +2619,9 @@ derived signals。</li>
 <li>Smoke coverage：web smoke
 新增初始畫面時間預算、籌碼重複提示檢查與展開拆解區存在檢查。</li>
 </ul>
-<h2 id="v12.7-優化2026-06-06">v12.7 優化（2026-06-06）</h2>
+</section>
+<section id="v12.7-優化2026-06-06" class="level2">
+<h2>v12.7 優化（2026-06-06）</h2>
 <ul>
 <li>持股作戰室新增 MA5 / MA20（月線）失守警告：只要目前持股低於 5
 日線或月線，就在作戰室上方直接顯示「目前有問題」。</li>
@@ -2299,7 +2632,9 @@ MA5 / MA20 與最新報價。</li>
 <li>Smoke coverage：web smoke 合成 0050 跌破 MA5 / MA20，要求 UI
 顯示「均線警告」「目前有問題」與該股號。</li>
 </ul>
-<h2 id="v12.6-優化2026-06-06">v12.6 優化（2026-06-06）</h2>
+</section>
+<section id="v12.6-優化2026-06-06" class="level2">
+<h2>v12.6 優化（2026-06-06）</h2>
 <ul>
 <li>Panic override：慢性平均分數之外新增硬觸發 floor。台指期夜盤
 <code>&lt;= -2%</code> 至少 78、<code>&lt;= -4%</code> 至少
@@ -2320,7 +2655,9 @@ MA5 / MA20 與最新報價。</li>
 <li>Smoke coverage：新增 synthetic 台指期夜盤 <code>-6.68%</code>
 測試，必須觸發 panic override 且總分 <code>&gt;=95</code>。</li>
 </ul>
-<h2 id="v12.5-優化2026-06-06">v12.5 優化（2026-06-06）</h2>
+</section>
+<section id="v12.5-優化2026-06-06" class="level2">
+<h2>v12.5 優化（2026-06-06）</h2>
 <ul>
 <li>大盤急殺風險雷達：放在大盤總覽上方，以大紅字顯示急殺風險分數、風險等級與當下行動提示，協助先保護獲利與降低追價
 / 滿倉風險。</li>
@@ -2333,7 +2670,9 @@ proxy、TWSE / TPEx 法人前 10 賣壓、TWSE 融資水位與融資退潮。</l
 <li>Smoke coverage：<code>scripts/web_context_smoke.mjs</code>
 新增大盤急殺雷達渲染檢查。</li>
 </ul>
-<h2 id="v12.4-優化2026-06-06">v12.4 優化（2026-06-06）</h2>
+</section>
+<section id="v12.4-優化2026-06-06" class="level2">
+<h2>v12.4 優化（2026-06-06）</h2>
 <ul>
 <li>無回應熱修：開啟 extension 時不再自動解析 / 合併完整
 <code>data/state.json</code>；fresh profile 只讀
@@ -2348,7 +2687,9 @@ startup auto refresh 改成 15 秒後分批執行，避免同一秒集中 fetch 
 render。</li>
 </ul>
 <hr />
-<h2 id="v12.3-優化2026-06-05">v12.3 優化（2026-06-05）</h2>
+</section>
+<section id="v12.3-優化2026-06-05" class="level2">
+<h2>v12.3 優化（2026-06-05）</h2>
 <ul>
 <li>初始畫面加速：大盤、總經、處置、Podcast、記憶體報價等自動更新改為啟動後
 idle 延遲，先顯示本機快取與互動畫面。</li>
@@ -2367,7 +2708,9 @@ idle 延遲，先顯示本機快取與互動畫面。</li>
 macOS <code>Icon\r</code> 檔案，刪檔需使用者確認後再清。</li>
 </ul>
 <hr />
-<h2 id="v12.2-優化2026-06-04">v12.2 優化（2026-06-04）</h2>
+</section>
+<section id="v12.2-優化2026-06-04" class="level2">
+<h2>v12.2 優化（2026-06-04）</h2>
 <ul>
 <li>記憶體報價中控：左側點「記憶體」後，主題總覽前段會優先顯示 DDR4 /
 DDR5 現貨、DRAM 合約價與模組現貨表。</li>
@@ -2385,7 +2728,9 @@ HBM4、長約議價、產能排擠與台股映射，避免把 DDR 現貨表誤�
 狀態分開解讀；記憶體分類仍需用月營收、法說、庫存與官方公告交叉複核。</li>
 </ul>
 <hr />
-<h2 id="v12.1-優化2026-06-04">v12.1 優化（2026-06-04）</h2>
+</section>
+<section id="v12.1-優化2026-06-04" class="level2">
+<h2>v12.1 優化（2026-06-04）</h2>
 <ul>
 <li>勝率 proxy 歷史校準：Top 候選會用既有
 <code>backtestPlaybook()</code>（近 1 年、2ATR 停損、3ATR 目標、20
@@ -2407,7 +2752,9 @@ extension smoke；找不到時輸出 JSON 診斷，不會安裝系統依賴。</
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> scripts/extension_native_arm_smoke.mjs</span></code></pre></div>
 <hr />
-<h2 id="v12.0-優化2026-06-04">v12.0 優化（2026-06-04）</h2>
+</section>
+<section id="v12.0-優化2026-06-04" class="level2">
+<h2>v12.0 優化（2026-06-04）</h2>
 <ul>
 <li>勝率研究 proxy：新增
 <code>app_files/analysis_frameworks.js</code>，把研究流程抽象成「預期差
@@ -2433,7 +2780,9 @@ Diversification；交易資料仍以 TWSE / TPEx / MOPS 等 Tier 1
 來源為準。</li>
 </ul>
 <hr />
-<h2 id="v11.9-優化2026-06-04">v11.9 優化（2026-06-04）</h2>
+</section>
+<section id="v11.9-優化2026-06-04" class="level2">
+<h2>v11.9 優化（2026-06-04）</h2>
 <ul>
 <li>重快取 hot subset v2：儲存 <code>chrome.storage</code> /
 <code>data/state.json</code>
@@ -2455,7 +2804,9 @@ health check；若 web / extension 環境不支援 Worker，會記錄
 fallback，不阻斷 UI。</li>
 </ul>
 <hr />
-<h2 id="v11.8-優化2026-06-03">v11.8 優化（2026-06-03）</h2>
+</section>
+<section id="v11.8-優化2026-06-03" class="level2">
+<h2>v11.8 優化（2026-06-03）</h2>
 <ul>
 <li>載入加速：K 線改為 <code>IndexedDB + hot cache</code> 分層。完整 K
 線優先寫入 IndexedDB，<code>chrome.storage</code> /
@@ -2474,7 +2825,9 @@ IndexedDB，下一次儲存只留下 hot K 線，降低重開 extension 時的 J
 state，避免剛更新完立刻關閉時遺失完整 K 線。</li>
 </ul>
 <hr />
-<h2 id="v11.7-優化2026-06-03">v11.7 優化（2026-06-03）</h2>
+</section>
+<section id="v11.7-優化2026-06-03" class="level2">
+<h2>v11.7 優化（2026-06-03）</h2>
 <ul>
 <li>左側分類第 <code>03</code> 改為「台積電相關」；新增第
 <code>06</code>「先進封裝CoWoS/CoPoS」，原第 <code>06</code>「網通 /
@@ -2499,7 +2852,9 @@ state，避免剛更新完立刻關閉時遺失完整 K 線。</li>
 <code>玻璃基板</code>、<code>GCS</code>、<code>Glass Core Substrate</code>、<code>TGV</code>、<code>CoWoS核心設備</code>、<code>CoWoS測試</code>、<code>光電玻璃加工</code>；同一個股可同時顯示一個以上研究標籤。</li>
 </ul>
 <hr />
-<h2 id="v11.6-優化2026-06-02">v11.6 優化（2026-06-02）</h2>
+</section>
+<section id="v11.6-優化2026-06-02" class="level2">
+<h2>v11.6 優化（2026-06-02）</h2>
 <ul>
 <li>將目前持股 preset 更新為使用者指定 24
 檔：<code>0050</code>、<code>00981A</code>、<code>2301</code>、<code>2308</code>、<code>2312</code>、<code>2313</code>、<code>2330</code>、<code>2408</code>、<code>3008</code>、<code>3017</code>、<code>3037</code>、<code>3081</code>、<code>3105</code>、<code>3653</code>、<code>3665</code>、<code>4585</code>、<code>6188</code>、<code>6274</code>、<code>6278</code>、<code>6285</code>、<code>6442</code>、<code>6640</code>、<code>6669</code>、<code>8021</code>。</li>
@@ -2514,7 +2869,9 @@ state，避免剛更新完立刻關閉時遺失完整 K 線。</li>
 bundled <code>data/state.json</code> 補資料，降低初始畫面卡頓。</li>
 </ul>
 <hr />
-<h2 id="v11.5-優化2026-05-29">v11.5 優化（2026-05-29）</h2>
+</section>
+<section id="v11.5-優化2026-05-29" class="level2">
+<h2>v11.5 優化（2026-05-29）</h2>
 <ul>
 <li>在 v11.4 精簡上方分頁後新增
 <code>標的找尋</code>，取代舊比較圖的導覽位置，用於找左側 /
@@ -2530,7 +2887,9 @@ MA5/10/20/60/120/240、RSI、MACD、量能均線、ATR、布林通道、20/60/12
 <li>將 <code>0050 元大台灣50</code> 加入退休存股核心台股曝險，補上 ETF
 基本資訊、官方來源連結與退休現金流頁角色說明。</li>
 </ul>
-<h2 id="v11.4-優化2026-05-28">v11.4 優化（2026-05-28）</h2>
+</section>
+<section id="v11.4-優化2026-05-28" class="level2">
+<h2>v11.4 優化（2026-05-28）</h2>
 <ul>
 <li>縮減上方主分頁，避免「大盤總覽」那排因為選項增加而超出畫面；舊的
 <code>比較圖</code>、<code>估值資料</code>、<code>快照趨勢</code>
@@ -2550,7 +2909,9 @@ PBR / 殖利率資料層保留，仍供個股研究、交易雷達、市場熱�
 <li>快捷鍵同步重排：<code>Cmd/Ctrl + 6</code> 處置股、<code>7</code>
 催化劑、<code>8</code> 總體經濟與風險、<code>0</code> 說明。</li>
 </ul>
-<h2 id="v11.3-優化2026-05-28">v11.3 優化（2026-05-28）</h2>
+</section>
+<section id="v11.3-優化2026-05-28" class="level2">
+<h2>v11.3 優化（2026-05-28）</h2>
 <ul>
 <li>技術分析新增 <code>月季年乖離</code>：同時計算
 MA20（月線）、MA60（季線）、MA240（年線）乖離、方向分位、P90 / P95
@@ -2567,7 +2928,9 @@ MA20（月線）、MA60（季線）、MA240（年線）乖離、方向分位、P
 <code>v11.3</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v11.2-優化2026-05-27">v11.2 優化（2026-05-27）</h2>
+</section>
+<section id="v11.2-優化2026-05-27" class="level2">
+<h2>v11.2 優化（2026-05-27）</h2>
 <ul>
 <li>「月線乖離 /
 減碼紀律」卡新增預設收合的「解讀口徑」，將乖離分位、減碼比例與買回紀律直接寫進
@@ -2580,7 +2943,9 @@ extension 內。</li>
 <code>v11.2</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v11.1-優化2026-05-27">v11.1 優化（2026-05-27）</h2>
+</section>
+<section id="v11.1-優化2026-05-27" class="level2">
+<h2>v11.1 優化（2026-05-27）</h2>
 <ul>
 <li>技術分析新增「乖離水位」：用每檔個股自身近 480 根可用日線的 MA20
 乖離分位判斷水位，避免把台積電與高波動 AI 股套同一個固定百分比。</li>
@@ -2597,7 +2962,9 @@ proxy。</li>
 <code>v11.1</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v11.0-優化2026-05-27">v11.0 優化（2026-05-27）</h2>
+</section>
+<section id="v11.0-優化2026-05-27" class="level2">
+<h2>v11.0 優化（2026-05-27）</h2>
 <ul>
 <li>技術分析 &amp;
 籌碼頁的三大法人逐日買賣超表改成預設收合的「逐日明細（核對用）」，避免
@@ -2609,7 +2976,9 @@ changelog 與共享計劃文件。</li>
 <code>v11.0</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v10.9-優化2026-05-27">v10.9 優化（2026-05-27）</h2>
+</section>
+<section id="v10.9-優化2026-05-27" class="level2">
+<h2>v10.9 優化（2026-05-27）</h2>
 <ul>
 <li>搜尋 debounce 後改用 <code>render({ scope: "active" })</code>：搜尋
 / 清除搜尋時只重繪目前分頁內容，不再每次重畫
@@ -2624,7 +2993,9 @@ render 需求，會保留 full render；active render
 <code>v10.9</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v10.8-優化2026-05-26">v10.8 優化（2026-05-26）</h2>
+</section>
+<section id="v10.8-優化2026-05-26" class="level2">
+<h2>v10.8 優化（2026-05-26）</h2>
 <ul>
 <li><code>filteredStocks()</code>
 新增結果快取：依搜尋字、目前主題與自訂類股加入 /
@@ -2639,7 +3010,9 @@ signature，不再只看物件 key
 <code>v10.8</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v10.7-優化2026-05-26">v10.7 優化（2026-05-26）</h2>
+</section>
+<section id="v10.7-優化2026-05-26" class="level2">
+<h2>v10.7 優化（2026-05-26）</h2>
 <ul>
 <li>股號搜尋新增快速路徑：輸入數字 / 股號型字串時，先走
 <code>codeSearch</code> index，支援完全相符、前綴與 3
@@ -2654,7 +3027,9 @@ changelog 與共享計劃文件。</li>
 <code>v10.7</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v10.6-優化2026-05-26">v10.6 優化（2026-05-26）</h2>
+</section>
+<section id="v10.6-優化2026-05-26" class="level2">
+<h2>v10.6 優化（2026-05-26）</h2>
 <ul>
 <li>技術分析 &amp; 籌碼頁新增「個股過熱 / 深跌超賣」derived
 signal，放在價格附近：線圖價格列、技術數字摘要第一排、最近行情與同業 PE
@@ -2685,7 +3060,9 @@ changelog、共享計劃文件與 bundled <code>data/state.json</code>
 頂層版本；<code>data/state.json</code> 內部報價 / asOf / fetchedAt
 保留原始時間，避免舊資料看起來像今日資料。</li>
 </ul>
-<h2 id="v10.5-優化2026-05-26">v10.5 優化（2026-05-26）</h2>
+</section>
+<section id="v10.5-優化2026-05-26" class="level2">
+<h2>v10.5 優化（2026-05-26）</h2>
 <ul>
 <li>小版本維護，重點是 release gate
 與交接文件收斂，不新增交易判讀功能。</li>
@@ -2701,7 +3078,9 @@ Heat Score、v10.3 外資持股趨勢、v10.2 月營收 /
 <code>v10.5</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README、頁面
 changelog 與共享計劃文件。</li>
 </ul>
-<h2 id="v10.4-優化2026-05-26">v10.4 優化（2026-05-26）</h2>
+</section>
+<section id="v10.4-優化2026-05-26" class="level2">
+<h2>v10.4 優化（2026-05-26）</h2>
 <ul>
 <li>大盤總覽新增「Market Heat Score 市場過熱 / 回檔風險」：把 TAIEX
 RSI、20 日均線乖離、布林上緣、追蹤池站上月線 / 季線比例、追蹤池
@@ -2722,7 +3101,9 @@ class="uri">https://www.fidelity.com/learning-center/trading-investing/technical
 <code>v10.4</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v10.3-優化2026-05-26">v10.3 優化（2026-05-26）</h2>
+</section>
+<section id="v10.3-優化2026-05-26" class="level2">
+<h2>v10.3 優化（2026-05-26）</h2>
 <ul>
 <li>快照趨勢新增「外資持股趨勢排名」：依最近 5
 筆外資持股比率變化、歷史筆數與官方來源小幅加權，列出主題內累積 /
@@ -2736,7 +3117,9 @@ class="uri">https://www.fidelity.com/learning-center/trading-investing/technical
 <code>v10.3</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v10.2-優化2026-05-25">v10.2 優化（2026-05-25）</h2>
+</section>
+<section id="v10.2-優化2026-05-25" class="level2">
+<h2>v10.2 優化（2026-05-25）</h2>
 <ul>
 <li>降低卡頓：一般互動儲存改成 900ms 合併寫入，畫面重繪改為同一 frame
 合併，避免連續點擊 / 切分頁造成重複重畫。</li>
@@ -2747,7 +3130,9 @@ proxy」四層，處置股頁新增綜合排行、風險分、量能、今日漲
 <code>v10.2</code>：<code>app_files/main.js</code>、<code>main.html</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v10.1-優化2026-05-25">v10.1 優化（2026-05-25）</h2>
+</section>
+<section id="v10.1-優化2026-05-25" class="level2">
+<h2>v10.1 優化（2026-05-25）</h2>
 <ul>
 <li>新增「可能進處置」：抓 TWSE / TPEx
 官方注意累計異常，標示隔日再被公告注意時可能進入處置的股票。</li>
@@ -2767,7 +3152,9 @@ proxy」四層，處置股頁新增綜合排行、風險分、量能、今日漲
 <code>v10.1</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v10.0-優化2026-05-21">v10.0 優化（2026-05-21）</h2>
+</section>
+<section id="v10.0-優化2026-05-21" class="level2">
+<h2>v10.0 優化（2026-05-21）</h2>
 <ul>
 <li>左側新增第 17 類「退休存股」，收錄
 <code>00713</code>、<code>0056</code>、<code>00929</code>、<code>2412</code>、<code>9911</code>、<code>2850</code>、<code>6803</code>、<code>2603</code>。</li>
@@ -2781,7 +3168,9 @@ proxy」四層，處置股頁新增綜合排行、風險分、量能、今日漲
 <code>v10.0</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v9.9-優化2026-05-21">v9.9 優化（2026-05-21）</h2>
+</section>
+<section id="v9.9-優化2026-05-21" class="level2">
+<h2>v9.9 優化（2026-05-21）</h2>
 <ul>
 <li>大盤總覽新增「今日變化摘要」：集中列出目前主題 / 搜尋範圍內 Top
 變化個股。</li>
@@ -2794,7 +3183,9 @@ proxy」四層，處置股頁新增綜合排行、風險分、量能、今日漲
 <code>v9.9</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v9.8-優化2026-05-21">v9.8 優化（2026-05-21）</h2>
+</section>
+<section id="v9.8-優化2026-05-21" class="level2">
+<h2>v9.8 優化（2026-05-21）</h2>
 <ul>
 <li>「開啟後日常完整」改為背景完整更新：開啟 extension
 後自動排入日常完整流程，不再要求 5 秒無操作。</li>
@@ -2807,7 +3198,9 @@ proxy」四層，處置股頁新增綜合排行、風險分、量能、今日漲
 <code>v9.8</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v9.7-優化2026-05-20">v9.7 優化（2026-05-20）</h2>
+</section>
+<section id="v9.7-優化2026-05-20" class="level2">
+<h2>v9.7 優化（2026-05-20）</h2>
 <ul>
 <li>大盤總覽新增「資料健康總分」，集中檢查報價 / 估值、日線 /
 大盤、籌碼30日、ETF NAV / 持股、月營收與大盤 / 期貨六層快取。</li>
@@ -2823,7 +3216,9 @@ payload，重開後可沿用本日完成狀態。</li>
 <code>v9.7</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v9.6-優化2026-05-20">v9.6 優化（2026-05-20）</h2>
+</section>
+<section id="v9.6-優化2026-05-20" class="level2">
+<h2>v9.6 優化（2026-05-20）</h2>
 <ul>
 <li>更新入口收斂成兩個主要按鈕：「快速更新」與「完整更新」。</li>
 <li>「快速更新」定位為盤中看盤用：更新即時報價，並在背景同步大盤總覽、期貨水位與
@@ -2839,7 +3234,9 @@ NAV、主動 ETF 持股。</li>
 <li>修正手動日常完整更新常見錯誤：<code>TAIEX_CODE is not defined</code>。原因是流程診斷階段引用了未宣告的大盤代碼常數，已補成
 <code>^TWII</code>。</li>
 </ul>
-<h2 id="v9.5-新增功能2026-05-20">v9.5 新增功能（2026-05-20）</h2>
+</section>
+<section id="v9.5-新增功能2026-05-20" class="level2">
+<h2>v9.5 新增功能（2026-05-20）</h2>
 <ul>
 <li>新增「大戶仍在場」derived signal：整合三大法人近 5 / 10
 日、投信認養、外資持股趨勢、TDCC
@@ -2856,7 +3253,9 @@ NAV、主動 ETF 持股。</li>
 <code>v9.5</code>：<code>app_files/main.js</code>、<code>manifest.json</code>、README
 與頁面 changelog。</li>
 </ul>
-<h2 id="v9.4-優化2026-05-17">v9.4 優化（2026-05-17）</h2>
+</section>
+<section id="v9.4-優化2026-05-17" class="level2">
+<h2>v9.4 優化（2026-05-17）</h2>
 <ul>
 <li>技術分析頁線圖改回預設開啟，符合盤中看圖習慣。</li>
 <li>圖上不再直接堆滿大量高低、週大量、ATR、POC、修復半價等文字；改集中到線圖上方「關鍵價位」列，圖中只保留水平線與滑鼠提示，避免文字互相重疊。</li>
@@ -2868,7 +3267,9 @@ NAV、主動 ETF 持股。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v9.3-優化2026-05-17">v9.3 優化（2026-05-17）</h2>
+</section>
+<section id="v9.3-優化2026-05-17" class="level2">
+<h2>v9.3 優化（2026-05-17）</h2>
 <ul>
 <li>搜尋框放大、提高字級與對比，避免左側搜尋欄文字太小或顏色太淡。</li>
 <li>搜尋結果改成可讀卡片列：顯示股號、名稱、主題、產業與命中理由，並高亮命中文字，讓你馬上知道為什麼會搜尋到這檔。</li>
@@ -2883,7 +3284,9 @@ NAV、主動 ETF 持股。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v9.2-熱修2026-05-17">v9.2 熱修（2026-05-17）</h2>
+</section>
+<section id="v9.2-熱修2026-05-17" class="level2">
+<h2>v9.2 熱修（2026-05-17）</h2>
 <ul>
 <li>啟動時正規化舊快取中的
 <code>search</code>、<code>filter</code>、<code>selectedCode</code> 與
@@ -2900,7 +3303,9 @@ seed；空主題仍會自動切回可渲染股池。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v9.1-新增功能2026-05-17">v9.1 新增功能（2026-05-17）</h2>
+</section>
+<section id="v9.1-新增功能2026-05-17" class="level2">
+<h2>v9.1 新增功能（2026-05-17）</h2>
 <ul>
 <li>大盤總覽新增「今日概念股輪動」：依本機已更新個股報價計算主題平均漲跌、漲跌家數、報價覆蓋率與量能比，快速看今天資金輪到哪些概念。</li>
 <li>輪動主題納入台積電相關 / Terafab、CPO /
@@ -2922,7 +3327,9 @@ FAU、光學耦合、準直鏡等詞。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v9.0-新增功能2026-05-17">v9.0 新增功能（2026-05-17）</h2>
+</section>
+<section id="v9.0-新增功能2026-05-17" class="level2">
+<h2>v9.0 新增功能（2026-05-17）</h2>
 <ul>
 <li>左側新增第 15 主題「被動元件」，第 12 主題維持台灣主動式 ETF，第 14
 主題維持海外 / 美日股 / 美債 ETF，其他觀察順延為第 16。</li>
@@ -2940,7 +3347,9 @@ EBC、商周與玉山證券產業整理補強 AI
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.9-新增功能2026-05-17">v8.9 新增功能（2026-05-17）</h2>
+</section>
+<section id="v8.9-新增功能2026-05-17" class="level2">
+<h2>v8.9 新增功能（2026-05-17）</h2>
 <ul>
 <li>更新入口收斂成三種模式：<code>輕量定時</code>、<code>日常完整更新流程</code>、<code>單項手動更新</code>。</li>
 <li>Hero 的排程按鈕改名為「輕量定時」：台股盤中更新報價 / 官方估值 /
@@ -2956,7 +3365,9 @@ NAV、主動 ETF 持股。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.8-新增功能2026-05-17">v8.8 新增功能（2026-05-17）</h2>
+</section>
+<section id="v8.8-新增功能2026-05-17" class="level2">
+<h2>v8.8 新增功能（2026-05-17）</h2>
 <ul>
 <li>新增「事件後續航」：針對目前最重要的新鮮 /
 有效技術事件，回看同一檔股票過去相似事件後 1 / 3 / 5 / 10
@@ -2973,7 +3384,9 @@ NAV、主動 ETF 持股。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.7-新增功能2026-05-17">v8.7 新增功能（2026-05-17）</h2>
+</section>
+<section id="v8.7-新增功能2026-05-17" class="level2">
+<h2>v8.7 新增功能（2026-05-17）</h2>
 <ul>
 <li>新增「技術事件新鮮度」：回看最近 20 根日線，判斷大量 K 高低 /
 半價、週線大量 K、POC 成本區、MA20 與 ATR 追蹤停損的收盤穿越是今日、近 3
@@ -2990,7 +3403,9 @@ NAV、主動 ETF 持股。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.6-新增功能2026-05-17">v8.6 新增功能（2026-05-17）</h2>
+</section>
+<section id="v8.6-新增功能2026-05-17" class="level2">
+<h2>v8.6 新增功能（2026-05-17）</h2>
 <ul>
 <li>新增「交易狀態機」：把大量 K 高低攻防、失守後修復、ATR
 追蹤停損、週線大量 K、POC 成本區、KD / 背離與 RSI
@@ -3009,7 +3424,9 @@ badges。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.5-新增功能2026-05-16">v8.5 新增功能（2026-05-16）</h2>
+</section>
+<section id="v8.5-新增功能2026-05-16" class="level2">
+<h2>v8.5 新增功能（2026-05-16）</h2>
 <ul>
 <li>新增「失守後修復 / 再進場判讀」：大量 K
 低點若曾失守，會依收盤是否重新站回大量低、半價與大量高，分成未修復、假修復、初步修復、修復確認與強修復。</li>
@@ -3027,7 +3444,9 @@ badges。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.4-新增功能2026-05-16">v8.4 新增功能（2026-05-16）</h2>
+</section>
+<section id="v8.4-新增功能2026-05-16" class="level2">
+<h2>v8.4 新增功能（2026-05-16）</h2>
 <ul>
 <li>新增「技術決策層」：把日線大量 K、週線大量 K、ATR 初始 / 追蹤停損與
 Volume Profile POC 成本區合併成同一個判讀卡。</li>
@@ -3044,7 +3463,9 @@ Volume Profile POC 成本區合併成同一個判讀卡。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.3-新增功能2026-05-16">v8.3 新增功能（2026-05-16）</h2>
+</section>
+<section id="v8.3-新增功能2026-05-16" class="level2">
+<h2>v8.3 新增功能（2026-05-16）</h2>
 <ul>
 <li>新增「大量 K 高低攻防」：最近 60 根日線中，找相對前 20 日均量達 1.5
 倍且有明顯價格波動的 K 棒作錨點。</li>
@@ -3060,7 +3481,9 @@ K 日期、高點、低點、半價與量能倍數。</li>
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.2-新增功能2026-05-16">v8.2 新增功能（2026-05-16）</h2>
+</section>
+<section id="v8.2-新增功能2026-05-16" class="level2">
+<h2>v8.2 新增功能（2026-05-16）</h2>
 <ul>
 <li>新增「漲跌停鎖單強度」：官方 MIS
 報價解析五檔委買委賣、漲停價與跌停價，計算鎖住張數 /
@@ -3078,7 +3501,9 @@ proxy，尚未扣除董監、大股東、庫藏股或長期鎖定持股；後續
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.1-新增功能2026-05-16">v8.1 新增功能（2026-05-16）</h2>
+</section>
+<section id="v8.1-新增功能2026-05-16" class="level2">
+<h2>v8.1 新增功能（2026-05-16）</h2>
 <ul>
 <li>ETF 追蹤入口收斂：移除上方 ETF 追蹤 tab，改由左側第 12
 主題開啟台灣主動式 ETF，第 14 主題開啟國外 ETF。</li>
@@ -3094,7 +3519,9 @@ proxy，尚未扣除董監、大股東、庫藏股或長期鎖定持股；後續
 與頁面 changelog。</li>
 </ul>
 <hr />
-<h2 id="v8.0-新增功能2026-05-15">v8.0 新增功能（2026-05-15）</h2>
+</section>
+<section id="v8.0-新增功能2026-05-15" class="level2">
+<h2>v8.0 新增功能（2026-05-15）</h2>
 <ul>
 <li>全站時間顯示統一改為 24 小時制。</li>
 <li>大盤總覽的美股四大指數改為同時顯示「當地美東時間」與「台北抓取時間」，避免盤後
@@ -3109,7 +3536,9 @@ proxy，尚未扣除董監、大股東、庫藏股或長期鎖定持股；後續
 與頁面 changelog 同步更新。</li>
 </ul>
 <hr />
-<h2 id="v7.9-新增功能2026-05-15">v7.9 新增功能（2026-05-15）</h2>
+</section>
+<section id="v7.9-新增功能2026-05-15" class="level2">
+<h2>v7.9 新增功能（2026-05-15）</h2>
 <ul>
 <li>新增 / 校正使用者指定股：3305 昇貿、2059 川湖、3665 貿聯-KY、2449
 京元電子。</li>
@@ -3124,7 +3553,9 @@ proxy，尚未扣除董監、大股東、庫藏股或長期鎖定持股；後續
 與頁面 changelog 同步更新。</li>
 </ul>
 <hr />
-<h2 id="v7.5-新增功能2026-05-14">v7.5 新增功能（2026-05-14）</h2>
+</section>
+<section id="v7.5-新增功能2026-05-14" class="level2">
+<h2>v7.5 新增功能（2026-05-14）</h2>
 <ul>
 <li>自動更新流程補上每一步耗時、資料覆蓋率、來源摘要與錯誤訊息，方便
 Chrome 實測時定位卡住的資料層。</li>
@@ -3134,7 +3565,9 @@ Chrome 實測時定位卡住的資料層。</li>
 NAV、折溢價、持股展開與法人回補狀態追蹤。</li>
 </ul>
 <hr />
-<h2 id="v7.4-新增功能2026-05-13">v7.4 新增功能（2026-05-13）</h2>
+</section>
+<section id="v7.4-新增功能2026-05-13" class="level2">
+<h2>v7.4 新增功能（2026-05-13）</h2>
 <ul>
 <li>新增「自動更新流程」面板：可看到報價、日線、月營收、股利、期貨、大盤、美債燈號、ETF
 NAV、主動 ETF 持股目前跑到哪一步。</li>
@@ -3146,7 +3579,9 @@ NAV 日期；缺 NAV 時直接提供「更新 NAV」。</li>
 <li>統一介面用語為「更新」，避免混用其他同義詞。</li>
 </ul>
 <hr />
-<h2 id="v7.3-新增功能2026-05-13">v7.3 新增功能（2026-05-13）</h2>
+</section>
+<section id="v7.3-新增功能2026-05-13" class="level2">
+<h2>v7.3 新增功能（2026-05-13）</h2>
 <ul>
 <li>依 Claude 稽核結果修正 TWSE50 / MID100
 市值分類：6278、2376、3481、2344、2105 等不再被誤標大型；T50 與 MID100
@@ -3160,7 +3595,9 @@ K 模式顯示週 K 標籤。</li>
 分鐘。</li>
 </ul>
 <hr />
-<h2 id="v7.0-新增功能2026-05-13">v7.0 新增功能（2026-05-13）</h2>
+</section>
+<section id="v7.0-新增功能2026-05-13" class="level2">
+<h2>v7.0 新增功能（2026-05-13）</h2>
 <ul>
 <li>新增「開啟 extension 後 5
 秒無操作自動更新」：依序更新報價、日線、月營收、股利 /
@@ -3176,7 +3613,9 @@ K 模式顯示週 K 標籤。</li>
 / 現金流加入 1476 儒鴻，並維持股號去重。</li>
 </ul>
 <hr />
-<h2 id="v6.9-新增功能2026-05-13">v6.9 新增功能（2026-05-13）</h2>
+</section>
+<section id="v6.9-新增功能2026-05-13" class="level2">
+<h2>v6.9 新增功能（2026-05-13）</h2>
 <ul>
 <li>新增最左側「大盤總覽」分頁，整合台灣加權指數、台指期夜盤與美股四大指數線圖。</li>
 <li>台股成交金額優先以 TWSE 官方收盤統計補強；盤中線圖採 Yahoo chart
@@ -3188,14 +3627,19 @@ API，畫面會保留來源與更新時間。</li>
 <li>ETF 持股列改用專屬前往邏輯，避免從 ETF 研究頁誤跳到技術線圖。</li>
 </ul>
 <hr />
-<h2 id="v6.1-新增功能2026-05-11">v6.1 新增功能（2026-05-11）</h2>
-<h3 id="自動更新-台股時段感知">自動更新 + 台股時段感知</h3>
+</section>
+<section id="v6.1-新增功能2026-05-11" class="level2">
+<h2>v6.1 新增功能（2026-05-11）</h2>
+<section id="自動更新-台股時段感知" class="level3">
+<h3>自動更新 + 台股時段感知</h3>
 <p>側欄新增<strong>市場狀態 badge</strong>（開盤中 / 收盤 / 盤前 /
 休市）與<strong>自動更新</strong>切換按鈕。開啟後： -
 僅在台灣股市開盤時段（<strong>09:00–13:30，週一–五</strong>）自動呼叫「更新報價」
 - 可切換 <strong>5 / 10 / 15 分鐘</strong>更新間隔，並顯示下次更新倒計時
 - 設定持久化，重啟 extension 後保留上次選擇</p>
-<h3 id="月營收整合">月營收整合</h3>
+</section>
+<section id="月營收整合" class="level3">
+<h3>月營收整合</h3>
 <ul>
 <li><strong>股票卡片</strong>：每張卡片加入月營收 YoY / MoM
 百分比（綠/紅顯示方向）</li>
@@ -3203,21 +3647,27 @@ API，畫面會保留來源與更新時間。</li>
 <li><strong>今日操盤快訊</strong>：加入月營收 YoY 成長 Top 5 與衰退 Top
 5（需先按「月營收」更新）</li>
 </ul>
-<h3 id="持倉損益總覽v6.1">持倉損益總覽（v6.1）</h3>
+</section>
+<section id="持倉損益總覽v6.1" class="level3">
+<h3>持倉損益總覽（v6.1）</h3>
 <p>主題總覽頁新增「持倉損益總覽」面板： -
 彙整所有已設定成本均價的個股，顯示成本總計、市值合計、<strong>未實現損益
 + 總報酬率</strong> - 依報酬率排序，按欄位可跳至個股研究頁 -
 <strong>距停損 &lt; 5%</strong> 的個股以紅色警示框獨立標示 -
 設定方式：個股研究頁 → 籌碼分析 tab → 輸入「成本均價」與「張數」</p>
-<h3 id="倉位計算器v6.1">倉位計算器（v6.1）</h3>
+</section>
+<section id="倉位計算器v6.1" class="level3">
+<h3>倉位計算器（v6.1）</h3>
 <p>持倉面板下方新增風控倉位計算器： -
 輸入：帳戶資金（萬元）、每筆最大風險 %、進場價、停損價 -
 輸出：<strong>最大可買張數</strong>、每張虧損、停損幅度、部位名目、佔帳戶比例
 - ⚠️ 為估算工具，請依個人財務狀況調整</p>
 <hr />
-<h3 id="v5.3v5.9-核心觀念">v5.3–v5.9 核心觀念</h3>
-<h4 id="所有股票流動性評估個股-etf">1. 所有股票流動性評估（個股 +
-ETF）</h4>
+</section>
+<section id="v5.3v5.9-核心觀念" class="level3">
+<h3>v5.3–v5.9 核心觀念</h3>
+<section id="所有股票流動性評估個股-etf" class="level4">
+<h4>1. 所有股票流動性評估（個股 + ETF）</h4>
 <p>採「<strong>日均成交張數</strong>」為主、「<strong>日均交易金額</strong>」為輔，<strong>取兩者較嚴格者</strong>為最終分級（最近
 20 日 kline 計算）：</p>
 <table>
@@ -3283,8 +3733,9 @@ illiquidity ratio、Kyle (1985) market depth 4. <strong>ETF 規模
 中信日本商社（40 億）規模差距明顯</p>
 <p>第 15
 主題的「流動性評估方法學」面板會直接列出分級門檻、輔助分級與來源連結。</p>
-<h4 id="海外-etf-配息來源-5-類-課稅口徑">2. 海外 ETF 配息來源 5 類 ×
-課稅口徑</h4>
+</section>
+<section id="海外-etf-配息來源-5-類-課稅口徑" class="level4">
+<h4>2. 海外 ETF 配息來源 5 類 × 課稅口徑</h4>
 <p>每檔海外 / 美日股 / 美債 ETF 顯示配息組成（一般化）： -
 <strong>股利所得</strong>（境內 ETF 才會出現；可選合併申報享 8.5%
 抵扣，上限 8 萬，或分離 28%） - <strong>利息所得</strong>（債券型 ETF
@@ -3299,8 +3750,9 @@ illiquidity ratio、Kyle (1985) market depth 4. <strong>ETF 規模
 ETF</strong>：依證交稅條例 §2-1 暫停徵證交稅 + 證所稅停徵 - 個人配息單筆
 2 萬以上：扣繳 + 二代健保補充保費 2.11%（年度上限 1,000 萬）</p>
 <p>每檔 ETF 都附「投信收益分配通知書」官方入口讓使用者核對。</p>
-<h4 id="buffett-日本商社替代投資途徑">3. Buffett
-日本商社替代投資途徑</h4>
+</section>
+<section id="buffett-日本商社替代投資途徑" class="level4">
+<h4>3. Buffett 日本商社替代投資途徑</h4>
 <p>第 15 主題日股 ETF 面板列出 4 種途徑比較：</p>
 <table>
 <colgroup>
@@ -3345,7 +3797,9 @@ ETF</strong>：依證交稅條例 §2-1 暫停徵證交稅 + 證所稅停徵 - �
 </tr>
 </tbody>
 </table>
-<h4 id="操盤手工具入口外部直通車">4. 操盤手工具入口（外部直通車）</h4>
+</section>
+<section id="操盤手工具入口外部直通車" class="level4">
+<h4>4. 操盤手工具入口（外部直通車）</h4>
 <p>第 15 主題新增 6 類操盤手日常缺口的權威外連：</p>
 <ul>
 <li><strong>個股借券 / 融券放空</strong>：TWSE 個股借券當日明細 /
@@ -3469,7 +3923,11 @@ Ratio、WSTS、DRAMeXchange、TrendForce、TSMC 法說</li>
 </tbody>
 </table>
 <hr />
-<h2 id="資料來源與驗證原則">資料來源與驗證原則</h2>
+</section>
+</section>
+</section>
+<section id="資料來源與驗證原則" class="level2">
+<h2>資料來源與驗證原則</h2>
 <blockquote>
 <p>⚠️ <strong>重要</strong>：資料正確性是最優先事項。</p>
 </blockquote>
@@ -3608,7 +4066,9 @@ Goodinfo 或財報狗查閱 4. 新聞 → 以原始來源頁面為準，本 exte
 官方公告為準；量價 proxy
 只作低可信度提示，放出日以處置迄日後下一個平日推定並需回官方核對</p>
 <hr />
-<h2 id="podcast-更新維護者用">Podcast 更新（維護者用）</h2>
+</section>
+<section id="podcast-更新維護者用" class="level2">
+<h2>Podcast 更新（維護者用）</h2>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 日常快速更新 RSS metadata（不碰音檔）</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/update_podcast_digest.py <span class="at">--refresh-only</span></span>
@@ -3625,7 +4085,9 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 若本機已有 whisper / faster-whisper / whisper.cpp，可由音檔轉錄後產生摘要</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> scripts/update_youtube_market_lessons.py <span class="at">--audio</span> szA2MSO_qTo=/path/to/EP670.m4a <span class="at">--transcribe-backend</span> auto <span class="at">--print-summary</span></span></code></pre></div>
 <hr />
-<h2 id="版本紀錄">版本紀錄</h2>
+</section>
+<section id="版本紀錄" class="level2">
+<h2>版本紀錄</h2>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -3641,9 +4103,17 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 </thead>
 <tbody>
 <tr>
+<td><strong>v20.0</strong></td>
+<td><strong>2026-09-13</strong></td>
+<td><strong>操盤工作台、433
+檔公共股池六域同步、緊湊日線、前景重查與手機身分列更新，保留私人清單隔離及
+13 分頁</strong></td>
+</tr>
+<tr>
 <td><strong>v19.3</strong></td>
 <td><strong>2026-09-02</strong></td>
-<td><strong>整段貼上持股、差異確認、20 檔私人 seed 精確遷移、行情 provenance 隔離與 Pages 隱私邊界</strong></td>
+<td><strong>整段貼上持股、差異確認、20 檔私人 seed 精確遷移、行情
+provenance 隔離與 Pages 隱私邊界</strong></td>
 </tr>
 <tr>
 <td><strong>v19.2</strong></td>
@@ -3651,20 +4121,30 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="
 <td><strong>資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界</strong></td>
 </tr>
 <tr>
+<td><strong>v19.2</strong></td>
+<td><strong>2026-08-29</strong></td>
+<td><strong>融合 v19.1
+盤後研究架構與手機資料身分列、離線裝置快照匯入／匯出、公開 artifact
+隱私隔離及窄螢幕操作修正</strong></td>
+</tr>
+<tr>
 <td><strong>v19.1</strong></td>
 <td><strong>2026-08-21</strong></td>
-<td><strong>來源 schema v2 相容 migration、隱私清理盤後 Web 快照、next-open 非重疊回測與 R:R 執行閘門</strong></td>
+<td><strong>來源 schema v2 相容 migration、隱私清理盤後 Web
+快照、next-open 非重疊回測與 R:R 執行閘門</strong></td>
 </tr>
 <tr>
 <td><strong>v19.0</strong></td>
 <td><strong>2026-08-13</strong></td>
-<td><strong>Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00 Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正</strong></td>
+<td><strong>Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00
+Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source
+adapters、state sharding 與 Web refresh 修正</strong></td>
 </tr>
 <tr>
 <td><strong>v18.2.1</strong></td>
 <td><strong>2026-07-30</strong></td>
-<td><strong>修正 null transport options 誤套 1024-byte
-上限，恢復 8 MiB／12 秒／重試與來源並行預設</strong></td>
+<td><strong>修正 null transport options 誤套 1024-byte 上限，恢復 8
+MiB／12 秒／重試與來源並行預設</strong></td>
 </tr>
 <tr>
 <td><strong>v18.2</strong></td>
@@ -4494,7 +4974,9 @@ ETF）、搜尋即時候選下拉、主題展開收起 Grid、官網連結修正
 </tbody>
 </table>
 <hr />
-<h2 id="注意事項">注意事項</h2>
+</section>
+<section id="注意事項" class="level2">
+<h2>注意事項</h2>
 <ul>
 <li>所有訊號（外資累積 / 出清、Chip
 Score、交易雷達分、大戶仍在場、散戶情緒溫度計）為<strong>工具內自訂研究排序規則</strong>，非官方訊號，不保證報酬。</li>
@@ -4505,5 +4987,7 @@ Score、交易雷達分、大戶仍在場、散戶情緒溫度計）為<strong>�
 <code>chrome.storage.local</code>，<code>localStorage</code>
 僅儲存小型偏好備援。</li>
 </ul>
+</section>
+</section>
 </body>
 </html>

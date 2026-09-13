@@ -37,7 +37,14 @@ jobs:
           node scripts/build_market_snapshot.mjs --self-test
 
       - name: Refresh fixed-source delayed snapshot
-        run: node scripts/build_market_snapshot.mjs --output data/live_market.json
+        env:
+          REFRESH_EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$REFRESH_EVENT" = "push" ] || [ "$REFRESH_EVENT" = "workflow_dispatch" ]; then
+            node scripts/build_market_snapshot.mjs --output data/live_market.json --force-after-close
+          else
+            node scripts/build_market_snapshot.mjs --output data/live_market.json
+          fi
 
       - name: Stage runtime-only Pages site
         shell: bash

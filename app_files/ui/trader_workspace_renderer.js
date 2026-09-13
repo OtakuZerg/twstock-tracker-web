@@ -52,6 +52,28 @@
       </section>`;
   }
 
+  function renderSessionBrief(brief = {}) {
+    return `<header class="trader-session-brief" data-trader-session-brief>
+      <div class="trader-session-title"><div><span>TAIWAN EQUITY · 波段研究</span><h2>今日操盤工作台</h2></div><span class="trader-session-date">${escapeHtml(brief.date || "")}</span></div>
+      <div class="trader-session-grid">
+        <article><span>01 市場環境</span><strong>${escapeHtml(brief.market || "市場資料待補")}</strong><small>${escapeHtml(brief.marketSource || "核對大盤與夜盤日期")}</small></article>
+        <article><span>02 我的追蹤</span><strong>${escapeHtml(brief.tracking || "尚未建立清單")}</strong><small>${escapeHtml(brief.trackingNote || "先處理資料缺口，再比較候選")}</small></article>
+        <article><span>03 今日任務</span><strong>${escapeHtml(brief.task || "檢查研究計畫")}</strong><small>${escapeHtml(brief.taskNote || "觸發條件、失效條件與資料依據")}</small></article>
+      </div>
+      <nav class="trader-workflow-links" aria-label="操盤研究流程">
+        <button type="button" data-tab-target="macro">市場與風險</button><button type="button" data-tab-target="discovery">族群與候選</button><button type="button" data-tab-target="catalyst">公告與催化劑</button><button type="button" data-tab-target="help">同步與資料</button>
+      </nav>
+    </header>`;
+  }
+
+  function renderReviewQueue(rows = [], domains = []) {
+    return `<section class="trader-review-board" data-trader-review-board>
+      <div class="trader-review-head"><div><h3>追蹤清單 · 先處理這些</h3><p>依資料缺口優先；股票清單不含部位大小，不能據此推算帳戶風險。</p></div><button class="ghost-btn" type="button" data-tab-target="report">持股與計畫</button></div>
+      <div class="trader-review-list">${rows.length ? rows.map((row) => `<button type="button" class="trader-review-row" data-trader-review-code="${escapeHtml(row.code)}"><strong>${escapeHtml(row.code)} <span>${escapeHtml(row.name)}</span></strong><span class="trader-review-reason">${escapeHtml(row.reason)}</span><small>${escapeHtml(row.asOf || "日期待補")} <span aria-hidden="true">↗</span></small></button>`).join("") : `<p>加入追蹤清單後，這裡會列出需要複核的標的。</p>`}</div>
+      <details class="trader-data-detail"><summary>各類資料同步狀態 · 查看日期與範圍</summary><div class="trader-domain-grid">${domains.map((row) => `<article><span>${escapeHtml(row.label)}</span><strong>${escapeHtml(row.coverage)}</strong><small>${escapeHtml(row.asOf)}</small><p>${escapeHtml(row.note)}</p></article>`).join("")}</div><p class="trader-domain-note">行情自動更新與私人清單搬移是不同流程。月營收依公告月份；ETF 等不適用項目不補零。季報、集保與其他研究資料仍依原資料來源或匯入快照，需核對各自日期。</p></details>
+    </section>`;
+  }
+
   function render(model = {}) {
     const stock = model.stock || {};
     const quoteChangeText = model.quoteAvailable === true ? model.quoteChangeText : "報價待更新";
@@ -64,9 +86,11 @@
     const executionValue = (value) => executionLocked ? "—" : value;
     return `
     <section class="panel trader-desk" data-trader-desk data-stock-code="${escapeHtml(stock.code)}">
+      ${renderSessionBrief(model.sessionBrief)}
+      ${renderHoldingQuickSwitch(model.holdingRows, model.holdingSummary)}
       <div class="trader-desk-head">
         <div>
-          <div class="trader-desk-kicker">Trader workspace · 先判斷，再看細節</div>
+          <div class="trader-desk-kicker">目前標的 · 計畫與失效條件</div>
           <h1 class="trader-desk-title">${escapeHtml(stock.code)} ${escapeHtml(stock.name)}</h1>
           <p class="trader-desk-meta">${escapeHtml(model.quoteSource)}｜研究排序，不是買賣保證；盤中執行前仍需核對即時價量。</p>
         </div>
@@ -74,8 +98,6 @@
           ${renderStockOptions(model.stockOptions)}
         </select>
       </div>
-
-      ${renderHoldingQuickSwitch(model.holdingRows, model.holdingSummary)}
 
       <div class="trader-safety-gate" data-status="${escapeHtml(eligibility.status || "blocked")}" role="status">
         <div>
@@ -124,6 +146,7 @@
         <button class="ghost-btn" type="button" data-tab-target="screener">回標的雷達</button>
         <p class="trader-blocker"><strong>目前限制：</strong>${escapeHtml(model.blockerText)}｜${escapeHtml(model.missingText)}</p>
       </div>
+      ${renderReviewQueue(model.reviewRows, model.domainRows)}
     </section>`;
   }
 
@@ -132,6 +155,8 @@
     escapeHtml,
     renderStockOptions,
     renderHoldingQuickSwitch,
+    renderSessionBrief,
+    renderReviewQueue,
     render
   });
 

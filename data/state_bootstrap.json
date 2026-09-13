@@ -1,5 +1,5 @@
 {
-  "version": "19.3",
+  "version": "20.0",
   "savedAt": "2026-06-03T16:25:24.247Z",
   "lastUpdated": "2026-05-12T16:00:29.175Z",
   "klineUpdatedAt": "2026-05-12T15:42:50.670Z",
@@ -975,6 +975,2173 @@
   },
   "idleAutoUpdateEnabled": false,
   "idleAutoUpdateUserOptIn": false,
+  "publicResearchUniverse": [
+    {
+      "code": "00403A",
+      "name": "主動統一升級50",
+      "suffix": "TW"
+    },
+    {
+      "code": "0050",
+      "name": "元大台灣50",
+      "suffix": "TW"
+    },
+    {
+      "code": "0056",
+      "name": "元大高股息",
+      "suffix": "TW"
+    },
+    {
+      "code": "006208",
+      "name": "富邦台50",
+      "suffix": "TW"
+    },
+    {
+      "code": "00631L",
+      "name": "元大S&P500正2",
+      "suffix": "TW"
+    },
+    {
+      "code": "00646",
+      "name": "元大S&P500",
+      "suffix": "TW"
+    },
+    {
+      "code": "00662",
+      "name": "富邦NASDAQ",
+      "suffix": "TW"
+    },
+    {
+      "code": "00679B",
+      "name": "元大美債20年",
+      "suffix": "TWO"
+    },
+    {
+      "code": "00680L",
+      "name": "元大台灣50正2",
+      "suffix": "TW"
+    },
+    {
+      "code": "00687B",
+      "name": "國泰20年美債",
+      "suffix": "TWO"
+    },
+    {
+      "code": "00692",
+      "name": "富邦公司治理",
+      "suffix": "TW"
+    },
+    {
+      "code": "00694B",
+      "name": "富邦美債1-3",
+      "suffix": "TWO"
+    },
+    {
+      "code": "00713",
+      "name": "元大台灣高息低波",
+      "suffix": "TW"
+    },
+    {
+      "code": "00719B",
+      "name": "元大美債1-3",
+      "suffix": "TWO"
+    },
+    {
+      "code": "00757",
+      "name": "統一FANG+",
+      "suffix": "TW"
+    },
+    {
+      "code": "00830",
+      "name": "國泰費城半導體",
+      "suffix": "TW"
+    },
+    {
+      "code": "00865B",
+      "name": "國泰US短期公債",
+      "suffix": "TW"
+    },
+    {
+      "code": "00878",
+      "name": "國泰永續高股息",
+      "suffix": "TW"
+    },
+    {
+      "code": "00881",
+      "name": "國泰台灣5G+",
+      "suffix": "TW"
+    },
+    {
+      "code": "00891",
+      "name": "中信關鍵半導體",
+      "suffix": "TW"
+    },
+    {
+      "code": "00900",
+      "name": "富邦特選高股息30",
+      "suffix": "TW"
+    },
+    {
+      "code": "00919",
+      "name": "群益台灣精選高息",
+      "suffix": "TW"
+    },
+    {
+      "code": "00929",
+      "name": "復華台灣科技優息",
+      "suffix": "TW"
+    },
+    {
+      "code": "00935",
+      "name": "野村臺灣新科技50",
+      "suffix": "TW"
+    },
+    {
+      "code": "00949",
+      "name": "復華日本龍頭",
+      "suffix": "TW"
+    },
+    {
+      "code": "00955",
+      "name": "中信日本商社",
+      "suffix": "TWO"
+    },
+    {
+      "code": "00980A",
+      "name": "主動野村臺灣優選",
+      "suffix": "TW"
+    },
+    {
+      "code": "00981A",
+      "name": "主動統一台股增長",
+      "suffix": "TW"
+    },
+    {
+      "code": "00982A",
+      "name": "主動群益台灣強棒",
+      "suffix": "TW"
+    },
+    {
+      "code": "00983A",
+      "name": "主動中信ARK創新",
+      "suffix": "TW"
+    },
+    {
+      "code": "00984A",
+      "name": "主動安聯台灣高息",
+      "suffix": "TW"
+    },
+    {
+      "code": "00985A",
+      "name": "主動野村台灣50",
+      "suffix": "TW"
+    },
+    {
+      "code": "00986A",
+      "name": "主動台新龍頭成長",
+      "suffix": "TW"
+    },
+    {
+      "code": "00987A",
+      "name": "主動台新優勢成長",
+      "suffix": "TW"
+    },
+    {
+      "code": "00988A",
+      "name": "主動統一全球創新",
+      "suffix": "TW"
+    },
+    {
+      "code": "00989A",
+      "name": "主動摩根美國科技",
+      "suffix": "TW"
+    },
+    {
+      "code": "00990A",
+      "name": "主動元大AI新經濟",
+      "suffix": "TW"
+    },
+    {
+      "code": "00991A",
+      "name": "主動復華未來50",
+      "suffix": "TW"
+    },
+    {
+      "code": "00992A",
+      "name": "主動群益科技創新",
+      "suffix": "TW"
+    },
+    {
+      "code": "00993A",
+      "name": "主動安聯台灣",
+      "suffix": "TW"
+    },
+    {
+      "code": "00994A",
+      "name": "主動第一金台股優",
+      "suffix": "TW"
+    },
+    {
+      "code": "00995A",
+      "name": "主動中信台灣卓越",
+      "suffix": "TW"
+    },
+    {
+      "code": "00996A",
+      "name": "主動兆豐台灣豐收",
+      "suffix": "TW"
+    },
+    {
+      "code": "00997A",
+      "name": "主動群益美國增長",
+      "suffix": "TW"
+    },
+    {
+      "code": "1216",
+      "name": "統一",
+      "suffix": "TW"
+    },
+    {
+      "code": "1301",
+      "name": "台塑",
+      "suffix": "TW"
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "suffix": "TW"
+    },
+    {
+      "code": "1476",
+      "name": "儒鴻",
+      "suffix": "TW"
+    },
+    {
+      "code": "1503",
+      "name": "士電",
+      "suffix": "TW"
+    },
+    {
+      "code": "1504",
+      "name": "東元",
+      "suffix": "TW"
+    },
+    {
+      "code": "1513",
+      "name": "中興電",
+      "suffix": "TW"
+    },
+    {
+      "code": "1514",
+      "name": "亞力",
+      "suffix": "TW"
+    },
+    {
+      "code": "1515",
+      "name": "力山",
+      "suffix": "TW"
+    },
+    {
+      "code": "1519",
+      "name": "華城",
+      "suffix": "TW"
+    },
+    {
+      "code": "1536",
+      "name": "和大",
+      "suffix": "TW"
+    },
+    {
+      "code": "1560",
+      "name": "中砂",
+      "suffix": "TW"
+    },
+    {
+      "code": "1569",
+      "name": "濱川",
+      "suffix": "TWO"
+    },
+    {
+      "code": "1583",
+      "name": "程泰",
+      "suffix": "TW"
+    },
+    {
+      "code": "1590",
+      "name": "亞德客-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "1597",
+      "name": "直得",
+      "suffix": "TW"
+    },
+    {
+      "code": "1605",
+      "name": "華新",
+      "suffix": "TW"
+    },
+    {
+      "code": "1608",
+      "name": "華榮",
+      "suffix": "TW"
+    },
+    {
+      "code": "1609",
+      "name": "大亞",
+      "suffix": "TW"
+    },
+    {
+      "code": "1612",
+      "name": "宏泰",
+      "suffix": "TW"
+    },
+    {
+      "code": "1618",
+      "name": "合機",
+      "suffix": "TW"
+    },
+    {
+      "code": "1711",
+      "name": "永光",
+      "suffix": "TW"
+    },
+    {
+      "code": "1717",
+      "name": "長興",
+      "suffix": "TW"
+    },
+    {
+      "code": "1723",
+      "name": "中碳",
+      "suffix": "TW"
+    },
+    {
+      "code": "1732",
+      "name": "毛寶",
+      "suffix": "TW"
+    },
+    {
+      "code": "1773",
+      "name": "勝一",
+      "suffix": "TW"
+    },
+    {
+      "code": "1785",
+      "name": "光洋科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "1802",
+      "name": "台玻",
+      "suffix": "TW"
+    },
+    {
+      "code": "1815",
+      "name": "富喬",
+      "suffix": "TWO"
+    },
+    {
+      "code": "2002",
+      "name": "中鋼",
+      "suffix": "TW"
+    },
+    {
+      "code": "2049",
+      "name": "上銀",
+      "suffix": "TW"
+    },
+    {
+      "code": "2059",
+      "name": "川湖",
+      "suffix": "TW"
+    },
+    {
+      "code": "2247",
+      "name": "汎德永業",
+      "suffix": "TW"
+    },
+    {
+      "code": "2301",
+      "name": "光寶科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2303",
+      "name": "聯電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2308",
+      "name": "台達電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2312",
+      "name": "金寶",
+      "suffix": "TW"
+    },
+    {
+      "code": "2313",
+      "name": "華通",
+      "suffix": "TW"
+    },
+    {
+      "code": "2317",
+      "name": "鴻海",
+      "suffix": "TW"
+    },
+    {
+      "code": "2324",
+      "name": "仁寶",
+      "suffix": "TW"
+    },
+    {
+      "code": "2327",
+      "name": "國巨",
+      "suffix": "TW"
+    },
+    {
+      "code": "2329",
+      "name": "華泰",
+      "suffix": "TW"
+    },
+    {
+      "code": "2330",
+      "name": "台積電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2337",
+      "name": "旺宏",
+      "suffix": "TW"
+    },
+    {
+      "code": "2342",
+      "name": "茂矽",
+      "suffix": "TW"
+    },
+    {
+      "code": "2344",
+      "name": "華邦電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2345",
+      "name": "智邦",
+      "suffix": "TW"
+    },
+    {
+      "code": "2347",
+      "name": "聯強",
+      "suffix": "TW"
+    },
+    {
+      "code": "2352",
+      "name": "佳世達",
+      "suffix": "TW"
+    },
+    {
+      "code": "2353",
+      "name": "宏碁",
+      "suffix": "TW"
+    },
+    {
+      "code": "2356",
+      "name": "英業達",
+      "suffix": "TW"
+    },
+    {
+      "code": "2357",
+      "name": "華碩",
+      "suffix": "TW"
+    },
+    {
+      "code": "2359",
+      "name": "所羅門",
+      "suffix": "TW"
+    },
+    {
+      "code": "2360",
+      "name": "致茂",
+      "suffix": "TW"
+    },
+    {
+      "code": "2365",
+      "name": "昆盈",
+      "suffix": "TW"
+    },
+    {
+      "code": "2367",
+      "name": "燿華",
+      "suffix": "TW"
+    },
+    {
+      "code": "2368",
+      "name": "金像電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2371",
+      "name": "大同",
+      "suffix": "TW"
+    },
+    {
+      "code": "2375",
+      "name": "凱美",
+      "suffix": "TW"
+    },
+    {
+      "code": "2376",
+      "name": "技嘉",
+      "suffix": "TW"
+    },
+    {
+      "code": "2377",
+      "name": "微星",
+      "suffix": "TW"
+    },
+    {
+      "code": "2379",
+      "name": "瑞昱",
+      "suffix": "TW"
+    },
+    {
+      "code": "2382",
+      "name": "廣達",
+      "suffix": "TW"
+    },
+    {
+      "code": "2383",
+      "name": "台光電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2385",
+      "name": "群光",
+      "suffix": "TW"
+    },
+    {
+      "code": "2388",
+      "name": "威盛",
+      "suffix": "TW"
+    },
+    {
+      "code": "2392",
+      "name": "正崴",
+      "suffix": "TW"
+    },
+    {
+      "code": "2395",
+      "name": "研華",
+      "suffix": "TW"
+    },
+    {
+      "code": "2402",
+      "name": "毅嘉",
+      "suffix": "TW"
+    },
+    {
+      "code": "2404",
+      "name": "漢唐",
+      "suffix": "TW"
+    },
+    {
+      "code": "2408",
+      "name": "南亞科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2412",
+      "name": "中華電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2413",
+      "name": "環科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2421",
+      "name": "建準",
+      "suffix": "TW"
+    },
+    {
+      "code": "2428",
+      "name": "興勤",
+      "suffix": "TW"
+    },
+    {
+      "code": "2436",
+      "name": "偉詮電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2441",
+      "name": "超豐",
+      "suffix": "TW"
+    },
+    {
+      "code": "2449",
+      "name": "京元電子",
+      "suffix": "TW"
+    },
+    {
+      "code": "2451",
+      "name": "創見",
+      "suffix": "TW"
+    },
+    {
+      "code": "2454",
+      "name": "聯發科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2455",
+      "name": "全新",
+      "suffix": "TW"
+    },
+    {
+      "code": "2458",
+      "name": "義隆",
+      "suffix": "TW"
+    },
+    {
+      "code": "2459",
+      "name": "敦吉",
+      "suffix": "TW"
+    },
+    {
+      "code": "2464",
+      "name": "盟立",
+      "suffix": "TW"
+    },
+    {
+      "code": "2467",
+      "name": "志聖",
+      "suffix": "TW"
+    },
+    {
+      "code": "2471",
+      "name": "資通",
+      "suffix": "TW"
+    },
+    {
+      "code": "2472",
+      "name": "立隆電",
+      "suffix": "TW"
+    },
+    {
+      "code": "2474",
+      "name": "可成",
+      "suffix": "TW"
+    },
+    {
+      "code": "2478",
+      "name": "大毅",
+      "suffix": "TW"
+    },
+    {
+      "code": "2480",
+      "name": "敦陽科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2481",
+      "name": "強茂",
+      "suffix": "TW"
+    },
+    {
+      "code": "2484",
+      "name": "希華",
+      "suffix": "TW"
+    },
+    {
+      "code": "2485",
+      "name": "兆赫",
+      "suffix": "TW"
+    },
+    {
+      "code": "2492",
+      "name": "華新科",
+      "suffix": "TW"
+    },
+    {
+      "code": "2548",
+      "name": "華固",
+      "suffix": "TW"
+    },
+    {
+      "code": "2603",
+      "name": "長榮",
+      "suffix": "TW"
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "suffix": "TW"
+    },
+    {
+      "code": "2618",
+      "name": "長榮航",
+      "suffix": "TW"
+    },
+    {
+      "code": "2630",
+      "name": "亞航",
+      "suffix": "TW"
+    },
+    {
+      "code": "2634",
+      "name": "漢翔",
+      "suffix": "TW"
+    },
+    {
+      "code": "2645",
+      "name": "長榮航太",
+      "suffix": "TW"
+    },
+    {
+      "code": "2707",
+      "name": "晶華",
+      "suffix": "TW"
+    },
+    {
+      "code": "2753",
+      "name": "八方雲集",
+      "suffix": "TW"
+    },
+    {
+      "code": "2834",
+      "name": "臺企銀",
+      "suffix": "TW"
+    },
+    {
+      "code": "2850",
+      "name": "新產",
+      "suffix": "TW"
+    },
+    {
+      "code": "2881",
+      "name": "富邦金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2882",
+      "name": "國泰金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2884",
+      "name": "玉山金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2885",
+      "name": "元大金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2886",
+      "name": "兆豐金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2891",
+      "name": "中信金",
+      "suffix": "TW"
+    },
+    {
+      "code": "2892",
+      "name": "第一金",
+      "suffix": "TW"
+    },
+    {
+      "code": "3006",
+      "name": "晶豪科",
+      "suffix": "TW"
+    },
+    {
+      "code": "3008",
+      "name": "大立光",
+      "suffix": "TW"
+    },
+    {
+      "code": "3013",
+      "name": "晟銘電",
+      "suffix": "TW"
+    },
+    {
+      "code": "3015",
+      "name": "全漢",
+      "suffix": "TW"
+    },
+    {
+      "code": "3016",
+      "name": "嘉晶",
+      "suffix": "TW"
+    },
+    {
+      "code": "3017",
+      "name": "奇鋐",
+      "suffix": "TW"
+    },
+    {
+      "code": "3019",
+      "name": "亞光",
+      "suffix": "TW"
+    },
+    {
+      "code": "3022",
+      "name": "威強電",
+      "suffix": "TW"
+    },
+    {
+      "code": "3023",
+      "name": "信邦",
+      "suffix": "TW"
+    },
+    {
+      "code": "3026",
+      "name": "禾伸堂",
+      "suffix": "TW"
+    },
+    {
+      "code": "3029",
+      "name": "零壹",
+      "suffix": "TW"
+    },
+    {
+      "code": "3030",
+      "name": "德律",
+      "suffix": "TW"
+    },
+    {
+      "code": "3034",
+      "name": "聯詠",
+      "suffix": "TW"
+    },
+    {
+      "code": "3035",
+      "name": "智原",
+      "suffix": "TW"
+    },
+    {
+      "code": "3037",
+      "name": "欣興",
+      "suffix": "TW"
+    },
+    {
+      "code": "3042",
+      "name": "晶技",
+      "suffix": "TW"
+    },
+    {
+      "code": "3044",
+      "name": "健鼎",
+      "suffix": "TW"
+    },
+    {
+      "code": "3045",
+      "name": "台灣大",
+      "suffix": "TW"
+    },
+    {
+      "code": "3059",
+      "name": "華晶科",
+      "suffix": "TW"
+    },
+    {
+      "code": "3081",
+      "name": "聯亞",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3088",
+      "name": "艾訊",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3090",
+      "name": "日電貿",
+      "suffix": "TW"
+    },
+    {
+      "code": "3105",
+      "name": "穩懋",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3131",
+      "name": "弘塑",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3135",
+      "name": "凌航",
+      "suffix": "TW"
+    },
+    {
+      "code": "3149",
+      "name": "正達",
+      "suffix": "TW"
+    },
+    {
+      "code": "3163",
+      "name": "波若威",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3167",
+      "name": "大量",
+      "suffix": "TW"
+    },
+    {
+      "code": "3189",
+      "name": "景碩",
+      "suffix": "TW"
+    },
+    {
+      "code": "3207",
+      "name": "耀勝",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3211",
+      "name": "順達",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3218",
+      "name": "大學光",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3221",
+      "name": "台嘉碩",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3227",
+      "name": "原相",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3231",
+      "name": "緯創",
+      "suffix": "TW"
+    },
+    {
+      "code": "3234",
+      "name": "光環",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3236",
+      "name": "千如",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3260",
+      "name": "威剛",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3264",
+      "name": "欣銓",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3265",
+      "name": "台星科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3305",
+      "name": "昇貿",
+      "suffix": "TW"
+    },
+    {
+      "code": "3317",
+      "name": "尼克森",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3323",
+      "name": "加百裕",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3324",
+      "name": "雙鴻",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3357",
+      "name": "臺慶科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3362",
+      "name": "先進光",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3363",
+      "name": "上詮",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3374",
+      "name": "精材",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3380",
+      "name": "明泰",
+      "suffix": "TW"
+    },
+    {
+      "code": "3406",
+      "name": "玉晶光",
+      "suffix": "TW"
+    },
+    {
+      "code": "3413",
+      "name": "京鼎",
+      "suffix": "TW"
+    },
+    {
+      "code": "3430",
+      "name": "奇鈦科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3443",
+      "name": "創意",
+      "suffix": "TW"
+    },
+    {
+      "code": "3450",
+      "name": "聯鈞",
+      "suffix": "TW"
+    },
+    {
+      "code": "3481",
+      "name": "群創",
+      "suffix": "TW"
+    },
+    {
+      "code": "3491",
+      "name": "昇達科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3515",
+      "name": "華擎",
+      "suffix": "TW"
+    },
+    {
+      "code": "3526",
+      "name": "凡甲",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3529",
+      "name": "力旺",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3533",
+      "name": "嘉澤",
+      "suffix": "TW"
+    },
+    {
+      "code": "3535",
+      "name": "晶彩科",
+      "suffix": "TW"
+    },
+    {
+      "code": "3537",
+      "name": "堡達",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3580",
+      "name": "友威科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3583",
+      "name": "辛耘",
+      "suffix": "TW"
+    },
+    {
+      "code": "3596",
+      "name": "智易",
+      "suffix": "TW"
+    },
+    {
+      "code": "3615",
+      "name": "安可",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3624",
+      "name": "光頡",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3625",
+      "name": "西勝",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3653",
+      "name": "健策",
+      "suffix": "TW"
+    },
+    {
+      "code": "3661",
+      "name": "世芯-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "3663",
+      "name": "鑫科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3665",
+      "name": "貿聯-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "3675",
+      "name": "德微",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3680",
+      "name": "家登",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3693",
+      "name": "營邦",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3704",
+      "name": "合勤控",
+      "suffix": "TW"
+    },
+    {
+      "code": "3706",
+      "name": "神達",
+      "suffix": "TW"
+    },
+    {
+      "code": "3707",
+      "name": "漢磊",
+      "suffix": "TWO"
+    },
+    {
+      "code": "3711",
+      "name": "日月光投控",
+      "suffix": "TW"
+    },
+    {
+      "code": "3715",
+      "name": "定穎投控",
+      "suffix": "TW"
+    },
+    {
+      "code": "4105",
+      "name": "東洋",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4506",
+      "name": "崇友",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4526",
+      "name": "東台",
+      "suffix": "TW"
+    },
+    {
+      "code": "4533",
+      "name": "協易機",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4540",
+      "name": "全球傳動",
+      "suffix": "TW"
+    },
+    {
+      "code": "4561",
+      "name": "健椿",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4572",
+      "name": "駐龍",
+      "suffix": "TW"
+    },
+    {
+      "code": "4576",
+      "name": "大銀微系統",
+      "suffix": "TW"
+    },
+    {
+      "code": "4583",
+      "name": "台灣精銳",
+      "suffix": "TW"
+    },
+    {
+      "code": "4585",
+      "name": "達明機器人",
+      "suffix": "TW"
+    },
+    {
+      "code": "4721",
+      "name": "美琪瑪",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4722",
+      "name": "國精化",
+      "suffix": "TW"
+    },
+    {
+      "code": "4736",
+      "name": "泰博",
+      "suffix": "TW"
+    },
+    {
+      "code": "4739",
+      "name": "康普",
+      "suffix": "TW"
+    },
+    {
+      "code": "4749",
+      "name": "新應材",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4760",
+      "name": "勤凱",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4763",
+      "name": "材料-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "4764",
+      "name": "雙鍵",
+      "suffix": "TW"
+    },
+    {
+      "code": "4766",
+      "name": "南寶",
+      "suffix": "TW"
+    },
+    {
+      "code": "4772",
+      "name": "台特化",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4906",
+      "name": "正文",
+      "suffix": "TW"
+    },
+    {
+      "code": "4908",
+      "name": "前鼎",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4916",
+      "name": "事欣科",
+      "suffix": "TW"
+    },
+    {
+      "code": "4919",
+      "name": "新唐",
+      "suffix": "TW"
+    },
+    {
+      "code": "4923",
+      "name": "力士",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4931",
+      "name": "新盛力",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4938",
+      "name": "和碩",
+      "suffix": "TW"
+    },
+    {
+      "code": "4958",
+      "name": "臻鼎-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "4966",
+      "name": "譜瑞-KY",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4967",
+      "name": "十銓",
+      "suffix": "TW"
+    },
+    {
+      "code": "4973",
+      "name": "廣穎電通",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4977",
+      "name": "眾達-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "4979",
+      "name": "華星光",
+      "suffix": "TWO"
+    },
+    {
+      "code": "4989",
+      "name": "榮科",
+      "suffix": "TW"
+    },
+    {
+      "code": "4991",
+      "name": "環宇-KY",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5209",
+      "name": "新鼎",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5228",
+      "name": "鈺鎧",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5269",
+      "name": "祥碩",
+      "suffix": "TW"
+    },
+    {
+      "code": "5274",
+      "name": "信驊",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5289",
+      "name": "宜鼎",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5299",
+      "name": "杰力",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5309",
+      "name": "系統電",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5328",
+      "name": "華容",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5340",
+      "name": "建榮",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5347",
+      "name": "世界",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5351",
+      "name": "鈺創",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5371",
+      "name": "中光電",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5386",
+      "name": "青雲",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5388",
+      "name": "中磊",
+      "suffix": "TW"
+    },
+    {
+      "code": "5425",
+      "name": "台半",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5434",
+      "name": "崇越",
+      "suffix": "TW"
+    },
+    {
+      "code": "5439",
+      "name": "高技",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5443",
+      "name": "均豪",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5469",
+      "name": "瀚宇博",
+      "suffix": "TW"
+    },
+    {
+      "code": "5471",
+      "name": "松翰",
+      "suffix": "TW"
+    },
+    {
+      "code": "5475",
+      "name": "德宏",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5536",
+      "name": "聖暉*",
+      "suffix": "TWO"
+    },
+    {
+      "code": "5538",
+      "name": "東明-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "5880",
+      "name": "合庫金",
+      "suffix": "TW"
+    },
+    {
+      "code": "6104",
+      "name": "創惟",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6112",
+      "name": "邁達特",
+      "suffix": "TW"
+    },
+    {
+      "code": "6117",
+      "name": "迎廣",
+      "suffix": "TW"
+    },
+    {
+      "code": "6121",
+      "name": "新普",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6125",
+      "name": "廣運",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6127",
+      "name": "九豪",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6138",
+      "name": "茂達",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6139",
+      "name": "亞翔",
+      "suffix": "TW"
+    },
+    {
+      "code": "6146",
+      "name": "耕興",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6147",
+      "name": "頎邦",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6153",
+      "name": "嘉聯益",
+      "suffix": "TW"
+    },
+    {
+      "code": "6155",
+      "name": "鈞寶",
+      "suffix": "TW"
+    },
+    {
+      "code": "6156",
+      "name": "松上",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6166",
+      "name": "凌華",
+      "suffix": "TW"
+    },
+    {
+      "code": "6173",
+      "name": "信昌電",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6174",
+      "name": "安碁",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6175",
+      "name": "立敦",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6187",
+      "name": "萬潤",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6188",
+      "name": "廣明",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6190",
+      "name": "萬泰科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6191",
+      "name": "精成科",
+      "suffix": "TW"
+    },
+    {
+      "code": "6192",
+      "name": "巨路",
+      "suffix": "TW"
+    },
+    {
+      "code": "6196",
+      "name": "帆宣",
+      "suffix": "TW"
+    },
+    {
+      "code": "6202",
+      "name": "盛群",
+      "suffix": "TW"
+    },
+    {
+      "code": "6204",
+      "name": "艾華",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6207",
+      "name": "雷科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6209",
+      "name": "今國光",
+      "suffix": "TW"
+    },
+    {
+      "code": "6213",
+      "name": "聯茂",
+      "suffix": "TW"
+    },
+    {
+      "code": "6214",
+      "name": "精誠",
+      "suffix": "TW"
+    },
+    {
+      "code": "6215",
+      "name": "和椿",
+      "suffix": "TW"
+    },
+    {
+      "code": "6216",
+      "name": "居易",
+      "suffix": "TW"
+    },
+    {
+      "code": "6223",
+      "name": "旺矽",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6224",
+      "name": "聚鼎",
+      "suffix": "TW"
+    },
+    {
+      "code": "6230",
+      "name": "超眾",
+      "suffix": "TW"
+    },
+    {
+      "code": "6239",
+      "name": "力成",
+      "suffix": "TW"
+    },
+    {
+      "code": "6257",
+      "name": "矽格",
+      "suffix": "TW"
+    },
+    {
+      "code": "6259",
+      "name": "百徽",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6269",
+      "name": "台郡",
+      "suffix": "TW"
+    },
+    {
+      "code": "6274",
+      "name": "台燿",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6278",
+      "name": "台表科",
+      "suffix": "TW"
+    },
+    {
+      "code": "6282",
+      "name": "康舒",
+      "suffix": "TW"
+    },
+    {
+      "code": "6284",
+      "name": "佳邦",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6285",
+      "name": "啟碁",
+      "suffix": "TW"
+    },
+    {
+      "code": "6287",
+      "name": "元隆",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6405",
+      "name": "悅城",
+      "suffix": "TW"
+    },
+    {
+      "code": "6409",
+      "name": "旭隼",
+      "suffix": "TW"
+    },
+    {
+      "code": "6412",
+      "name": "群電",
+      "suffix": "TW"
+    },
+    {
+      "code": "6414",
+      "name": "樺漢",
+      "suffix": "TW"
+    },
+    {
+      "code": "6415",
+      "name": "矽力*-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6432",
+      "name": "今展科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6435",
+      "name": "大中",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6442",
+      "name": "光聖",
+      "suffix": "TW"
+    },
+    {
+      "code": "6449",
+      "name": "鈺邦",
+      "suffix": "TW"
+    },
+    {
+      "code": "6451",
+      "name": "訊芯-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6485",
+      "name": "點序",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6510",
+      "name": "精測",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6515",
+      "name": "穎崴",
+      "suffix": "TW"
+    },
+    {
+      "code": "6525",
+      "name": "捷敏-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6531",
+      "name": "愛普*",
+      "suffix": "TW"
+    },
+    {
+      "code": "6533",
+      "name": "晶心科",
+      "suffix": "TW"
+    },
+    {
+      "code": "6569",
+      "name": "醫揚",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6579",
+      "name": "研揚",
+      "suffix": "TW"
+    },
+    {
+      "code": "6584",
+      "name": "南俊國際",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6603",
+      "name": "富強鑫",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6609",
+      "name": "瀧澤科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6640",
+      "name": "均華",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6642",
+      "name": "富致",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6643",
+      "name": "M31",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6664",
+      "name": "群翊",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6667",
+      "name": "信紘科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6669",
+      "name": "緯穎",
+      "suffix": "TW"
+    },
+    {
+      "code": "6683",
+      "name": "雍智科技",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6690",
+      "name": "安碁資訊",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6691",
+      "name": "洋基工程",
+      "suffix": "TW"
+    },
+    {
+      "code": "6693",
+      "name": "廣閎科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6719",
+      "name": "力智",
+      "suffix": "TW"
+    },
+    {
+      "code": "6742",
+      "name": "澤米",
+      "suffix": "TW"
+    },
+    {
+      "code": "6752",
+      "name": "叡揚",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6756",
+      "name": "威鋒電子",
+      "suffix": "TW"
+    },
+    {
+      "code": "6757",
+      "name": "台灣虎航",
+      "suffix": "TW"
+    },
+    {
+      "code": "6761",
+      "name": "穩得",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6770",
+      "name": "力積電",
+      "suffix": "TW"
+    },
+    {
+      "code": "6781",
+      "name": "AES-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6788",
+      "name": "華景電",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6789",
+      "name": "采鈺",
+      "suffix": "TW"
+    },
+    {
+      "code": "6803",
+      "name": "崑鼎",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6821",
+      "name": "聯寶",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6831",
+      "name": "邁科",
+      "suffix": "TW"
+    },
+    {
+      "code": "6834",
+      "name": "天二科技",
+      "suffix": "TW"
+    },
+    {
+      "code": "6841",
+      "name": "長佳智能",
+      "suffix": "TWO"
+    },
+    {
+      "code": "6862",
+      "name": "三集瑞-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6863",
+      "name": "永道-KY",
+      "suffix": "TW"
+    },
+    {
+      "code": "6870",
+      "name": "騰雲",
+      "suffix": "TWO"
+    },
+    {
+      "code": "7402",
+      "name": "邑錡",
+      "suffix": "TWO"
+    },
+    {
+      "code": "7734",
+      "name": "印能科技",
+      "suffix": "TWO"
+    },
+    {
+      "code": "7750",
+      "name": "新代科技",
+      "suffix": "TW"
+    },
+    {
+      "code": "7769",
+      "name": "鴻勁",
+      "suffix": "TW"
+    },
+    {
+      "code": "7795",
+      "name": "長廣",
+      "suffix": "TW"
+    },
+    {
+      "code": "8016",
+      "name": "矽創",
+      "suffix": "TW"
+    },
+    {
+      "code": "8021",
+      "name": "尖點",
+      "suffix": "TW"
+    },
+    {
+      "code": "8027",
+      "name": "鈦昇",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8028",
+      "name": "昇陽半導體",
+      "suffix": "TW"
+    },
+    {
+      "code": "8033",
+      "name": "雷虎",
+      "suffix": "TW"
+    },
+    {
+      "code": "8039",
+      "name": "台虹",
+      "suffix": "TW"
+    },
+    {
+      "code": "8042",
+      "name": "金山電",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8043",
+      "name": "蜜望實",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8046",
+      "name": "南電",
+      "suffix": "TW"
+    },
+    {
+      "code": "8050",
+      "name": "廣積",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8069",
+      "name": "元太",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8071",
+      "name": "能率網通",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8080",
+      "name": "泰霖",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8081",
+      "name": "致新",
+      "suffix": "TW"
+    },
+    {
+      "code": "8084",
+      "name": "巨虹",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8085",
+      "name": "福華",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8086",
+      "name": "宏捷科",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8088",
+      "name": "品安",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8110",
+      "name": "華東",
+      "suffix": "TW"
+    },
+    {
+      "code": "8114",
+      "name": "振樺電",
+      "suffix": "TW"
+    },
+    {
+      "code": "8121",
+      "name": "越峰",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8131",
+      "name": "福懋科",
+      "suffix": "TW"
+    },
+    {
+      "code": "8150",
+      "name": "南茂",
+      "suffix": "TW"
+    },
+    {
+      "code": "8182",
+      "name": "加高",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8210",
+      "name": "勤誠",
+      "suffix": "TW"
+    },
+    {
+      "code": "8222",
+      "name": "寶一",
+      "suffix": "TW"
+    },
+    {
+      "code": "8234",
+      "name": "新漢",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8255",
+      "name": "朋程",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8261",
+      "name": "富鼎",
+      "suffix": "TW"
+    },
+    {
+      "code": "8271",
+      "name": "宇瞻",
+      "suffix": "TW"
+    },
+    {
+      "code": "8277",
+      "name": "商丞",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8289",
+      "name": "泰藝",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8299",
+      "name": "群聯",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8358",
+      "name": "金居",
+      "suffix": "TWO"
+    },
+    {
+      "code": "8422",
+      "name": "可寧衛*",
+      "suffix": "TW"
+    },
+    {
+      "code": "8996",
+      "name": "高力",
+      "suffix": "TW"
+    },
+    {
+      "code": "9911",
+      "name": "櫻花",
+      "suffix": "TW"
+    },
+    {
+      "code": "9914",
+      "name": "美利達",
+      "suffix": "TW"
+    },
+    {
+      "code": "9921",
+      "name": "巨大",
+      "suffix": "TW"
+    },
+    {
+      "code": "9933",
+      "name": "中鼎",
+      "suffix": "TW"
+    }
+  ],
   "alertLastState": {},
   "comparisonCodes": [],
   "customTWSE50": null,
@@ -984,9 +3151,10 @@
   "decisionDigest": null,
   "futuresSettlementReminderLast": "",
   "performance": {},
+  "deviceSnapshotMeta": null,
   "publicBuild": {
     "profile": "public-pages-hardened-v3",
-    "builtAt": "2026-09-02T07:34:45.344Z",
+    "builtAt": "2026-09-13T08:23:21.766Z",
     "sourcePath": "data/state_core.json",
     "sourceDataAsOf": "2026-05-12T16:00:29.175Z",
     "note": "公開 Pages 僅含中性示範清單；個人持股、成本、提醒與自訂研究未納入 artifact。"
@@ -995,7 +3163,7 @@
   "schemaMigration": {
     "schemaVersion": 2,
     "mode": "compatible-in-memory",
-    "migratedAt": "2026-09-02T07:34:45.344Z",
+    "migratedAt": "2026-09-13T08:23:21.766Z",
     "records": 2771,
     "valid": 2682,
     "domains": {

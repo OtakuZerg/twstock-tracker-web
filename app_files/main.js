@@ -1,8 +1,12 @@
 "use strict";
 
-const APP_VERSION = "19.3";
+const APP_VERSION = "20.0";
 const STORAGE_KEY = "tsmcTerafabStockRadarV1";
 const LOCAL_STORAGE_BACKUP_MODE = "compact-preferences-v1";
+const DEVICE_SNAPSHOT_KIND = "twstock-device-snapshot";
+const DEVICE_SNAPSHOT_SCHEMA_VERSION = 1;
+const DEVICE_SNAPSHOT_MAX_BYTES = 32 * 1024 * 1024;
+const DEVICE_SNAPSHOT_MAX_NODES = 1000000;
 const STATE_SEED_PATH = "data/state.json";
 const STATE_CORE_SEED_PATH = "data/state_core.json";
 const STATE_BOOTSTRAP_SEED_PATH = "data/state_bootstrap.json";
@@ -941,7 +945,7 @@ const STOCK_UNIVERSE = {
   "3491": { name: "昇達科", suffix: "TWO", officialIndustry: "27", sector: "微波 / 衛星通訊" },
   "6285": { name: "啟碁", suffix: "TW", officialIndustry: "27", sector: "網通 / 無線通訊" },
   "3665": { name: "貿聯-KY", suffix: "TW", officialIndustry: "31", sector: "高速連接 / 線束" },
-  "3526": { name: "凡甲", suffix: "TW", officialIndustry: "28", sector: "高速連接器 / 大電流連接 / 資料中心 interconnect" },
+  "3526": { name: "凡甲", suffix: "TWO", officialIndustry: "28", sector: "高速連接器 / 大電流連接 / 資料中心 interconnect" },
   "3533": { name: "嘉澤", suffix: "TW", officialIndustry: "28", sector: "連接器 / 高速介面" },
   "3017": { name: "奇鋐", suffix: "TW", officialIndustry: "25", sector: "散熱 / 風扇" },
   "3324": { name: "雙鴻", suffix: "TWO", officialIndustry: "31", sector: "散熱模組" },
@@ -953,7 +957,7 @@ const STOCK_UNIVERSE = {
   "6781": { name: "AES-KY", suffix: "TW", officialIndustry: "28", sector: "BBU / 電池備援 / AI 伺服器電力管理" },
   "6831": { name: "邁科", suffix: "TW", sector: "散熱模組 / AI 伺服器散熱" },
   "6435": { name: "大中", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / AI 伺服器電源散熱延伸" },
-  "8261": { name: "富鼎", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / 功率元件" },
+  "8261": { name: "富鼎", suffix: "TW", officialIndustry: "24", sector: "純 MOSFET / 功率元件" },
   "5299": { name: "杰力", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / 功率元件延伸" },
   "2342": { name: "茂矽", suffix: "TW", officialIndustry: "24", sector: "MOSFET / IGBT / 垂直整合 IDM" },
   "3317": { name: "尼克森", suffix: "TWO", officialIndustry: "24", sector: "純 MOSFET / 功率元件延伸" },
@@ -1091,12 +1095,12 @@ const STOCK_UNIVERSE = {
   "9921": { name: "巨大", suffix: "TW", officialIndustry: "36", sector: "自行車（捷安特 GIANT，全球第一大自行車品牌）" },
   "9914": { name: "美利達", suffix: "TW", officialIndustry: "36", sector: "自行車（MERIDA，全球第二大自行車品牌）" },
   // 2026-07-06 先探講堂族群分析匯入：封測補漲 + 電池 BBU 概念
-  "8131": { name: "福懋科", suffix: "TWO", officialIndustry: "24", sector: "記憶體封測（DRAM / Flash 封裝測試）" },
+  "8131": { name: "福懋科", suffix: "TW", officialIndustry: "24", sector: "記憶體封測（DRAM / Flash 封裝測試）" },
   "6525": { name: "捷敏-KY", suffix: "TW", officialIndustry: "24", sector: "功率半導體封測 / 分離式元件封裝" },
-  "3323": { name: "加百裕", suffix: "TW", officialIndustry: "28", sector: "電池模組 / BBU 伺服器備援電池概念" },
+  "3323": { name: "加百裕", suffix: "TWO", officialIndustry: "28", sector: "電池模組 / BBU 伺服器備援電池概念" },
   "3625": { name: "西勝", suffix: "TWO", officialIndustry: "28", sector: "電池模組 / BBU 概念（基本面較弱）" },
   "4931": { name: "新盛力", suffix: "TWO", officialIndustry: "28", sector: "電池模組 / BBU 三雄（法人認同純度高）" },
-  "3211": { name: "順達", suffix: "TW", officialIndustry: "28", sector: "電池模組 / BBU 三雄（伺服器備援電池）" },
+  "3211": { name: "順達", suffix: "TWO", officialIndustry: "28", sector: "電池模組 / BBU 三雄（伺服器備援電池）" },
   "2609": { name: "陽明", suffix: "TW", officialIndustry: "15", sector: "航運 / 貨櫃" },
   "0050": { name: "元大台灣50", suffix: "TW", sector: "ETF / 台灣50" },
   "00935": { name: "野村臺灣新科技50", suffix: "TW", sector: "ETF / 台股創新科技50" },
@@ -1762,7 +1766,7 @@ const PASSIVE_COMPONENT_STOCKS = {
   "6173": { name: "信昌電", suffix: "TWO", officialIndustry: "28", sector: "被動元件 / MLCC / 介電陶瓷粉 / 電阻" },
   "5328": { name: "華容", suffix: "TWO", officialIndustry: "28", sector: "被動元件 / 電容" },
   "3537": { name: "堡達", suffix: "TWO", officialIndustry: "28", sector: "被動元件通路 / 電容代理" },
-  "6284": { name: "佳邦", suffix: "TW", officialIndustry: "28", sector: "被動元件 / 保護元件 / 濾波器" },
+  "6284": { name: "佳邦", suffix: "TWO", officialIndustry: "28", sector: "被動元件 / 保護元件 / 濾波器" },
   "2478": { name: "大毅", suffix: "TW", officialIndustry: "28", sector: "被動元件 / 晶片電阻 / 保護元件" },
   "2428": { name: "興勤", suffix: "TW", officialIndustry: "28", sector: "被動元件 / 熱敏電阻 / 保護元件" },
   "6224": { name: "聚鼎", suffix: "TW", officialIndustry: "28", sector: "被動元件 / 保護元件 / PPTC" },
@@ -1794,7 +1798,7 @@ const PASSIVE_COMPONENT_STOCKS = {
   "8182": { name: "加高", suffix: "TWO", officialIndustry: "28", sector: "被動元件 / 石英元件 / 頻率控制" },
   "8289": { name: "泰藝", suffix: "TWO", officialIndustry: "28", sector: "被動元件 / 石英晶體 / 振盪器" },
   "6435": { name: "大中", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / 純 MOSFET / AI 伺服器電源散熱連動" },
-  "8261": { name: "富鼎", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / 純 MOSFET" },
+  "8261": { name: "富鼎", suffix: "TW", officialIndustry: "24", sector: "功率半導體延伸 / 純 MOSFET" },
   "2481": { name: "強茂", suffix: "TW", officialIndustry: "24", sector: "功率半導體延伸 / 功率分離式元件平台" },
   "5425": { name: "台半", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / 功率元件平台" },
   "8255": { name: "朋程", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / 車用整流二極體 / HVDC 待複核" },
@@ -1810,7 +1814,7 @@ const PASSIVE_COMPONENT_STOCKS = {
   "6693": { name: "廣閎科", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / Driver IC（不是 MOSFET 本體）" },
   "6415": { name: "矽力*-KY", suffix: "TW", officialIndustry: "24", sector: "功率半導體延伸 / PMIC（不是 MOSFET 本體）" },
   "8081": { name: "致新", suffix: "TW", officialIndustry: "24", sector: "功率半導體延伸 / PMIC（不是 MOSFET 本體）" },
-  "6719": { name: "力智", suffix: "TWO", officialIndustry: "24", sector: "功率半導體延伸 / PMIC（不是 MOSFET 本體）" },
+  "6719": { name: "力智", suffix: "TW", officialIndustry: "24", sector: "功率半導體延伸 / PMIC（不是 MOSFET 本體）" },
   "2371": { name: "大同", suffix: "TW", officialIndustry: "28", sector: "廣義被動元件 / 電阻器鏈 / 綜合集團" },
   "2413": { name: "環科", suffix: "TW", officialIndustry: "28", sector: "廣義被動元件 / 磁性元件 / 電源供應" },
   "8071": { name: "能率網通", suffix: "TWO", officialIndustry: "28", sector: "廣義被動元件 / 電容 / 電感 / 濾波器鏈" },
@@ -1923,7 +1927,7 @@ const AI_SUPPLY_CHAIN_STOCKS = {
   "8277": { name: "商丞", suffix: "TWO", sector: "記憶體模組" },
   "3006": { name: "晶豪科", suffix: "TW", sector: "記憶體 IC / DRAM 題材觀察" },
   "5351": { name: "鈺創", suffix: "TWO", sector: "記憶體 IC / DRAM 題材觀察" },
-  "6485": { name: "點序", suffix: "TW", sector: "NAND 控制 IC / Flash 控制觀察" },
+  "6485": { name: "點序", suffix: "TWO", sector: "NAND 控制 IC / Flash 控制觀察" },
   "3324": { name: "雙鴻", suffix: "TWO", sector: "散熱模組 / 液冷 / AI Server" },
   "3017": { name: "奇鋐", suffix: "TW", sector: "散熱模組 / 伺服器散熱" },
   "3653": { name: "健策", suffix: "TW", sector: "均熱片 / 散熱 / 伺服器" },
@@ -1969,7 +1973,7 @@ const AI_SUPPLY_CHAIN_STOCKS = {
   "6643": { name: "M31", suffix: "TWO", sector: "高速介面 IP / 矽智財" },
   "6756": { name: "威鋒電子", suffix: "TW", sector: "USB 控制 IC / 高速傳輸" },
   "8081": { name: "致新", suffix: "TW", sector: "PMIC / 電源管理 IC（不是 MOSFET 本體）" },
-  "6719": { name: "力智", suffix: "TWO", sector: "PMIC / 電源管理 IC（不是 MOSFET 本體）" },
+  "6719": { name: "力智", suffix: "TW", sector: "PMIC / 電源管理 IC（不是 MOSFET 本體）" },
   "2458": { name: "義隆", suffix: "TW", sector: "觸控 / MCU" },
   "2436": { name: "偉詮電", suffix: "TW", sector: "電源管理 IC / USB PD" },
   "3227": { name: "原相", suffix: "TW", sector: "感測 IC" },
@@ -1987,7 +1991,7 @@ const AI_SUPPLY_CHAIN_STOCKS = {
   "6117": { name: "迎廣", suffix: "TW", sector: "液冷機櫃 / 伺服器機構件 / rack-scale integration" },
   "8210": { name: "勤誠", suffix: "TW", sector: "伺服器機殼" },
   "2059": { name: "川湖", suffix: "TW", sector: "伺服器滑軌 / AI Server 機構件" },
-  "6584": { name: "南俊國際", suffix: "TW", sector: "伺服器滑軌 / 機構件 / rack-scale integration" },
+  "6584": { name: "南俊國際", suffix: "TWO", sector: "伺服器滑軌 / 機構件 / rack-scale integration" },
   "3693": { name: "營邦", suffix: "TWO", sector: "工業電腦 / 伺服器" },
   "3022": { name: "威強電", suffix: "TW", sector: "工業電腦 / 邊緣運算" },
   "6414": { name: "樺漢", suffix: "TW", sector: "工業電腦 / 系統整合" },
@@ -3760,6 +3764,7 @@ const state = {
   marketInstitutionalRankings: null,
   bondSignalCache: null,
   memoryMarketCache: null,
+  deviceSnapshotMeta: null,
   selectedCode: CURRENT_HOLDINGS_SEED[0].code,
   filter: HOLDINGS_THEME_KEY,
   search: "",
@@ -6391,12 +6396,20 @@ function publishedDomainRecords(snapshot, id) {
   return records && typeof records === "object" && !Array.isArray(records) ? records : {};
 }
 
+function publishedRecordIsAtLeastAsNew(incoming, current) {
+  const dateDiff = snapshotRecordTime(incoming) - snapshotRecordTime(current);
+  if (dateDiff !== 0) return dateDiff > 0;
+  // Same trading day / period: an older download must not undo a newer revision.
+  return (Date.parse(incoming?.fetchedAt || incoming?.capturedAt || "") || 0)
+    >= (Date.parse(current?.fetchedAt || current?.capturedAt || "") || 0);
+}
+
 function mergePublishedKlineRows(currentRows, incomingRows) {
   const byDate = new Map();
   for (const row of [...(Array.isArray(currentRows) ? currentRows : []), ...(Array.isArray(incomingRows) ? incomingRows : [])]) {
     if (!row?.date || toNumber(row.close) === null) continue;
     const existing = byDate.get(row.date);
-    if (!existing || snapshotRecordTime(row) >= snapshotRecordTime(existing)) byDate.set(row.date, row);
+    if (!existing || publishedRecordIsAtLeastAsNew(row, existing)) byDate.set(row.date, row);
   }
   return compactKlineRows([...byDate.values()].sort((left, right) => String(left.date).localeCompare(String(right.date))));
 }
@@ -6405,21 +6418,22 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
   if (!snapshot || snapshot.schemaVersion !== 2 || !snapshot.domains) return { applied: false, counts: {} };
   const catalog = globalThis.TwStockSourceCatalog;
   if (!catalog?.normalizeProvenance) throw new Error("盤後快照需要 source catalog v2");
-  const counts = { quotes: 0, klines: 0, institutional: 0, margin: 0 };
+  const counts = { quotes: 0, klines: 0, institutional: 0, margin: 0, valuations: 0, revenue: 0 };
 
   for (const [code, raw] of Object.entries(publishedDomainRecords(snapshot, "quotes"))) {
     if (!STOCK_MAP.has(code)) continue;
     const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
     const current = state.quotes?.[code];
-    if (!current || snapshotRecordTime(incoming) >= snapshotRecordTime(current)) {
+    if (!current || publishedRecordIsAtLeastAsNew(incoming, current)) {
       state.quotes[code] = incoming;
       counts.quotes += 1;
     }
   }
 
   for (const [code, rawRows] of Object.entries(publishedDomainRecords(snapshot, "klines"))) {
-    if (!STOCK_MAP.has(code) || !Array.isArray(rawRows)) continue;
-    const incomingRows = rawRows.map((row) => catalog.normalizeProvenance(row, { fetchedAt: snapshot.generatedAt }));
+    if (!STOCK_MAP.has(code)) continue;
+    const decoded = globalThis.TwStockKlineSnapshotCodec?.decode(rawRows) || (Array.isArray(rawRows) ? rawRows : []);
+    const incomingRows = decoded.map((row) => catalog.normalizeProvenance(row, { fetchedAt: snapshot.generatedAt }));
     const merged = mergePublishedKlineRows(state.klines?.[code], incomingRows);
     if (!merged.length) continue;
     state.klines[code] = merged;
@@ -6430,7 +6444,7 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
     if (!STOCK_MAP.has(code)) continue;
     const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
     const current = state.institutional?.[code];
-    if (current && snapshotRecordTime(incoming) < snapshotRecordTime(current)) continue;
+    if (current && !publishedRecordIsAtLeastAsNew(incoming, current)) continue;
     state.institutional[code] = normalizeInstitutionalRecord({
       ...current,
       ...incoming,
@@ -6443,12 +6457,35 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
     if (!STOCK_MAP.has(code)) continue;
     const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
     const current = state.margin?.[code];
-    if (!current || snapshotRecordTime(incoming) >= snapshotRecordTime(current)) {
+    if (!current || publishedRecordIsAtLeastAsNew(incoming, current)) {
       state.margin[code] = incoming;
       counts.margin += 1;
     }
   }
 
+  for (const id of ["valuations", "revenue"]) {
+    state[id] = state[id] || {};
+    for (const [code, raw] of Object.entries(publishedDomainRecords(snapshot, id))) {
+      if (!STOCK_MAP.has(code)) continue;
+      const incoming = catalog.normalizeProvenance(raw, { fetchedAt: snapshot.generatedAt });
+      const current = state[id][code];
+      const comparePeriod = id === "revenue" && current?.yearMonth && incoming.yearMonth
+        ? String(incoming.yearMonth).localeCompare(String(current.yearMonth)) : 0;
+      if (comparePeriod < 0 || (comparePeriod === 0 && current && !publishedRecordIsAtLeastAsNew(incoming, current))) continue;
+      state[id][code] = incoming;
+      counts[id] += 1;
+    }
+  }
+  if (counts.revenue) {
+    state.revenueMeta = { ...state.revenueMeta, fetchedAt: snapshot.domains.revenue.fetchedAt || snapshot.generatedAt,
+      sourceSummary: "MOPS 官方月營收 · 公開研究股池延遲快照", source: "MOPS", errors: [] };
+    for (const [code, row] of Object.entries(state.revenue)) {
+      if (!row.yearMonth) continue;
+      const history = Array.isArray(state.revenueHistory?.[code]) ? state.revenueHistory[code] : [];
+      state.revenueHistory = state.revenueHistory || {};
+      state.revenueHistory[code] = [...history.filter((item) => item.yearMonth !== row.yearMonth), row].sort((a, b) => String(a.yearMonth).localeCompare(String(b.yearMonth))).slice(-REVENUE_HISTORY_MONTH_LIMIT);
+    }
+  }
   state.schemaVersion = 2;
   state.klineStorage = {
     ...normalizeKlineStorageMeta(state.klineStorage),
@@ -6462,6 +6499,13 @@ function applyPublishedAfterCloseSnapshot(snapshot) {
     attemptCount: Number(snapshot.attemptCount) || 0,
     asOf: snapshot.asOf || null,
     targetCount: Number(snapshot.targetCount) || 0,
+    universe: Array.isArray(snapshot.universe) ? snapshot.universe.map((row) => ({ code: String(row.code), name: String(row.name || ""), suffix: row.suffix === "TWO" ? "TWO" : "TW" })) : [],
+    domains: Object.fromEntries(Object.entries(snapshot.domains).map(([id, domain]) => [id, {
+      asOf: domain.asOf || null, expectedAsOf: domain.expectedAsOf || null, period: domain.period || null,
+      count: Number(domain.count) || 0, freshCount: Number(domain.freshCount) || 0,
+      targetCount: Number(domain.targetCount) || Number(snapshot.targetCount) || 0,
+      fallbackUsed: domain.fallbackUsed === true, source: domain.source || ""
+    }])),
     delivery: snapshot.delivery || null,
     counts,
     freshCounts: Object.fromEntries(["quotes", "klines", "institutional", "margin"].map((key) => [
@@ -6507,7 +6551,7 @@ async function loadPublishedMarketSnapshot() {
     headers: { Accept: "application/json" }
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const payload = await readLimitedJsonResponse(response, 4 * 1024 * 1024);
+  const payload = await readLimitedJsonResponse(response, 8 * 1024 * 1024);
   if (![1, 2].includes(payload?.schemaVersion) || !payload.marketDashboardCache || typeof payload.marketDashboardCache !== "object") {
     throw new Error("行情快照格式不相容");
   }
@@ -15062,6 +15106,22 @@ function mergeActiveEtfPayload(payload, sourceLabel = "", options = {}) {
   return incomingCount;
 }
 
+function normalizeDeviceSnapshotMeta(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  if (value.mode !== "imported") return null;
+  return {
+    mode: "imported",
+    schemaVersion: Number(value.schemaVersion) || DEVICE_SNAPSHOT_SCHEMA_VERSION,
+    sourceVersion: String(value.sourceVersion || "").slice(0, 32),
+    exportedAt: String(value.exportedAt || "").slice(0, 64),
+    importedAt: String(value.importedAt || "").slice(0, 64),
+    sourceLastUpdated: String(value.sourceLastUpdated || "").slice(0, 64),
+    holdingsCount: Math.max(0, Number(value.holdingsCount) || 0),
+    quoteCount: Math.max(0, Number(value.quoteCount) || 0),
+    fileName: String(value.fileName || "").slice(0, 160)
+  };
+}
+
 function normalizeStateAfterLoad() {
   state.filter = typeof state.filter === "string" && state.filter.trim() ? state.filter.trim() : HOLDINGS_THEME_KEY;
   state.search = typeof state.search === "string" ? state.search : "";
@@ -15229,6 +15289,7 @@ function normalizeStateAfterLoad() {
   state.marketInstitutionalRankings = normalizeMarketInstitutionalRankings(state.marketInstitutionalRankings);
   state.bondSignalCache = normalizeBondSignalCache(state.bondSignalCache);
   state.memoryMarketCache = normalizeMemoryMarketCache(state.memoryMarketCache);
+  state.deviceSnapshotMeta = normalizeDeviceSnapshotMeta(state.deviceSnapshotMeta);
   state.podcastDownloadDir = normalizePodcastDownloadDir(state.podcastDownloadDir);
   state.snapshotTrendWindow = normalizeSnapshotTrendWindow(state.snapshotTrendWindow);
   const sourceCatalog = globalThis.TwStockSourceCatalog;
@@ -16624,6 +16685,7 @@ function buildStatePayload() {
     marketInstitutionalRankings: state.marketInstitutionalRankings,
     bondSignalCache: state.bondSignalCache,
     memoryMarketCache: state.memoryMarketCache,
+    deviceSnapshotMeta: state.deviceSnapshotMeta,
     newsCache: state.newsCache,
     holdings: state.holdings,
     holdingsPresetVersion: state.holdingsPresetVersion || "",
@@ -16636,6 +16698,8 @@ function buildStatePayload() {
     tradingRadarMode: state.tradingRadarMode,
     screenerSort: state.screenerSort,
     screenerSortDir: state.screenerSortDir,
+    screenerColumnMode: state.screenerColumnMode,
+    screenerLiquidityFilter: state.screenerLiquidityFilter,
     virtualWindows: state.virtualWindows,
     analystWinRate: state.analystWinRate,
     analystWinRateCalibration: state.analystWinRateCalibration,
@@ -16701,6 +16765,7 @@ function buildLocalStorageBackup(payload) {
     search: payload.search,
     chartView: payload.chartView,
     memoryMarketCache: normalizeMemoryMarketCache(payload.memoryMarketCache),
+    deviceSnapshotMeta: normalizeDeviceSnapshotMeta(payload.deviceSnapshotMeta),
     tideSectorCache: normalizeTideSectorCache(payload.tideSectorCache),
     exDividendCalendar: normalizeExDividendCalendarState(payload.exDividendCalendar),
     activeEtf: {
@@ -17625,7 +17690,7 @@ function maybeRefreshPodcastFeeds() {
 
 function setBusy(isBusy, message = "") {
   state.busy = isBusy;
-  for (const id of ["quickUpdateBtn", "topFullUpdateBtn", "updateAllBtn", "updateAllKlinesBtn", "updateRevenueBtn", "updateDividendBtn", "refreshFuturesTopBtn", "refreshFuturesBtn", "exportBtn", "updatePodcastBtn", "updateInstThemeBtn", "prewarmInst30Btn", "refreshMarketInstRankingsBtn", "loadActiveEtfDataBtn", "updateActiveEtfDataBtn", "reloadActiveEtfBtn", "updateActiveEtfAllBtn", "updateEtfNavBtn"]) {
+  for (const id of ["quickUpdateBtn", "topFullUpdateBtn", "updateAllBtn", "updateAllKlinesBtn", "updateRevenueBtn", "updateDividendBtn", "refreshFuturesTopBtn", "refreshFuturesBtn", "exportBtn", "exportDeviceSnapshotBtn", "importDeviceSnapshotBtn", "mobileDeviceSnapshotBtn", "updatePodcastBtn", "updateInstThemeBtn", "prewarmInst30Btn", "refreshMarketInstRankingsBtn", "loadActiveEtfDataBtn", "updateActiveEtfDataBtn", "reloadActiveEtfBtn", "updateActiveEtfAllBtn", "updateEtfNavBtn"]) {
     const element = $(id);
     if (element) element.disabled = isBusy || (isPublishedWebRuntime() && element.dataset.webSnapshotOnly === "true");
   }
@@ -18045,6 +18110,22 @@ let _marketCrashRiskBatchUpdating = false;
 let _marketCrashRiskStartupQuickTimer = null;
 let _publishedMarketSnapshotAutoAttempted = false;
 let _publishedMarketSnapshotLoadedThisSession = false;
+let _publishedSnapshotLastCheckedAt = 0;
+
+function bindPublishedSnapshotRefresh() {
+  if (!isPublishedWebRuntime()) return;
+  const recheck = () => {
+    if (document.visibilityState === "hidden" || navigator.onLine === false) return;
+    if (Date.now() - _publishedSnapshotLastCheckedAt < 5 * 60 * 1000 || _marketDashboardRefreshPromise) return;
+    _publishedSnapshotLastCheckedAt = Date.now();
+    updateMarketDashboard(true).catch(() => { renderHero(); });
+  };
+  window.addEventListener("pageshow", recheck);
+  window.addEventListener("online", recheck);
+  document.addEventListener("visibilitychange", recheck);
+  window.setInterval(recheck, 60 * 1000);
+  window.setTimeout(recheck, 1500);
+}
 
 function marketCrashRiskRefreshTtlMs(now = new Date()) {
   return (isTaiwanMarketOpen(now) || isUsMarketOpen(now))
@@ -22235,7 +22316,10 @@ function setAutoRefreshInterval(minutes) {
 function renderHero() {
   $("heroTotal").textContent = WATCHLIST.length;
   $("heroUpdated").textContent = Object.keys(state.quotes).length;
-  $("heroLastUpdated").textContent = formatDateTime(state.lastUpdated);
+  const webRuntime = isPublishedWebRuntime();
+  $("heroLastUpdated").textContent = webRuntime ? state.afterCloseSnapshotMeta?.asOf || "待補" : formatDateTime(state.lastUpdated);
+  const updatedLabel = $("heroLastUpdated").parentElement?.querySelector("span");
+  if (updatedLabel) updatedLabel.textContent = webRuntime ? "行情日期" : "更新時間";
   const syncEl = $("heroSyncStatus");
   if (syncEl) {
     const name = fsSyncDirName();
@@ -22261,7 +22345,38 @@ function renderHero() {
       ? `<span class="chip flat" title="公開網站只讀 GitHub Actions 同來源延遲快照">Web 延遲快照｜不自動跨站</span>`
       : `<span class="chip flat" title="開頁只讀本機快取；收盤後按一次同步">收盤後研究｜開頁不自動抓取</span>`;
   }
+  renderMobileDataIdentity();
   renderAfterCloseScheduleStatus();
+}
+
+function renderMobileDataIdentity() {
+  const container = $("mobileDataIdentity");
+  if (!container) return;
+  const imported = normalizeDeviceSnapshotMeta(state.deviceSnapshotMeta);
+  const webRuntime = isPublishedWebRuntime();
+  const holdings = Array.isArray(state.holdings) ? state.holdings : [];
+  const holdingQuoteCount = holdings.filter((holding) => Boolean(state.quotes?.[holding.code])).length;
+  const profile = imported
+    ? "已匯入裝置快照"
+    : webRuntime ? "Web 本機資料" : "Extension 本機資料";
+  const holdingDates = holdings.map((holding) => state.quotes?.[holding.code]?.sourceDate || state.quotes?.[holding.code]?.asOf).filter(Boolean).sort();
+  const asOf = holdingDates[0] || "";
+  const holdingFresh = holdings.filter((holding) => ["fresh", "fallback"].includes(quoteFreshnessInfo(state.quotes?.[holding.code]).level)).length;
+  const note = imported
+    ? `來源 v${imported.sourceVersion || "?"} · ${formatDateTime(asOf)}`
+    : webRuntime
+      ? `行情獨立更新 · 私人資料不上傳 · 持股最早 ${asOf || "待補"} · 私人清單需匯入`
+      : `資料日期 ${formatDateTime(asOf)}`;
+  container.innerHTML = `
+    <div class="mobile-data-identity-main">
+      <span>目前資料</span>
+      <strong title="${escapeHtml(profile)}">${escapeHtml(profile)}</strong>
+      <small>${escapeHtml(note)}</small>
+    </div>
+    <div class="mobile-data-metric"><span>持股</span><strong>${formatNumber(holdings.length, 0)} 檔</strong></div>
+    <div class="mobile-data-metric" title="有報價 ${holdingQuoteCount} 檔；只計可核對日期的目前報價"><span>報價新鮮</span><strong>${formatNumber(holdingFresh, 0)}/${formatNumber(holdings.length, 0)}</strong></div>
+    <button id="mobileDeviceSnapshotBtn" class="mobile-data-device-btn" type="button" title="${imported ? "更新" : "匯入桌機"}裝置快照；檔案不上傳伺服器">${imported ? "更新快照" : "匯入快照"} · 不上傳</button>
+  `;
 }
 
 function renderSidebarPoolManager() {
@@ -39070,10 +39185,13 @@ async function updateMarketDashboard(silent = false) {
     if (webRuntime) {
       try {
         state.marketDashboardCache = await loadPublishedMarketSnapshot();
+        _publishedSnapshotLastCheckedAt = Date.now();
         _publishedMarketSnapshotLoadedThisSession = true;
         persistStateSilently("GitHub 大盤延遲快照");
         if (state.afterCloseSnapshotMeta?.generatedAt) {
-          renderAfterCloseScheduleStatus();
+          // Active-tab rendering intentionally omits the persistent shell.
+          // Refresh its mobile freshness/identity row explicitly after merging.
+          renderHero();
           if (!_marketCrashRiskBatchUpdating) render({ scope: "active" });
         } else if (!silent && state.activeTab === "market" && !_marketCrashRiskBatchUpdating) {
           renderMarketDashboardTab();
@@ -42414,6 +42532,23 @@ function renderMarketDashboardTab(options = {}) {
     }
   };
   const renderToken = ++_marketDashboardRenderToken;
+  let viewportGuardReleased = !preserveViewport;
+  let viewportGuardTimer = null;
+  const releaseViewportGuard = (shouldRestore = true) => {
+    if (viewportGuardReleased || renderToken !== _marketDashboardRenderToken) return;
+    viewportGuardReleased = true;
+    if (viewportGuardTimer !== null) clearTimeout(viewportGuardTimer);
+    if (shouldRestore) restoreViewport();
+    container.style.minHeight = "";
+    container.style.overflowAnchor = "";
+    if (shouldRestore) {
+      if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+        window.requestAnimationFrame(restoreViewport);
+      } else {
+        setTimeout(restoreViewport, 0);
+      }
+    }
+  };
   const wholeStartedAt = performanceDiagnosticsNow();
   _marketSecondaryToken += 1;
   setMarketSecondaryPanelsVisible(false);
@@ -42463,6 +42598,11 @@ function renderMarketDashboardTab(options = {}) {
   const stillCurrent = () => renderToken === _marketDashboardRenderToken
     && state.activeTab === "market"
     && $("marketDashboardContent") === container;
+  if (preserveViewport) {
+    // 分段渲染若因切頁、低速裝置或背景排程中斷，仍要有界解除版面保護；
+    // token gate 可避免舊 render 清掉較新的 viewport guard。
+    viewportGuardTimer = setTimeout(() => releaseViewportGuard(stillCurrent()), 500);
+  }
   const mountHtml = (id, html) => {
     const node = $(id);
     if (node && stillCurrent()) {
@@ -42509,13 +42649,7 @@ function renderMarketDashboardTab(options = {}) {
       recordPerformanceRenderBlock("大盤分段完整渲染", wholeStartedAt, { tab: "market" });
       renderMarketSecondaryPanels();
       if (preserveViewport) {
-        scheduleFrame(() => {
-          if (!stillCurrent()) return;
-          restoreViewport();
-          container.style.minHeight = "";
-          container.style.overflowAnchor = "";
-          scheduleFrame(restoreViewport);
-        });
+        scheduleFrame(() => releaseViewportGuard(stillCurrent()));
       }
       return;
     }
@@ -44282,7 +44416,39 @@ function renderTraderDesk() {
     pctText: row.pct !== null ? formatPct(row.pct) : "報價待更新"
   }));
 
+  const reviewRows = (state.holdings || []).map((holding) => {
+    const rowQuote = state.quotes[holding.code];
+    const freshness = quoteFreshnessInfo(rowQuote);
+    const stale = !["fresh", "fallback"].includes(freshness.level);
+    const klineReady = (state.klines?.[holding.code]?.length || 0) >= 20;
+    return { code: holding.code, name: holding.name || STOCK_MAP.get(holding.code)?.name || "",
+      asOf: rowQuote?.sourceDate || rowQuote?.asOf || "", priority: !rowQuote ? 3 : stale ? 2 : !klineReady ? 1 : 0,
+      reason: !rowQuote ? "缺報價，先補資料" : stale ? freshness.label : !klineReady ? "歷史日線待補" : "核對線型、事件與失效條件" };
+  }).sort((a, b) => b.priority - a.priority);
+  const pending = reviewRows.filter((row) => row.priority > 0).length;
+  const market = state.marketDashboardCache?.taiwan;
+  const marketUsable = market && !marketDashboardSnapshotStaleReason(market);
+  const domainLabels = { quotes: "報價", klines: "日線", institutional: "法人", margin: "資券", valuations: "估值", revenue: "月營收" };
+  const domainRows = Object.entries(domainLabels).map(([id, label]) => {
+    const domain = state.afterCloseSnapshotMeta?.domains?.[id];
+    const current = id === "klines" ? state.klines?.[stock.code]?.at(-1) : state[id]?.[stock.code];
+    return { label, coverage: isPublishedWebRuntime() && domain ? `${domain.freshCount}/${domain.targetCount} 檔` : current ? "已有資料" : "待補資料",
+      asOf: id === "revenue" ? (current?.yearMonth ? `此股月份 ${current.yearMonth}` : `此股缺資料 · 股池最新 ${domain?.period || "待補"}`) : `此股日期 ${current?.asOf || current?.sourceDate || current?.date || "待補"}`,
+      note: isPublishedWebRuntime() && domain ? `研究股池覆蓋 · ${domain.source || "來源待補"}${domain.fallbackUsed ? " · 含備援／缺口" : ""}` : current?.source || current?.sourceLabel || "尚未取得可核對來源" };
+  });
+
   container.innerHTML = traderWorkspaceRenderer().render({
+    sessionBrief: {
+      date: dateKeyInTaipei(),
+      market: marketUsable ? `加權 ${formatPct(market.pct)}` : "市場資料待核對",
+      marketSource: marketUsable ? `${market.source || "市場快照"} · ${market.sourceDate || market.fetchedAt || "日期待補"}` : "先確認大盤、海外市場與夜盤日期",
+      tracking: `${reviewRows.length} 檔追蹤 · ${pending} 檔待補`,
+      trackingNote: "先看自己的風險，再找新機會",
+      task: pending ? "補齊資料與檢查失效條件" : "比較候選與檢查持股計畫",
+      taskNote: isPublishedWebRuntime() ? "公開行情自動重讀 · 私人清單保留本機" : "收盤後同步，再核對盤後變化"
+    },
+    reviewRows: reviewRows.slice(0, 5),
+    domainRows,
     stock,
     stockOptions: storeSlice.stockOptions,
     holdingRows,
@@ -44930,6 +45096,169 @@ function exportSnapshots() {
   setStatus("已匯出快照 JSON。", "good");
 }
 
+function deviceSnapshotStatePayload() {
+  return {
+    ...buildStatePayload(),
+    // 裝置搬移檔保留完整記憶體資料；匯入時仍依 hot-cache contract
+    // 將長 K 線分層寫入 IndexedDB，避免啟動 state 無界增長。
+    snapshots: normalizeRecordMap(state.snapshots),
+    klines: normalizeRecordMap(state.klines),
+    institutional: normalizeRecordMap(state.institutional),
+    foreignOwnershipHistory: normalizeRecordMap(state.foreignOwnershipHistory),
+    tdccHistory: normalizeRecordMap(state.tdccHistory),
+    activeEtf: normalizeActiveEtfState(state.activeEtf),
+    screenerColumnMode: state.screenerColumnMode,
+    screenerLiquidityFilter: state.screenerLiquidityFilter
+  };
+}
+
+function buildDeviceSnapshotBundle() {
+  const exportedAt = new Date().toISOString();
+  return {
+    kind: DEVICE_SNAPSHOT_KIND,
+    schemaVersion: DEVICE_SNAPSHOT_SCHEMA_VERSION,
+    appVersion: APP_VERSION,
+    exportedAt,
+    privacy: {
+      containsPersonalData: true,
+      fields: ["持股", "成本", "提醒", "自訂研究", "本機研究快取"],
+      transport: "manual-file-only",
+      note: "檔案只在使用者手動匯出、選檔匯入時移動；App 不會上傳至伺服器。"
+    },
+    state: deviceSnapshotStatePayload(),
+    researchData: buildResearchDataPayload(),
+    customGroups: loadCustomGroups()
+  };
+}
+
+function assertDeviceSnapshotJsonSafe(value, path = "root", depth = 0, budget = { nodes: 0 }) {
+  if (depth > 48) throw new Error(`裝置快照巢狀過深：${path}`);
+  budget.nodes += 1;
+  if (budget.nodes > DEVICE_SNAPSHOT_MAX_NODES) throw new Error("裝置快照結構過大，已停止解析。");
+  if (value === null || ["string", "number", "boolean"].includes(typeof value)) return;
+  if (Array.isArray(value)) {
+    for (let index = 0; index < value.length; index += 1) {
+      assertDeviceSnapshotJsonSafe(value[index], `${path}[${index}]`, depth + 1, budget);
+    }
+    return;
+  }
+  if (typeof value !== "object") throw new Error(`裝置快照含不支援型別：${path}`);
+  const prototype = Object.getPrototypeOf(value);
+  if (prototype !== Object.prototype && prototype !== null) throw new Error(`裝置快照物件型別無效：${path}`);
+  for (const [key, child] of Object.entries(value)) {
+    if (["__proto__", "prototype", "constructor"].includes(key)) throw new Error(`裝置快照含禁止欄位：${path}.${key}`);
+    assertDeviceSnapshotJsonSafe(child, `${path}.${key}`, depth + 1, budget);
+  }
+}
+
+function inspectDeviceSnapshotBundle(bundle) {
+  assertDeviceSnapshotJsonSafe(bundle);
+  if (!bundle || bundle.kind !== DEVICE_SNAPSHOT_KIND) throw new Error("不是台股追蹤裝置快照。");
+  const schemaVersion = Number(bundle.schemaVersion);
+  if (schemaVersion !== DEVICE_SNAPSHOT_SCHEMA_VERSION) {
+    throw new Error(`不支援的裝置快照 schema v${schemaVersion || "?"}；目前支援 v${DEVICE_SNAPSHOT_SCHEMA_VERSION}。`);
+  }
+  const payload = bundle.state;
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("裝置快照缺少 state 物件。");
+  const holdings = Array.isArray(payload.holdings) ? payload.holdings : [];
+  if (!holdings.length) throw new Error("裝置快照沒有持股清單，為避免誤覆蓋已停止匯入。");
+  if (holdings.length > 1000) throw new Error("裝置快照持股超過 1,000 檔，已停止匯入。");
+  const quoteCount = Object.keys(normalizeRecordMap(payload.quotes)).length;
+  const klineCount = Object.keys(normalizeRecordMap(payload.klines)).length;
+  return {
+    schemaVersion,
+    sourceVersion: String(bundle.appVersion || payload.version || ""),
+    exportedAt: String(bundle.exportedAt || payload.savedAt || ""),
+    sourceLastUpdated: String(payload.lastUpdated || payload.savedAt || bundle.exportedAt || ""),
+    holdingsCount: holdings.length,
+    quoteCount,
+    klineCount,
+    researchRevenueCount: Object.keys(normalizeRecordMap(bundle.researchData?.financialPerformance?.monthlyRevenue?.records)).length
+  };
+}
+
+function downloadDeviceSnapshot() {
+  const bundle = buildDeviceSnapshotBundle();
+  const text = JSON.stringify(bundle, null, 2);
+  const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `twstock_device_snapshot_${todayKey()}.json`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 5000);
+  setStatus(`已匯出裝置資料（${formatNumber(blob.size / 1024 / 1024, 2)} MiB）。檔案含持股、成本、提醒與研究快取，請妥善保存。`, "good");
+  return { bytes: blob.size, bundle };
+}
+
+async function applyDeviceSnapshotBundle(bundle, options = {}) {
+  const preview = inspectDeviceSnapshotBundle(bundle);
+  if (options.confirmImport !== false) {
+    const accepted = window.confirm(
+      `將匯入 ${preview.holdingsCount} 檔持股、${preview.quoteCount} 檔報價、${preview.klineCount} 檔日線。\n\n` +
+      "這會取代目前瀏覽器的本機研究狀態；檔案不會上傳伺服器。是否繼續？"
+    );
+    if (!accepted) return { applied: false, cancelled: true, ...preview };
+  }
+  const incoming = { ...bundle.state };
+  delete incoming.publicBuild;
+  delete incoming.deviceSnapshotMeta;
+  Object.assign(state, slimStatePayloadForMemory(incoming, "device-snapshot-import"));
+  if (Array.isArray(bundle.customGroups)) saveCustomGroupsStorage(bundle.customGroups);
+  if (bundle.researchData) mergeResearchDataPayload(bundle.researchData, "裝置快照");
+  state.deviceSnapshotMeta = normalizeDeviceSnapshotMeta({
+    mode: "imported",
+    schemaVersion: preview.schemaVersion,
+    sourceVersion: preview.sourceVersion,
+    exportedAt: preview.exportedAt,
+    importedAt: new Date().toISOString(),
+    sourceLastUpdated: preview.sourceLastUpdated,
+    holdingsCount: preview.holdingsCount,
+    quoteCount: preview.quoteCount,
+    fileName: options.fileName || ""
+  });
+  normalizeStateAfterLoad();
+  invalidateStockSearchIndex();
+  applyCustomGroupsToFilters();
+  applyUserThemeAdditions();
+  ensureRenderableFilter({ persist: false });
+  ensureSelectedStockVisible({ persist: false, context: "裝置快照匯入" });
+  _cacheLoadInfo = {
+    source: "裝置快照（目前瀏覽器本機）",
+    seedApplied: false,
+    seedLabel: "",
+    seedMessage: "私人資料未上傳伺服器"
+  };
+  if (options.persist !== false) {
+    await saveState();
+    if (bundle.researchData) await persistResearchDataLayer("device-snapshot-import");
+  }
+  if (options.renderAfter !== false) render({ immediate: true });
+  return { applied: true, cancelled: false, ...preview };
+}
+
+async function importDeviceSnapshotFile(file) {
+  if (!file) return { applied: false, cancelled: true };
+  if (file.size > DEVICE_SNAPSHOT_MAX_BYTES) {
+    throw new Error(`裝置快照 ${formatNumber(file.size / 1024 / 1024, 1)} MiB，超過 32 MiB 安全上限。`);
+  }
+  const text = await file.text();
+  if (new Blob([text]).size > DEVICE_SNAPSHOT_MAX_BYTES) throw new Error("裝置快照解析後超過 32 MiB 安全上限。");
+  let bundle;
+  try {
+    bundle = JSON.parse(text);
+  } catch (_) {
+    throw new Error("裝置快照不是有效 JSON。");
+  }
+  const result = await applyDeviceSnapshotBundle(bundle, { fileName: file.name });
+  if (result.applied) {
+    setStatus(`已匯入裝置資料：持股 ${result.holdingsCount}、報價 ${result.quoteCount}、日線 ${result.klineCount}；只保存在目前瀏覽器本機。`, "good");
+  }
+  return result;
+}
+
 function applyChartAction(action, delta = 0) {
   const stock = STOCK_MAP.get(state.selectedCode) || WATCHLIST[0];
   const rows = latestKlines(stock.code);
@@ -44991,10 +45320,17 @@ function compactMobileSidebarAfterNavigation(options = {}) {
 
 function bindEvents() {
   document.body.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-trader-holding-code]");
+    const button = event.target.closest("[data-trader-holding-code], [data-trader-review-code]");
     if (!button) return;
-    const code = String(button.dataset.traderHoldingCode || "");
-    if (!STOCK_MAP.has(code) || code === state.selectedCode) return;
+    const code = String(button.dataset.traderHoldingCode || button.dataset.traderReviewCode || "");
+    if (!STOCK_MAP.has(code)) return;
+    if (button.dataset.traderReviewCode) {
+      state.selectedCode = code;
+      persistStateSilently("操盤待處理清單");
+      navigateToTab("technical");
+      return;
+    }
+    if (code === state.selectedCode) return;
     state.selectedCode = code;
     persistStateSilently("操盤首頁持股快切");
     render({ scope: "active" });
@@ -45057,6 +45393,25 @@ function bindEvents() {
   $("mobileSidebarToggle")?.addEventListener("click", () => {
     const sidebar = document.querySelector(".sidebar");
     setMobileSidebarTools(!sidebar?.classList.contains("mobile-tools-open"));
+  });
+
+  const openDeviceSnapshotPicker = () => $("deviceSnapshotImportInput")?.click();
+  $("importDeviceSnapshotBtn")?.addEventListener("click", openDeviceSnapshotPicker);
+  document.body.addEventListener("click", (event) => {
+    if (!event.target.closest("#mobileDeviceSnapshotBtn")) return;
+    openDeviceSnapshotPicker();
+  });
+  $("exportDeviceSnapshotBtn")?.addEventListener("click", downloadDeviceSnapshot);
+  $("deviceSnapshotImportInput")?.addEventListener("change", async (event) => {
+    const input = event.currentTarget;
+    const file = input.files?.[0] || null;
+    try {
+      if (file) await importDeviceSnapshotFile(file);
+    } catch (error) {
+      setStatus(`裝置快照匯入失敗：${error?.message || String(error)}`, "error");
+    } finally {
+      input.value = "";
+    }
   });
 
   document.body.addEventListener("click", (event) => {
@@ -46353,6 +46708,7 @@ async function init() {
   bindEvents();
   requestNotificationPermission();
   bindAfterCloseSyncRuntime();
+  bindPublishedSnapshotRefresh();
   _startupRenderedAt = typeof performance !== "undefined" ? performance.now() : Date.now();
   render({ immediate: true });
   // v19 作戰首頁第一屏需要日線／籌碼；先顯示核心快取，再非阻塞載入 technical shard 並重畫。

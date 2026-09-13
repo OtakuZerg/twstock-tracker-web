@@ -1,4 +1,15 @@
 <div class="cl-entry major">
+  <div class="cl-ver"><strong>v20.0</strong><span>2026-09-13</span><span class="cl-badge major">Trader Desk &amp; Mobile Data</span></div>
+  <ul class="cl-list">
+    <li>共用操盤工作台：市場背景、追蹤缺口、個股計畫與六域資料狀態；保留全部 13 個研究分頁。</li>
+    <li>公開盤後資料改依完整公開研究目錄更新，與私人持股分離；新增官方估值與月營收。</li>
+    <li>日線緊湊傳輸仍保留逐根來源與日期；手機回前景／連線恢復重查快照，逐域合併且不降版。</li>
+    <li>公開行情不等於私人資料同步；私人清單、成本與筆記仍使用離線裝置檔案，不上傳公開站。</li>
+    <li>缺資料、來源衝突與過期資料維持明確警示及決策採信閘門。</li>
+  </ul>
+</div>
+
+<div class="cl-entry major">
             <div class="cl-ver">
               <strong>v19.3</strong>
               <span>2026-09-02</span>
@@ -25,6 +36,22 @@
               <li><strong>低噪音通知</strong>：Extension 只有同步失敗或出現重大決策變更時才通知；無重大變化不再推送完成訊息。</li>
               <li><strong>分層覆蓋</strong>：資料健康頁分開顯示研究宇宙、Web 今日快照／個人持股新鮮度與決策可用檔數。</li>
               <li><strong>技術工作區邊界</strong>：新增純 selector 與安全 renderer，Extension 與 Web 共用同一套技術頁可信度狀態。</li>
+            </ul>
+          </div>
+
+<div class="cl-entry major">
+            <div class="cl-ver">
+              <strong>v19.2</strong>
+              <span>2026-08-29</span>
+              <span class="cl-badge major">Mobile Parity × v19.1 Merge</span>
+            </div>
+            <ul class="cl-list">
+              <li><strong>完整融合</strong>：保留 v19.1 的來源 schema v2、盤後快照、next-open 回測、R:R 閘門與 Trader UI，再納入手機資訊對等能力。</li>
+              <li><strong>資料身分透明</strong>：手機首屏直接顯示 Web 本機／已匯入裝置快照、持股檔數、持股報價覆蓋與來源資料日期。</li>
+              <li><strong>離線裝置搬移</strong>：Extension 可匯出持股、成本、提醒與研究快取，手機 PWA 手動選檔匯入；檔案不經伺服器。</li>
+              <li><strong>匯入防護</strong>：加入 schema、32 MiB、JSON 結構、危險鍵、持股與版本檢查，覆寫目前瀏覽器本機狀態前再次確認。</li>
+              <li><strong>公開隱私邊界</strong>：Pages build 持續清除私人狀態與裝置快照 metadata；公開 artifact 不包含使用者持股。</li>
+              <li><strong>390px 版面修正</strong>：section actions 與期貨控制改為完整寬度／網格排列，不再被壓成直排橢圓。</li>
             </ul>
           </div>
 

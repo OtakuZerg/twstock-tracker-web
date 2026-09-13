@@ -1,7 +1,7 @@
 "use strict";
 
 const CACHE_PREFIX = "twstock-pages";
-const CACHE_VERSION = "v19.3-pwa-1";
+const CACHE_VERSION = "v20.0-pwa-1";
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const REQUIRED_SHELL_PATHS = [
   "main.html?mode=web",
@@ -19,6 +19,7 @@ const REQUIRED_SHELL_PATHS = [
   "app_files/performance_diagnostics.js",
   "app_files/update_reliability.js",
   "app_files/core/source_catalog.js",
+  "app_files/core/kline_snapshot_codec.js",
   "app_files/core/after_close_protocol.js",
   "app_files/features/decision_safety.js",
   "app_files/features/holdings_import.js",
@@ -30,6 +31,7 @@ const REQUIRED_SHELL_PATHS = [
   "app_files/store/discovery_workspace_selectors.js",
   "app_files/ui/discovery_workspace_renderer.js",
   "app_files/ui/trader_workspace.css",
+  "app_files/ui/app_shell.css",
   "app_files/perf_worker.js",
   "app_files/main.js",
   "data/state_seed_manifest.json",

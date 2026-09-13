@@ -93,10 +93,10 @@
     if (runtime === "web") {
       scopes.push({
         key: "web-fresh",
-        label: "Web 今日快照",
+        label: "Web 研究股池行情",
         value: `${webFresh}/${webTarget}`,
-        detail: "公開中性清單；以四個盤後核心 domain 的最低 freshCount 計",
-        tone: webTarget > 0 && webFresh >= webTarget ? "up" : webFresh > 0 ? "warn" : "down"
+        detail: "公開研究股池；四個盤後核心資料域的最低有效日期覆蓋，不代表個人清單已同步",
+        tone: webTarget > 0 && webFresh >= webTarget ? "good" : webFresh > 0 ? "warn" : "bad"
       });
     } else {
       scopes.push({
@@ -104,15 +104,15 @@
         label: "個人持股新鮮",
         value: `${holdingsFresh}/${holdingsTotal}`,
         detail: "只計目前持股／觀察清單，不用全研究宇宙當分母",
-        tone: holdingsTotal > 0 && holdingsFresh >= holdingsTotal ? "up" : holdingsFresh > 0 ? "warn" : "down"
+        tone: holdingsTotal > 0 && holdingsFresh >= holdingsTotal ? "good" : holdingsFresh > 0 ? "warn" : "bad"
       });
     }
     scopes.push({
       key: "decision-ready",
       label: "決策可用",
-      value: `${decisionReady}/${runtime === "web" ? webTarget : holdingsTotal}`,
+      value: `${decisionReady}/${holdingsTotal}`,
       detail: "報價與日線新鮮、無來源衝突且核心覆蓋達門檻",
-      tone: decisionReady > 0 ? "up" : "down"
+      tone: decisionReady > 0 ? "good" : "bad"
     });
     return scopes;
   }

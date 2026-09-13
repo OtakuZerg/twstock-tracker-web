@@ -1,10 +1,34 @@
 # 台股追蹤 Taiwan Equity Tracker
 
-**版本：v19.3** ｜ **日期：2026-09-02** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
+**版本：v20.0** ｜ **日期：2026-09-13** ｜ Chrome Extension (Manifest V3) + GitHub Pages PWA
 
 > ⚠️ **資料正確性說明**：本 extension 的報價、估值、月營收、股利、法人與市場資料以 MOPS / TWSE / TPEx 等官方來源為優先；季報三率目前需匯入 MOPS 季損益表或已整理 CSV。Tide 板塊資金、情緒快照與其他外部網站只作第三方 proxy / 交叉核對入口，所有資料都要檢查來源日期、fallback 與缺漏狀態。
 >
 > ⚠️ **稅務與規模提示**：海外 ETF 配息來源組成（5 類）為一般化分類，**每期實際比例需以投信「收益分配通知書」核對**；ETF 規模 (AUM) / 日均成交量為 2026-05 概估，需以投信月報實際數值更新。最低稅負制 / 二代健保補充保費門檻會隨年度調整，請以財政部 / 衛福部公告為準。
+
+---
+
+## v20.0 操盤工作台與手機資料同步（2026-09-13）
+
+首頁以數日到數週的波段研究流程重排，Extension 與手機 Web 共用同一套介面，保留全部 13 個研究分頁。
+
+| 操盤時要回答的問題 | 工作台呈現 |
+| --- | --- |
+| 市場環境如何？ | 大盤方向、來源日期，以及市場／風險入口；過期資料不輸出確定結論。 |
+| 今天先看哪些持股？ | 追蹤清單、缺報價／過期／日線不足的優先複核列，可直接進入技術籌碼。 |
+| 個股依據與計畫是什麼？ | 價量、技術與籌碼、觸發／失效條件、目標與 R:R；不符合採信條件時鎖定推導數值。 |
+| 手機資料可靠嗎？ | 報價、日線、法人、資券、估值、月營收各自的日期、覆蓋範圍與缺口。 |
+
+- 公開盤後行情與私人持股解耦：原本固定 16 檔示範股的更新，擴為程式內建的 433 檔公開台股研究目錄（不含停用報價標的），包括延伸供應鏈股池。公開示範持股仍是 16 檔，不會上傳或公開使用者持股、成本、提醒或研究筆記。
+- 同源快照由四域擴為六域，新增 TWSE／TPEx 估值與 MOPS 月營收。日線採緊湊傳輸格式，逐根保留日期與來源，並相容舊格式。公開目錄以外、自訂股號、上游未公告、ETF 不適用資料仍可能缺漏，會明示而不補零。
+- 手機回到前景、恢復連線及開頁後會重新檢查公開快照，成功讀取後逐域合併；保留較新的本機資料，不把下載時間冒充資料日期。軟體設定最短重查間隔為 5 分鐘，不代表上游每 5 分鐘更新或提供即時行情。
+- 私人持股與筆記沒有雲端帳號同步；跨裝置仍使用「匯出／匯入裝置資料」。行情自動更新與私人資料搬移是兩個獨立流程。
+- 修正快照更新後手機頂端資料身分列未重畫的問題，側欄 Web 日期改取行情 `asOf`。原 inline shell CSS 獨立成共用可快取檔案，保持 Extension／Web 相同載入順序。
+- 上游回應不完整時會拒絕解析；櫃買靜態 API 可用強 ETag、Content-Range 與長度驗證分段重試，法人／資券另保留官方報表備援。TLS 失敗不會略過憑證驗證，來源缺口仍會顯示。
+- 季報、集保、ETF 持股與其他研究資料仍依原更新路徑或匯入快照，不能以六域行情成功推論全部資料同步。週末須核對最近交易日，而非單看今天是否抓取。
+- 官方查核入口：[TWSE 收盤](https://www.twse.com.tw/zh/trading/historical/mi-index.html)、[TPEx](https://www.tpex.org.tw/)、[MOPS](https://mops.twse.com.tw/)。Web 使用 GitHub Actions 延遲快照；排程可能延遲，參見 [GitHub schedule 說明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)。所有排序與數值均為研究工具，不是下單指示或報酬保證。
+
+以下各版紀錄保留其當時範圍；v19.x 的「16 檔行情」限制已由 v20.0 公開研究目錄取代。
 
 ---
 
@@ -28,6 +52,24 @@
 - 新增 deterministic decision-safety smoke，並把共用模組納入 Extension runtime、Pages allowlist、Service Worker required shell 與 project-subpath Web smoke。
 
 ---
+<!-- §1. v19.2 mobile information parity and device snapshot -->
+<section id="v19.2-mobile-information-parity">
+
+## v19.2 手機資訊對等與裝置快照（2026-08-29）
+
+- 完整保留 v19.1 的來源 schema v2、可追溯盤後快照、next-open 回測與 R:R 安全閘門，再融合手機資料身分與跨裝置本機研究狀態搬移；不是回退到 v18.x。
+- 手機首屏新增固定可見的資料身分列，直接顯示目前是 Web 本機資料或已匯入裝置快照、持股檔數、持股報價覆蓋與來源資料日期；不再把關鍵狀態全部藏在「主題 / 股池」。
+- 新增「匯出裝置資料」與「匯入裝置資料」：桌機 Extension 可輸出持股、成本、提醒、自訂研究、報價、日線、籌碼、月營收與季報三率等本機研究狀態，再由 iPhone／iPad PWA 手動選檔匯入。傳輸是離線檔案流程，App 不會把內容上傳至伺服器。
+- 裝置快照採明確 schema，匯入時檢查 32 MiB 大小上限、JSON 型別、巢狀深度、危險鍵、持股清單與版本；真正覆寫目前瀏覽器本機狀態前會先顯示持股／報價／日線筆數並再次確認。
+- 公開 Pages artifact 仍強制使用中性示範持股，並清空裝置快照 metadata、成本、提醒與自訂研究；「手機看到個人資料」只可能來自使用者在該瀏覽器手動匯入的本機檔案。
+- 修正 390px 窄螢幕的 section actions 與期貨列：更新按鈕不再被擠成直排橢圓，說明與操作改為完整寬度排列；13 個研究分頁仍保留於 safe-area 底部橫滑導覽。
+
+</section>
+
+---
+
+<!-- §2. v19.1 after-close data and backtest model -->
+<section id="v19.1-after-close-data">
 
 ## v19.1 盤後資料、來源 schema 與回測執行模型（2026-08-21）
 
@@ -36,6 +78,8 @@
 - Web 仍只抓 same-origin `data/live_market.json`，但載入後會把盤後資料合併回既有 `quotes / klines / institutional / margin`，直接重用同一套技術分析、Chip Score、作戰首頁與標的雷達，不新增平行 parser 或分析引擎。
 - Playbook 回測升級為 `playbook-next-open-v2`：收盤訊號在下一交易日開盤成交、同一標的不允許重疊持倉、同根 K 棒同時碰停損與目標時採保守的停損優先，並納入每邊 10 bps 成本與 5 bps 滑價的可調研究假設。模型假設不等於實際券商費率或稅負；目前股池仍可能有存活者偏差與回測過度擬合，方法限制可對照 [CFA Institute Backtesting & Simulation](https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation) 與 [Bailey et al. 的 backtest overfitting 論文](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2308659)。
 - 作戰首頁與交易雷達的 R:R 閘門同步收緊：未定義目標價或 R:R 時只能標為資料不足／候選追蹤，不能顯示「可執行」或「攻擊觀察」。
+
+</section>
 
 ---
 
@@ -118,6 +162,7 @@
 - private 原始碼倉庫的 GitHub Actions 先建立並用 Chrome 驗證 artifact；通過後使用只對公開成品倉庫有效的 deploy key 自動發布。公開倉庫再用 GitHub Pages workflow 部署 PWA。
 - 原始碼 `main` 更新並通過檢查後，網站會隨公開 artifact 自動更新；iPhone / iPad 主畫面 Web App 會由 Service Worker 接收新版。這不會自動更新家中電腦的 unpacked extension，該版本仍需同步專案資料夾並在 `chrome://extensions` 按「重新載入」。
 - 網頁版使用瀏覽器的 IndexedDB / localStorage 儲存持股與設定；Chrome extension 與網站資料彼此獨立，不會自動同步。
+- 若要把桌機研究狀態搬到手機：先在 Extension 的「資料設定」按「匯出裝置資料」，用 AirDrop／iCloud Drive／檔案 App 移到手機，再於 PWA 首屏按「匯入桌機裝置快照」。匯入只寫入該瀏覽器本機；快照含持股、成本與提醒，請勿放在公開連結或共用裝置。
 - 網站封面與主畫面圖示使用「精算鳥：長期投資，穩健致富」圖像。
 
 #### 加到 iPhone / iPad 主畫面
@@ -1396,8 +1441,10 @@ python3 scripts/update_youtube_market_lessons.py --audio szA2MSO_qTo=/path/to/EP
 
 | 版本 | 日期 | 重點 |
 |------|------|------|
+| **v20.0** | **2026-09-13** | **操盤工作台、433 檔公共股池六域同步、緊湊日線、前景重查與手機身分列更新，保留私人清單隔離及 13 分頁** |
 | **v19.3** | **2026-09-02** | **整段貼上持股、差異確認、20 檔私人 seed 精確遷移、行情 provenance 隔離與 Pages 隱私邊界** |
 | **v19.2** | **2026-09-02** | **資料可信度硬閘門、每日決策差異摘要、低噪音通知、分層覆蓋與技術工作區邊界** |
+| **v19.2** | **2026-08-29** | **融合 v19.1 盤後研究架構與手機資料身分列、離線裝置快照匯入／匯出、公開 artifact 隱私隔離及窄螢幕操作修正** |
 | **v19.1** | **2026-08-21** | **來源 schema v2 相容 migration、隱私清理盤後 Web 快照、next-open 非重疊回測與 R:R 執行閘門** |
 | **v19.0** | **2026-08-13** | **Trader-first 作戰首頁、五個主入口、13 領域來源目錄、15:00 Extension 自動同步，並整合 v18.1–v18.2.1 request broker、source adapters、state sharding 與 Web refresh 修正** |
 | **v18.2.1** | **2026-07-30** | **修正 null transport options 誤套 1024-byte 上限，恢復 8 MiB／12 秒／重試與來源並行預設** |

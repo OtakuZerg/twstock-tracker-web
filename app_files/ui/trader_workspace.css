@@ -1,4 +1,47 @@
-/* v19 Trader-first workspace: shared by Extension and Pages Web App. */
+/* v20 shared decision workspace: desktop Extension and mobile Pages. */
+.panel.trader-desk { background: var(--surface-strong); border: 1px solid var(--line-strong); }
+.trader-session-brief { padding: 18px 22px 12px; background: #172c3c; color: #f3f7fa; }
+.trader-session-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.trader-session-title span { font-size: .67rem; letter-spacing: .09em; color: #b6cbd8; }
+.trader-session-title h2 { margin: 4px 0 14px; font-size: 1.25rem; color: #fff; }
+.trader-session-date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.trader-session-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; }
+.trader-session-grid article { min-width: 0; border-left: 2px solid #567b8e; padding-left: 10px; }
+.trader-session-grid article > span { display: block; font-size: .68rem; color: #c2d5df; }
+.trader-session-grid strong { display: block; font-size: .95rem; margin: 5px 0; line-height: 1.4; }
+.trader-session-grid small { display: block; font-size: .68rem; color: #b6cbd8; overflow-wrap: anywhere; line-height: 1.45; }
+.trader-workflow-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.trader-workflow-links button { min-height: 36px; padding: 6px 12px; border: 1px solid #567b8e; border-radius: 7px; background: #213f53; color: #f3f7fa; font: inherit; font-size: .72rem; cursor: pointer; }
+.trader-workflow-links button:hover,.trader-workflow-links button:focus-visible { background: #36566a; outline: 2px solid #93becf; }
+.trader-review-board { border-top: 1px solid var(--line); padding: 18px 22px; background: var(--surface-strong); }
+.trader-review-head { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+.trader-review-head h3 { margin: 0; font-size: .95rem; }
+.trader-review-head p,.trader-domain-note { font-size: .72rem; line-height: 1.6; color: var(--muted); margin: 6px 0 12px; }
+.trader-review-head button { flex-shrink: 0; }
+.trader-review-list { display: grid; }
+.trader-review-row { display: grid; grid-template-columns: minmax(130px,1fr) minmax(150px,1.4fr) auto; align-items: center; gap: 12px; text-align: left; min-height: 46px; background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 10px 0; color: var(--ink); font: inherit; cursor: pointer; }
+.trader-review-row:hover,.trader-review-row:focus-visible { background: var(--accent-soft); }
+.trader-review-row strong { font-size: .78rem; }.trader-review-row strong span { font-weight: 500; }
+.trader-review-reason { font-size: .76rem; }.trader-review-row small { color: var(--muted); font-size: .7rem; }
+.trader-data-detail { margin-top: 14px; }.trader-data-detail summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-size: .78rem; font-weight: 700; }
+.trader-domain-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+.trader-domain-grid article { border: 1px solid var(--line); border-radius: 8px; padding: 12px; min-width: 0; }
+.trader-domain-grid article > span,.trader-domain-grid small { font-size: .7rem; display: block; color: var(--muted); }
+.trader-domain-grid strong { display: block; margin: 5px 0; font-size: 1rem; }.trader-domain-grid p { font-size: .7rem; margin: 6px 0 0; line-height: 1.5; overflow-wrap: anywhere; }
+@media(max-width:640px) {
+  .trader-session-brief { padding: 13px 14px 10px; }
+  .trader-session-title h2 { font-size: 1.15rem; margin-bottom: 10px; }
+  .trader-session-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .trader-session-grid article:last-child { grid-column: 1/-1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+  .trader-session-grid article:last-child small { width: 100%; }
+  .trader-session-grid strong { font-size: .85rem; }
+  .trader-workflow-links { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 5px; }
+  .trader-workflow-links button { min-height: 44px; padding: 4px; font-size: .65rem; white-space: nowrap; }
+  .trader-review-board { padding: 14px; }.trader-review-head { align-items: flex-start; }.trader-review-head button { font-size: .7rem; }
+  .trader-review-row { grid-template-columns: minmax(0,1fr) auto; gap: 3px 8px; padding: 10px 0; }
+  .trader-review-reason { grid-row: 2; font-size: .72rem; }.trader-review-row small { grid-column: 2; grid-row: 1/3; font-size: .65rem; }
+  .trader-domain-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
 
 .main-tab-nav {
   overflow: visible;

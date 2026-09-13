@@ -7,7 +7,9 @@ import { fileURLToPath } from "node:url";
 import "../app_files/source_adapters.js";
 import "../app_files/sources/market_data_normalizers.js";
 import "../app_files/sources/chip_data_normalizers.js";
+import "../app_files/sources/fundamental_data_normalizers.js";
 import "../app_files/core/source_catalog.js";
+import "../app_files/core/kline_snapshot_codec.js";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -19,7 +21,7 @@ const SCHEDULE_MINUTES = 15;
 const AFTER_CLOSE_HOUR = 15;
 const AFTER_CLOSE_HISTORY_RANGE = "6mo";
 const AFTER_CLOSE_CONCURRENCY = 4;
-const AFTER_CLOSE_MAX_CODES = 24;
+const AFTER_CLOSE_MAX_CODES = 1200; // Payload guard, not a trading threshold.
 const AFTER_CLOSE_MAX_ATTEMPTS = 4;
 const TAIPEI_TIME_ZONE = "Asia/Taipei";
 const US_TIME_ZONE = "America/New_York";
@@ -50,8 +52,13 @@ const FIXED_FETCH_RULES = [
   { host: "mis.twse.com.tw", path: /^\/stock\/api\/getStockInfo\.jsp$/ },
   { host: "www.twse.com.tw", path: /^\/rwd\/zh\/afterTrading\/MI_INDEX$/ },
   { host: "www.twse.com.tw", path: /^\/rwd\/zh\/fund\/T86$/ },
+  { host: "www.twse.com.tw", path: /^\/exchangeReport\/BWIBBU_d$/ },
+  { host: "www.tpex.org.tw", path: /^\/web\/stock\/aftertrading\/peratio_analysis\/pera_result\.php$/ },
+  { host: "www.tpex.org.tw", path: /^\/www\/zh-tw\/(?:insti\/dailyTrade|margin\/balance)$/ },
+  { host: "mopsfin.twse.com.tw", path: /^\/opendata\/t187ap05_[LO]\.csv$/ },
+  { host: "openapi.twse.com.tw", path: /^\/v1\/opendata\/t187ap05_L$/ },
   { host: "openapi.twse.com.tw", path: /^\/v1\/exchangeReport\/(?:STOCK_DAY_ALL|MI_MARGN)$/ },
-  { host: "www.tpex.org.tw", path: /^\/openapi\/v1\/(?:tpex_mainboard_quotes|tpex_3insti_daily_trading|tpex_mainboard_margin_balance)$/ },
+  { host: "www.tpex.org.tw", path: /^\/openapi\/v1\/(?:tpex_mainboard_quotes|tpex_3insti_daily_trading|tpex_mainboard_margin_balance|mopsfin_t187ap05_O)$/ },
   { host: "mis.taifex.com.tw", path: /^\/futures\/api\/getQuoteList$/ },
   { host: "www.cmoney.tw", path: /^\/forum\/futures\/TXF1$/ },
   { host: "cdn.cboe.com", path: /^\/api\/global\/delayed_quotes\/quotes\/(?:_DJX|_SPX|_NDX|_SOX)\.json$/ },
@@ -160,6 +167,7 @@ async function fetchFixedText(url, options, fetchLog) {
       headers: {
         Accept: options?.accept || "application/json,text/plain,text/html;q=0.9,*/*;q=0.5",
         "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.7",
+        "Accept-Encoding": "identity",
         "User-Agent": "Mozilla/5.0 (compatible; twstock-market-snapshot/1.0; +https://github.com/OtakuZerg/twstock-tracker-web)",
         ...(body ? { "Content-Type": options?.contentType || "application/json" } : {})
       }
@@ -171,12 +179,56 @@ async function fetchFixedText(url, options, fetchLog) {
     fetchLog.push({ source: options?.source || parsed.hostname, host: parsed.hostname, status, bytes, durationMs: Date.now() - startedAt, ok: true });
     return text;
   } catch (error) {
-    const message = error?.name === "AbortError" ? `Timeout: ${parsed.hostname}` : cleanError(error);
+    const message = error?.name === "AbortError" ? `Timeout: ${parsed.hostname}` : `${cleanError(error)}${error?.cause?.message ? ` (${error.cause.message})` : ""}`;
     fetchLog.push({ source: options?.source || parsed.hostname, host: parsed.hostname, status, bytes, durationMs: Date.now() - startedAt, ok: false, error: message });
+    // The static TPEx OpenAPI server can truncate large responses. A second,
+    // bounded attempt uses its advertised byte ranges; never parse partial JSON.
+    if (method === "GET" && parsed.hostname === "www.tpex.org.tw" && parsed.pathname.startsWith("/openapi/v1/") && !controller.signal.aborted) {
+      try {
+        const text = await fetchVerifiedRangeText(parsed, controller.signal);
+        fetchLog.push({ source: `${options?.source || parsed.hostname} verified-range retry`, host: parsed.hostname, status: 206, bytes: Buffer.byteLength(text), durationMs: Date.now() - startedAt, ok: true });
+        return text;
+      } catch (rangeError) {
+        fetchLog.push({ source: `${options?.source || parsed.hostname} verified-range retry`, host: parsed.hostname, status: 0, bytes: 0, durationMs: Date.now() - startedAt, ok: false, error: cleanError(rangeError) });
+      }
+    }
     throw new Error(message);
   } finally {
     clearTimeout(timer);
   }
+}
+
+export async function fetchVerifiedRangeText(url, signal, fetcher = fetch) {
+  const chunkBytes = 128 * 1024;
+  let total = null, offset = 0, etag = null;
+  const chunks = [];
+  do {
+    const end = total === null ? chunkBytes - 1 : Math.min(total - 1, offset + chunkBytes - 1);
+    const response = await fetcher(url, { redirect: "error", cache: "no-store", signal, headers: {
+      Range: `bytes=${offset}-${end}`, "Accept-Encoding": "identity", ...(etag ? { "If-Range": etag } : {})
+    } });
+    const match = response.headers.get("content-range")?.match(/^bytes (\d+)-(\d+)\/(\d+)$/);
+    const currentEtag = response.headers.get("etag");
+    if (response.status !== 206 || !match || !currentEtag || currentEtag.startsWith("W/")) throw new Error("Invalid range response / strong ETag missing");
+    const [start, last, size] = match.slice(1).map(Number);
+    if (size < 1 || size > MAX_RESPONSE_BYTES || start !== offset || last !== Math.min(end, size - 1)
+      || (total !== null && total !== size) || (etag !== null && etag !== currentEtag)) throw new Error("Range size / source revision mismatch");
+    total = size; etag = currentEtag;
+    const reader = response.body.getReader();
+    let received = 0;
+    const parts = [];
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      received += value.byteLength;
+      if (received > last - start + 1) { await reader.cancel(); throw new Error("Range body too large"); }
+      parts.push(Buffer.from(value));
+    }
+    if (received !== last - start + 1) throw new Error("Truncated range body");
+    chunks.push(...parts);
+    offset = last + 1;
+  } while (offset < total);
+  return new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks));
 }
 
 function normalizeSeries(rows) {
@@ -668,7 +720,8 @@ function taipeiClock(value = new Date()) {
 function trackedStocksFromStatePayload(payload) {
   if (!String(payload?.publicBuild?.profile || "").startsWith("public-pages")) return [];
   const seen = new Set();
-  return (Array.isArray(payload?.holdings) ? payload.holdings : [])
+  const universe = Array.isArray(payload?.publicResearchUniverse) ? payload.publicResearchUniverse : payload?.holdings;
+  return (Array.isArray(universe) ? universe : [])
     .map((row) => ({
       code: String(row?.code || "").trim().toUpperCase(),
       name: String(row?.name || "").trim(),
@@ -703,7 +756,8 @@ function afterCloseRefreshDue(previous, generatedAt, trackedStocks) {
   const clock = taipeiClock(new Date(generatedAt));
   if (["Sat", "Sun"].includes(clock.weekday)) return { due: false, reason: "weekend", date: clock.date };
   if (clock.hour < AFTER_CLOSE_HOUR) return { due: false, reason: "before-after-close-window", date: clock.date };
-  const sameDayAttempt = previous?.attemptedDate === clock.date;
+  const sameUniverse = previous?.targetCount == null || previous.targetCount === trackedStocks.length;
+  const sameDayAttempt = sameUniverse && previous?.attemptedDate === clock.date;
   const previousAttempts = sameDayAttempt ? Math.max(1, Number(previous?.attemptCount) || 1) : 0;
   if (sameDayAttempt && afterCloseSnapshotComplete(previous, clock.date, trackedStocks.length)) {
     return { due: false, reason: "already-complete-today", date: clock.date, attemptCount: previousAttempts };
@@ -744,7 +798,8 @@ function officialQuoteCode(row, market) {
 
 async function fetchOfficialTrackedQuotes(stocks, market, generatedAt, fetchLog) {
   const isTpex = String(market).toUpperCase() === "TPEX";
-  const marketStocks = stocks.filter((row) => row.suffix === (isTpex ? "TWO" : "TW"));
+  // Official membership is authoritative even if a catalogue market tag drifted.
+  const marketStocks = stocks;
   if (!marketStocks.length) return {};
   const url = isTpex
     ? "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
@@ -757,10 +812,11 @@ async function fetchOfficialTrackedQuotes(stocks, market, generatedAt, fetchLog)
   for (const stock of marketStocks) {
     const row = byCode.get(stock.code);
     if (!row) continue;
-    const parsed = marketNormalizers().parseOfficialDailyQuoteRow(row, stock, isTpex ? "TPEX" : "TWSE", { capturedAt: generatedAt });
+    const parsed = marketNormalizers().parseOfficialDailyQuoteRow(row, { ...stock, suffix: isTpex ? "TWO" : "TW" }, isTpex ? "TPEX" : "TWSE", { capturedAt: generatedAt });
     if (!parsed) continue;
     records[stock.code] = normalizedProvenance({
       ...parsed,
+      marketSuffix: isTpex ? "TWO" : "TW",
       source: label,
       sourceKind: "official",
       fallbackUsed: false
@@ -771,6 +827,11 @@ async function fetchOfficialTrackedQuotes(stocks, market, generatedAt, fetchLog)
 }
 
 async function fetchMisTrackedQuotes(stocks, generatedAt, fetchLog) {
+  if (stocks.length > 40) {
+    const batches = Array.from({ length: Math.ceil(stocks.length / 40) }, (_, index) => stocks.slice(index * 40, (index + 1) * 40));
+    const results = await mapConcurrent(batches, 2, (batch) => fetchMisTrackedQuotes(batch, generatedAt, fetchLog));
+    return Object.assign({}, ...results);
+  }
   const channels = stocks.map((stock) => `${stock.suffix === "TWO" ? "otc" : "tse"}_${stock.code}.tw`).join("|");
   if (!channels) return {};
   const url = `https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${channels}&json=1&delay=0&_=${Date.now()}`;
@@ -795,16 +856,20 @@ function selectLatestTrackedQuotes(tableQuotes, misQuotes, errors = []) {
   for (const code of codes) {
     const table = tableQuotes?.[code] || null;
     const mis = misQuotes?.[code] || null;
+    let conflict = null;
     if (table && mis && table.asOf && table.asOf === mis.asOf) {
       const tablePrice = numberValue(table.price);
       const misPrice = numberValue(mis.price);
       if (tablePrice !== null && misPrice !== null && Math.abs(tablePrice - misPrice) / Math.max(1, Math.abs(tablePrice)) > 0.01) {
         errors.push(`${code} 收盤待複核：官方日表 ${tablePrice} vs MIS ${misPrice}`);
+        conflict = { tablePrice, misPrice, asOf: table.asOf, sources: [table.source, mis.source] };
       }
     }
     if (!table) selected[code] = mis;
     else if (!mis) selected[code] = table;
     else selected[code] = String(mis.asOf || "") >= String(table.asOf || "") ? mis : table;
+    if (selected[code] && table?.marketSuffix) selected[code] = { ...selected[code], marketSuffix: table.marketSuffix };
+    if (conflict) selected[code] = { ...selected[code], sourceConflict: true, crossCheck: conflict, confidence: "low" };
   }
   return selected;
 }
@@ -838,6 +903,14 @@ function officialQuoteAsKline(quote, generatedAt) {
 }
 
 async function fetchTrackedKlines(stock, officialQuote, previousRows, generatedAt, fetchLog, errors) {
+  previousRows = globalThis.TwStockKlineSnapshotCodec.decode(previousRows);
+  // Keep the full history. Reuse recent history and append official bars; backfill gaps.
+  const lastDate = previousRows.at(-1)?.date;
+  const gapDays = (Date.parse(officialQuote?.asOf || "") - Date.parse(lastDate || "")) / 86400000;
+  if (previousRows.length >= 100 && gapDays >= 0 && gapDays <= 4) {
+    const officialBar = officialQuoteAsKline(officialQuote, generatedAt);
+    return { rows: mergeKlineRows(previousRows, officialBar ? [officialBar] : []), fresh: Boolean(officialBar) };
+  }
   let rows = [];
   let fetched = false;
   try {
@@ -891,6 +964,13 @@ async function fetchTrackedInstitutional(stocks, date, generatedAt, fetchLog, er
     hasTpex
       ? fetchFixedText("https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading", { source: "TPEx institutional", accept: "application/json" }, fetchLog)
         .then((text) => chipNormalizers().parseAllInstitutionalTpex(text))
+        .catch(async () => {
+          const text = await fetchFixedText("https://www.tpex.org.tw/www/zh-tw/insti/dailyTrade", {
+            source: "TPEx institutional official report fallback", method: "POST", contentType: "application/x-www-form-urlencoded",
+            body: new URLSearchParams({ response: "json", type: "Daily", sect: "EW", date: date.replaceAll("-", "/") }).toString()
+          }, fetchLog);
+          return chipNormalizers().parseAllInstitutionalTpex(text).map((row) => ({ ...row, fallbackUsed: true }));
+        })
       : Promise.resolve([])
   ]);
   if (twse.status === "rejected") errors.push(`TWSE T86：${cleanError(twse.reason)}`);
@@ -904,12 +984,23 @@ async function fetchTrackedInstitutional(stocks, date, generatedAt, fetchLog, er
 async function fetchTrackedMargin(stocks, officialQuotes, generatedAt, fetchLog, errors) {
   const hasTwse = stocks.some((row) => row.suffix === "TW");
   const hasTpex = stocks.some((row) => row.suffix === "TWO");
+  let tpexFallbackUsed = false;
   const [twse, tpex] = await Promise.allSettled([
     hasTwse
       ? fetchFixedText("https://openapi.twse.com.tw/v1/exchangeReport/MI_MARGN", { source: "TWSE MI_MARGN", accept: "application/json" }, fetchLog).then(JSON.parse)
       : Promise.resolve([]),
     hasTpex
       ? fetchFixedText("https://www.tpex.org.tw/openapi/v1/tpex_mainboard_margin_balance", { source: "TPEx margin balance", accept: "application/json" }, fetchLog).then(JSON.parse)
+        .catch(async () => {
+          const date = Object.values(officialQuotes).map((row) => row.asOf).filter(Boolean).sort().at(-1);
+          if (!date) throw new Error("TPEx margin fallback requires an official trading date");
+          const text = await fetchFixedText("https://www.tpex.org.tw/www/zh-tw/margin/balance", {
+            source: "TPEx margin official report fallback", method: "POST", contentType: "application/x-www-form-urlencoded",
+            body: new URLSearchParams({ response: "json", date: date.replaceAll("-", "") }).toString()
+          }, fetchLog);
+          tpexFallbackUsed = true;
+          return JSON.parse(text);
+        })
       : Promise.resolve([])
   ]);
   if (twse.status === "rejected") errors.push(`TWSE 資券：${cleanError(twse.reason)}`);
@@ -924,7 +1015,7 @@ async function fetchTrackedMargin(stocks, officialQuotes, generatedAt, fetchLog,
       const parsed = stock.suffix === "TWO"
         ? chipNormalizers().parseMarginTpex(payload, stock.code)
         : chipNormalizers().parseMarginTwse(payload, stock.code);
-      if (parsed) records[stock.code] = normalizedProvenance(parsed, {
+      if (parsed) records[stock.code] = normalizedProvenance({ ...parsed, fallbackUsed: stock.suffix === "TWO" && tpexFallbackUsed }, {
         sourceTier: "Tier 1",
         asOf: officialQuotes?.[stock.code]?.asOf || null,
         fetchedAt: generatedAt,
@@ -961,6 +1052,36 @@ function previousDomainRecords(previous, id) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
 }
 
+async function fetchTrackedFundamentals(stocks, date, generatedAt, fetchLog, errors) {
+  const trackedCodes = stocks.map((stock) => stock.code);
+  const valuations = {}, revenue = {};
+  const rocDate = `${Number(date.slice(0, 4)) - 1911}/${date.slice(5, 7)}/${date.slice(8, 10)}`;
+  const valuationsSources = [
+    { url: `https://www.twse.com.tw/exchangeReport/BWIBBU_d?response=json&date=${date.replaceAll("-", "")}&selectType=ALL`, label: "TWSE 官方估值", parse: marketNormalizers().parseTwseValuations },
+    { url: `https://www.tpex.org.tw/web/stock/aftertrading/peratio_analysis/pera_result.php?l=zh-tw&o=json&d=${encodeURIComponent(rocDate)}`, label: "TPEx 官方估值", parse: marketNormalizers().parseTpexValuations }
+  ];
+  await Promise.all(valuationsSources.map(async (source) => {
+    try {
+      const text = await fetchFixedText(source.url, { source: source.label, accept: "application/json" }, fetchLog);
+      const parsed = source.parse(text, { trackedCodes, fetchedAt: generatedAt });
+      for (const [code, row] of Object.entries(parsed.records)) valuations[code] = normalizedProvenance({ ...row, source: source.label, sourceUrl: source.url }, { sourceTier: "Tier 1", fallbackUsed: false, confidence: "high" });
+    } catch (error) { errors.push(`${source.label}：${cleanError(error)}`); }
+  }));
+  const sources = [
+    { market: "listed", label: "MOPS t187ap05_L 月營收 CSV", url: "https://mopsfin.twse.com.tw/opendata/t187ap05_L.csv" },
+    { market: "otc", label: "MOPS t187ap05_O 月營收 CSV", url: "https://mopsfin.twse.com.tw/opendata/t187ap05_O.csv" }
+  ];
+  const tracked = new Set(trackedCodes);
+  await Promise.all(sources.map(async (source) => {
+    try {
+      const text = await fetchFixedText(source.url, { source: source.label, accept: "text/csv" }, fetchLog);
+      const parsed = globalThis.TwStockFundamentalDataNormalizers.parseMonthlyRevenueCsv(text, source, generatedAt);
+      for (const item of parsed) if (tracked.has(item.code)) revenue[item.code] = normalizedProvenance(item.row, { asOf: item.row.sourceDate || null, sourceTier: "Tier 1", confidence: "high" });
+    } catch (error) { errors.push(`${source.label}：${cleanError(error)}`); }
+  }));
+  return { valuations, revenue };
+}
+
 function latestDomainAsOf(domains, previousAsOf = null) {
   return Object.values(domains || {})
     .map((domain) => String(domain?.asOf || "").trim())
@@ -970,7 +1091,7 @@ function latestDomainAsOf(domains, previousAsOf = null) {
 }
 
 async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options = {}) {
-  const stocks = loadPublicTrackedStocks(options.stateCorePath);
+  let stocks = loadPublicTrackedStocks(options.stateCorePath);
   const scheduled = afterCloseRefreshDue(previous, generatedAt, stocks);
   const due = options.force === true && stocks.length
     ? {
@@ -1002,6 +1123,7 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
     misQuotes.status === "fulfilled" ? misQuotes.value : {},
     errors
   );
+  stocks = stocks.map((stock) => ({ ...stock, suffix: tableQuotes[stock.code]?.marketSuffix || stock.suffix }));
   const quotes = { ...previousDomainRecords(previous, "quotes"), ...freshQuotes };
   const previousKlines = previousDomainRecords(previous, "klines");
   const klineRows = await mapConcurrent(stocks, AFTER_CLOSE_CONCURRENCY, async (stock) => {
@@ -1015,9 +1137,10 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
   };
   const quoteDates = Object.values(freshQuotes).map((row) => row?.asOf).filter(Boolean).sort();
   const institutionalDate = quoteDates.at(-1) || due.date;
-  const [institutionalResult, marginResult] = await Promise.allSettled([
+  const [institutionalResult, marginResult, fundamentalResult] = await Promise.allSettled([
     fetchTrackedInstitutional(stocks, institutionalDate, generatedAt, fetchLog, errors),
-    fetchTrackedMargin(stocks, freshQuotes, generatedAt, fetchLog, errors)
+    fetchTrackedMargin(stocks, freshQuotes, generatedAt, fetchLog, errors),
+    fetchTrackedFundamentals(stocks, institutionalDate, generatedAt, fetchLog, errors)
   ]);
   if (institutionalResult.status === "rejected") errors.push(`法人摘要：${cleanError(institutionalResult.reason)}`);
   if (marginResult.status === "rejected") errors.push(`資券摘要：${cleanError(marginResult.reason)}`);
@@ -1032,6 +1155,8 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
   const freshQuoteCount = Object.keys(freshQuotes).length;
   const freshInstitutionalCount = institutionalResult.status === "fulfilled" ? Object.keys(institutionalResult.value).length : 0;
   const freshMarginCount = marginResult.status === "fulfilled" ? Object.keys(marginResult.value).length : 0;
+  const fundamental = fundamentalResult.status === "fulfilled" ? fundamentalResult.value : { valuations: {}, revenue: {} };
+  if (fundamentalResult.status === "rejected") errors.push(`基本面：${cleanError(fundamentalResult.reason)}`);
   const domains = {
     quotes: domainPayload("quotes", quotes, generatedAt, {
       source: "TWSE / TPEx official close tables + TWSE MIS tracked batch",
@@ -1044,8 +1169,26 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
     institutional: domainPayload("institutional", institutional, generatedAt, { source: "TWSE T86 + TPEx institutional", sourceTier: "Tier 1", fallbackUsed: freshInstitutionalCount < stocks.length, confidence: freshInstitutionalCount === stocks.length ? "high" : "low", freshCount: freshInstitutionalCount }),
     margin: domainPayload("margin", margin, generatedAt, { source: "TWSE MI_MARGN + TPEx margin balance", sourceTier: "Tier 1", fallbackUsed: freshMarginCount < stocks.length, confidence: freshMarginCount === stocks.length ? "high" : "low", freshCount: freshMarginCount })
   };
+  for (const id of ["valuations", "revenue"]) {
+    const records = { ...previousDomainRecords(previous, id), ...fundamental[id] };
+    domains[id] = domainPayload(id, records, generatedAt, { source: id === "revenue" ? "MOPS monthly revenue" : "TWSE / TPEx official valuation", sourceTier: "Tier 1", fallbackUsed: !Object.keys(fundamental[id]).length, freshCount: Object.keys(fundamental[id]).length });
+  }
+  // Count dates, not successful HTTP fetches. A source may still serve yesterday's table.
+  for (const id of ["quotes", "klines", "institutional", "margin", "valuations"]) {
+    const domain = domains[id];
+    domain.freshCount = Object.values(domain.records).filter((record) => {
+      const row = Array.isArray(record) ? record.at(-1) : record;
+      return String(row?.asOf || row?.sourceDate || row?.date || "").slice(0, 10) === institutionalDate;
+    }).length;
+    domain.expectedAsOf = institutionalDate;
+    domain.targetCount = id === "valuations" ? stocks.filter((stock) => /^\d{4}$/.test(stock.code)).length : stocks.length;
+    domain.fallbackUsed = domain.fallbackUsed || domain.freshCount < domain.targetCount;
+  }
+  domains.revenue.targetCount = stocks.filter((stock) => /^\d{4}$/.test(stock.code)).length;
+  domains.revenue.period = Object.values(domains.revenue.records).map((row) => row.yearMonth).filter(Boolean).sort().at(-1) || null;
+  domains.klines.records = Object.fromEntries(Object.entries(klines).map(([code, rows]) => [code, globalThis.TwStockKlineSnapshotCodec.encode(globalThis.TwStockKlineSnapshotCodec.decode(rows))]));
   const fresh = [freshQuoteCount, freshKlineCount, freshInstitutionalCount, freshMarginCount].some((count) => count > 0);
-  const asOf = latestDomainAsOf(domains, previous?.asOf);
+  const asOf = latestDomainAsOf(Object.fromEntries(["quotes", "klines", "institutional", "margin"].map((key) => [key, domains[key]])), previous?.asOf);
   return {
     fresh,
     reason: due.reason,
@@ -1057,11 +1200,12 @@ async function buildAfterCloseSnapshot(previous, generatedAt, fetchLog, options 
       attemptCount: due.attemptCount || 1,
       asOf,
       targetCount: stocks.length,
+      universe: stocks,
       delivery: {
         mode: "github-actions-sanitized-after-close",
         generatedAt,
         schedule: "weekdays after 15:00 Asia/Taipei; retry partial domains up to four attempts",
-        privacy: "public neutral holdings only; no cost basis, alerts, or private research"
+        privacy: "public research catalogue; no private membership, cost basis, alerts, or private research"
       },
       domains,
       errors: uniqueStrings(errors).slice(-24)
@@ -1140,7 +1284,7 @@ function previousGlobal(cache, key) {
 function writeJsonAtomic(filePath, payload) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
-  fs.writeFileSync(tempPath, `${JSON.stringify(payload, null, 2)}\n`, { encoding: "utf8", mode: 0o644, flag: "wx" });
+  fs.writeFileSync(tempPath, `${JSON.stringify(payload)}\n`, { encoding: "utf8", mode: 0o644, flag: "wx" });
   fs.renameSync(tempPath, filePath);
 }
 
@@ -1197,6 +1341,9 @@ async function buildSnapshot(args) {
     afterCloseSnapshot: afterCloseResult.snapshot,
     fetchLog
   };
+  if (Buffer.byteLength(JSON.stringify(payload), "utf8") > MAX_RESPONSE_BYTES) {
+    throw new Error("Published snapshot exceeds the Web client's 8 MiB limit; previous artifact preserved");
+  }
   writeJsonAtomic(args.output, payload);
   const relativeSnapshot = `data/${path.basename(args.output)}`;
   writeJsonAtomic(path.join(path.dirname(args.output), "snapshot-manifest.json"), {
@@ -1306,6 +1453,7 @@ function selfTest() {
   return { ok: true, checks };
 }
 
+if (path.resolve(process.argv[1] || "") === fileURLToPath(import.meta.url)) {
 const args = parseArgs(process.argv.slice(2));
 if (args.help) {
   process.stdout.write("Usage: node scripts/build_market_snapshot.mjs [--output PATH] [--no-remote-fallback] [--force-after-close] [--self-test]\n");
@@ -1318,4 +1466,5 @@ if (args.help) {
       process.stderr.write(`${cleanError(error)}\n`);
       process.exitCode = 1;
     });
+}
 }
